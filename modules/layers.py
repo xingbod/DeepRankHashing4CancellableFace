@@ -1,5 +1,6 @@
 import tensorflow as tf
 import math
+import tensorflow.keras.backend as K
 
 
 class BatchNormalization(tf.keras.layers.BatchNormalization):
@@ -48,3 +49,63 @@ class ArcMarginPenaltyLogists(tf.keras.layers.Layer):
         logists = tf.multiply(logists, self.logist_scale, 'arcface_logist')
 
         return logists
+
+class MaxIndexLinearForeward(tf.keras.layers.Layer):
+
+    def __init__(self, units=32, q=4):
+        super(MaxIndexLinearForeward, self).__init__()
+        self.units = units
+        self.q = q
+        self.iteratenum = tf.dtypes.cast(units / self.q, tf.int32)
+        self.helpvector = tf.cast(tf.range(0, self.q, 1) + 1, tf.double)
+
+    def call(self, inputs):
+        myvar = []
+        for i in range(0, self.iteratenum.numpy()):  # q=4
+            my_variable1 = inputs[:, i * self.q + 0:i * self.q + self.q]
+            init_index = K.argmax(my_variable1)
+
+            myvar.append(init_index)
+        myvar = tf.stack(myvar)
+        myvar = tf.transpose(myvar)
+        return myvar
+
+class MaxIndexLinearTraining(tf.keras.layers.Layer):
+
+  def __init__(self, units=32,q=4):
+    super(MaxIndexLinearTraining, self).__init__()
+    self.units = units
+    self.q = q
+    self.iteratenum = tf.dtypes.cast(units/self.q, tf.int32)
+    self.helpvector =  tf.cast( tf.range(0, self.q , 1) + 1,tf.double)
+
+    #print(self.helpvector.numpy())
+    #print(self.iteratenum.numpy())
+
+  def call(self, inputs):
+    myvar=[]
+    for i in range(0,self.iteratenum.numpy()): # q=4
+        my_variable1 = inputs[:,i*self.q+0:i*self.q+self.q]
+        my_variable1 = tf.nn.softmax(my_variable1, axis=1)
+        my_variable1 = tf.cast(my_variable1, tf.double)
+        # init_index = K.argmax(res[:,0*self.q+0:0*self.q+self.q-1])
+        softargmax2 = tf.multiply(self.helpvector, my_variable1)
+        softargmax2 = tf.reduce_sum(softargmax2, axis=-1)
+        myvar.append(softargmax2)
+        #softargmax = tf.stack((softargmax, softargmax2), axis=-1)
+    #print(init_index)
+    #return  tf.stack(my_variable, axis=-1)
+    myvar = tf.stack(myvar)
+    myvar = tf.cast(myvar,tf.float64)
+    myvar = tf.transpose(myvar)
+    #print(myvar)
+    return myvar
+class PermLayer(tf.keras.layers.Layer):
+
+    def __init__(self, permKey):
+        super(PermLayer, self).__init__()
+        self.permKey = permKey
+
+    def call(self, inputs):
+        return tf.matmul(self.permKey, inputs)
+

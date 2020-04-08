@@ -52,7 +52,7 @@ def main(_):
     learning_rate = tf.constant(cfg['base_lr'])
     optimizer = tf.keras.optimizers.SGD(
         learning_rate=learning_rate, momentum=0.9, nesterov=True)
-    loss_fn = SoftmaxLoss()
+    loss_fn = SoftmaxLoss() #############################################
 
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
     if ckpt_path is not None:

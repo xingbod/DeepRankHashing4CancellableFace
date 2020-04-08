@@ -12,7 +12,10 @@ from tensorflow.keras.applications import (
 )
 from .layers import (
     BatchNormalization,
-    ArcMarginPenaltyLogists
+    ArcMarginPenaltyLogists,
+    MaxIndexLinearForeward,
+    MaxIndexLinearTraining,
+    PermLayer
 )
 
 
@@ -50,7 +53,6 @@ def OutputLayer(embd_shape, w_decay=5e-4, name='OutputLayer'):
         return Model(inputs, x, name=name)(x_in)
     return output_layer
 
-
 def ArcHead(num_classes, margin=0.5, logist_scale=64, name='ArcHead'):
     """Arc Head"""
     def arc_head(x_in, y_in):
@@ -62,6 +64,19 @@ def ArcHead(num_classes, margin=0.5, logist_scale=64, name='ArcHead'):
         return Model((inputs1, y), x, name=name)((x_in, y_in))
     return arc_head
 
+def IoMHead(m,q,permKey, isTraining=True, name='IoMHead'):
+    """Arc Head"""
+    def iom_head(x_in, y_in):
+        x = inputs1 = Input(x_in.shape[1:])
+        y = Input(y_in.shape[1:])
+        x = PermLayer(permKey)(x) # permutation
+        if isTraining:
+            x = MaxIndexLinearTraining(units=m,q=q)(x) # permutation
+            return Model((inputs1, y), x, name=name)((x_in, y_in))
+        else:
+            x = MaxIndexLinearForeward(units=m,q=q)(x) # permutation
+            return Model(inputs1, x, name=name)(x_in)
+    return iom_head
 
 def NormHead(num_classes, w_decay=5e-4, name='NormHead'):
     """Norm Head"""
@@ -75,7 +90,7 @@ def NormHead(num_classes, w_decay=5e-4, name='NormHead'):
 def ArcFaceModel(size=None, channels=3, num_classes=None, name='arcface_model',
                  margin=0.5, logist_scale=64, embd_shape=512,
                  head_type='ArcHead', backbone_type='ResNet50',
-                 w_decay=5e-4, use_pretrain=True, training=False):
+                 w_decay=5e-4, use_pretrain=True, training=False,permKey=None):
     """Arc Face Model"""
     x = inputs = Input([size, size, channels], name='input_image')
 
@@ -89,8 +104,15 @@ def ArcFaceModel(size=None, channels=3, num_classes=None, name='arcface_model',
         if head_type == 'ArcHead':
             logist = ArcHead(num_classes=num_classes, margin=margin,
                              logist_scale=logist_scale)(embds, labels)
+        elif head_type == 'IoMHead':
+            logist = IoMHead(m=embd_shape,q=4,permKey=permKey, isTraining=training)(embds, labels) # loss need to change
         else:
             logist = NormHead(num_classes=num_classes, w_decay=w_decay)(embds)
         return Model((inputs, labels), logist, name=name)
     else:
-        return Model(inputs, embds, name=name)
+        if  head_type == 'IoMHead':
+            labels = Input([], name='label')
+            logist = IoMHead(m=embd_shape, q=4, permKey=permKey, isTraining=training)(embds,labels)  # loss need to change
+            return Model(inputs, logist, name=name)
+        else:
+            return Model(inputs, embds, name=name)
