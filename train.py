@@ -9,9 +9,10 @@ from modules.models import ArcFaceModel
 from modules.losses import SoftmaxLoss
 from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf
 import modules.dataset as dataset
+from tensorflow import keras
 
 
-flags.DEFINE_string('cfg_path', './configs/arc_res50.yaml', 'config file path')
+flags.DEFINE_string('cfg_path', './configs/test_res50.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_enum('mode', 'fit', ['fit', 'eager_tf'],
                   'fit: model.fit, eager_tf: custom GradientTape')
@@ -47,7 +48,14 @@ def main(_):
     else:
         logging.info("load fake dataset.")
         steps_per_epoch = 1
-        train_dataset = dataset.load_fake_dataset(cfg['input_size'])
+        #train_dataset = dataset.load_fake_dataset(cfg['input_size'])
+        (x_train1, y_train1), (x_test1, y_test1) = keras.datasets.cifar10.load_data()
+        from keras.preprocessing.image import ImageDataGenerator
+        datagen = ImageDataGenerator(rescale=1. / 255,
+                                     shear_range=0.2,
+                                     zoom_range=0.2,
+                                     horizontal_flip=True)
+        train_dataset = datagen.flow(x_train1, y_train1, batch_size=cfg['batch_size'])
 
     learning_rate = tf.constant(cfg['base_lr'])
     optimizer = tf.keras.optimizers.SGD(
