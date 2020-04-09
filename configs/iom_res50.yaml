@@ -18,4 +18,4 @@ w_decay: !!float 5e-4
 save_steps: 1000
 
 # test
-test_dataset: '/your/path/to/test_dataset'
+test_dataset: '/data/test_dataset'

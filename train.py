@@ -42,7 +42,10 @@ def main(_):
     set_memory_growth()
 
     cfg = load_yaml(FLAGS.cfg_path)
-    permKey = generatePermKey(cfg['embd_shape'])
+    permKey = None
+    if cfg['train_dataset'] == "IoMHead":#
+        #permKey = generatePermKey(cfg['embd_shape'])
+        permKey = tf.eye(cfg['embd_shape']) # for training, we don't permutate, won't influence the performance
     # tf.io.write_file( "./data/permKey.tfrecord", permKey, name="permKey")
     model = ArcFaceModel(size=cfg['input_size'],
                          backbone_type=cfg['backbone_type'],

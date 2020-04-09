@@ -111,6 +111,35 @@ def triplet_mask(labels):
     mask = tf.logical_and(distinct_idxes, valid_label_idxes)
     return mask
 
+def _get_triplet_mask(labels):
+    """Return a 3D mask where mask[a, p, n] is True iff the triplet (a, p, n) is valid.
+    A triplet (i, j, k) is valid if:
+        - i, j, k are distinct
+        - labels[i] == labels[j] and labels[i] != labels[k]
+    Args:
+        labels: tf.int32 `Tensor` with shape [batch_size]
+    """
+    # Check that i, j and k are distinct
+    indices_equal = tf.cast(tf.eye(tf.shape(labels)[0]), tf.bool)
+    indices_not_equal = tf.logical_not(indices_equal)
+    i_not_equal_j = tf.expand_dims(indices_not_equal, 2)
+    i_not_equal_k = tf.expand_dims(indices_not_equal, 1)
+    j_not_equal_k = tf.expand_dims(indices_not_equal, 0)
+
+    distinct_indices = tf.logical_and(tf.logical_and(i_not_equal_j, i_not_equal_k), j_not_equal_k)
+
+
+    # Check if labels[i] == labels[j] and labels[i] != labels[k]
+    label_equal = tf.equal(tf.expand_dims(labels, 0), tf.expand_dims(labels, 1))
+    i_equal_j = tf.expand_dims(label_equal, 2)
+    i_equal_k = tf.expand_dims(label_equal, 1)
+
+    valid_labels = tf.logical_and(i_equal_j, tf.logical_not(i_equal_k))
+
+    # Combine the two masks
+    mask = tf.logical_and(distinct_indices, valid_labels)
+
+    return mask
 
 def semihard_triplet_loss(labels, embeddings, margin=1.0):
     # get pairwise distances of embeddings
@@ -125,7 +154,9 @@ def semihard_triplet_loss(labels, embeddings, margin=1.0):
     triplet_loss = ap_dist - an_dist + margin
 
     # remove invalid triplets
-    mask = triplet_mask(labels)
+    # mask = triplet_mask(labels)
+    mask = _get_triplet_mask(labels)
+
     mask = tf.cast(mask, tf.float32)
     triplet_loss = tf.multiply(triplet_loss, tf.cast(mask,tf.double))
 

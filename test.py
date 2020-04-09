@@ -10,7 +10,7 @@ from modules.models import ArcFaceModel
 from modules.utils import set_memory_growth, load_yaml, l2_norm
 
 
-flags.DEFINE_string('cfg_path', './configs/arc_res50.yaml', 'config file path')
+flags.DEFINE_string('cfg_path', './configs/iom_res50.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_string('img_path', '', 'path to input image')
 
