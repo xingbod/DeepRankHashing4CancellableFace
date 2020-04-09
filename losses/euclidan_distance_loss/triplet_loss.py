@@ -100,6 +100,7 @@ def triplet_mask(labels):
         tf.logical_and(ij_not_eq, ik_not_eq), jk_not_eq)
 
     # get valid label indicies (label[i]==label[j] and label[i]!=label[k])
+    labels = tf.expand_dims(labels, 1)
     label_eq = tf.equal(labels, tf.transpose(labels))
     ij_eq = tf.expand_dims(label_eq, 2)
     ik_eq = tf.expand_dims(label_eq, 1)
@@ -113,6 +114,9 @@ def triplet_mask(labels):
 
 def semihard_triplet_loss(labels, embeddings, margin=1.0):
     # get pairwise distances of embeddings
+    # print("*******************")
+    # print(labels)
+    # print(embeddings)
     pairwise_dist = pairwise_distances(embeddings)
 
     # build 3d anchor/positive/negative distance tensor
@@ -123,13 +127,13 @@ def semihard_triplet_loss(labels, embeddings, margin=1.0):
     # remove invalid triplets
     mask = triplet_mask(labels)
     mask = tf.cast(mask, tf.float32)
-    triplet_loss = tf.multiply(triplet_loss, mask)
+    triplet_loss = tf.multiply(triplet_loss, tf.cast(mask,tf.double))
 
     # remove easy triplets (negative losses)
     triplet_loss = tf.maximum(0.0, triplet_loss)
 
     # get number of non-zero triplets and normalize
-    pos_triplets = tf.cast(tf.greater(triplet_loss, 1e-16), tf.float32)
+    pos_triplets = tf.cast(tf.greater(triplet_loss, 1e-16), tf.double)
     num_pos_triplets = tf.reduce_sum(pos_triplets)
-    triplet_loss = tf.reduce_sum(triplet_loss) / (num_pos_triplets + 1e-16)
+    triplet_loss = tf.cast(tf.reduce_sum(triplet_loss), tf.double) / (num_pos_triplets + 1e-16)
     return triplet_loss

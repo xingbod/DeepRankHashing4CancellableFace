@@ -7,16 +7,30 @@ from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 
 from modules.models import ArcFaceModel
 from modules.losses import SoftmaxLoss
-from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf
+from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf,generatePermKey
+from losses.angular_margin_loss import arcface_loss,cosface_loss,sphereface_loss
+from losses.euclidan_distance_loss import triplet_loss,triplet_loss_vanila,contrastive_loss
 import modules.dataset as dataset
 from tensorflow import keras
 
 
-flags.DEFINE_string('cfg_path', './configs/test_res50.yaml', 'config file path')
+flags.DEFINE_string('cfg_path', './configs/iom_res50.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_enum('mode', 'fit', ['fit', 'eager_tf'],
                   'fit: model.fit, eager_tf: custom GradientTape')
 
+gpus = tf.config.experimental.list_physical_devices('GPU')
+print("Num GPUs Available: ", len(gpus))
+if gpus:
+  try:
+    # Currently, memory growth needs to be the same across GPUs
+    for gpu in gpus:
+      tf.config.experimental.set_memory_growth(gpu, True)
+    logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+    print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+  except RuntimeError as e:
+    # Memory growth must be set before GPUs have been initialized
+    print(e)
 
 def main(_):
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -28,14 +42,15 @@ def main(_):
     set_memory_growth()
 
     cfg = load_yaml(FLAGS.cfg_path)
-
+    permKey = generatePermKey(cfg['embd_shape'])
+    # tf.io.write_file( "./data/permKey.tfrecord", permKey, name="permKey")
     model = ArcFaceModel(size=cfg['input_size'],
                          backbone_type=cfg['backbone_type'],
                          num_classes=cfg['num_classes'],
                          head_type=cfg['head_type'],
                          embd_shape=cfg['embd_shape'],
                          w_decay=cfg['w_decay'],
-                         training=True)
+                         training=True,permKey=permKey)
     model.summary(line_length=80)
 
     if cfg['train_dataset']:
@@ -48,20 +63,21 @@ def main(_):
     else:
         logging.info("load fake dataset.")
         steps_per_epoch = 1
-        #train_dataset = dataset.load_fake_dataset(cfg['input_size'])
-        (x_train1, y_train1), (x_test1, y_test1) = keras.datasets.cifar10.load_data()
-        from keras.preprocessing.image import ImageDataGenerator
-        datagen = ImageDataGenerator(rescale=1. / 255,
-                                     shear_range=0.2,
-                                     zoom_range=0.2,
-                                     horizontal_flip=True)
-        train_dataset = datagen.flow(x_train1, y_train1, batch_size=cfg['batch_size'])
+        train_dataset = dataset.load_fake_dataset(cfg['input_size'])
+        # (x_train1, y_train1), (x_test1, y_test1) = keras.datasets.cifar10.load_data()
+        # from keras.preprocessing.image import ImageDataGenerator
+        # datagen = ImageDataGenerator(rescale=1. / 255,
+        #                              shear_range=0.2,
+        #                              zoom_range=0.2,
+        #                              horizontal_flip=True)
+        # train_dataset = datagen.flow(x_train1, y_train1, batch_size=cfg['batch_size'])
 
     learning_rate = tf.constant(cfg['base_lr'])
     optimizer = tf.keras.optimizers.SGD(
         learning_rate=learning_rate, momentum=0.9, nesterov=True)
-    loss_fn = SoftmaxLoss() #############################################
-
+    # loss_fn = SoftmaxLoss() #############################################
+    # loss_fn = triplet_loss_vanila.triplet_loss_adapted_from_tf
+    loss_fn = triplet_loss.semihard_triplet_loss
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
     if ckpt_path is not None:
         print("[*] load ckpt from {}".format(ckpt_path))
@@ -81,10 +97,9 @@ def main(_):
 
         while epochs <= cfg['epochs']:
             inputs, labels = next(train_dataset)
-
             with tf.GradientTape() as tape:
                 logist = model(inputs, training=True)
-                reg_loss = tf.reduce_sum(model.losses)
+                reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.double)
                 pred_loss = loss_fn(labels, logist)
                 total_loss = pred_loss + reg_loss
 

@@ -2,7 +2,14 @@ import yaml
 import numpy as np
 import tensorflow as tf
 from absl import logging
+import tensorflow.keras.backend as K
 
+def generatePermKey(size):
+    key = np.random.permutation(size)
+    permkey=np.zeros((size,size))
+    for i in range(size):
+        permkey[i, key[i]] = 1
+    return K.constant(permkey)
 
 def set_memory_growth():
     gpus = tf.config.experimental.list_physical_devices('GPU')

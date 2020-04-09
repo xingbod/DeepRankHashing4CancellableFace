@@ -40,12 +40,12 @@ def pairwise_distance(feature, squared=False):
 
     # Undo conditionally adding 1e-16.
     pairwise_distances = math_ops.multiply(
-        pairwise_distances, math_ops.to_float(math_ops.logical_not(error_mask)))
+        pairwise_distances, math_ops.cast(math_ops.logical_not(error_mask),tf.double))
 
     num_data = array_ops.shape(feature)[0]
     # Explicitly set diagonals to zero.
-    mask_offdiagonals = array_ops.ones_like(pairwise_distances) - array_ops.diag(
-        array_ops.ones([num_data]))
+    mask_offdiagonals = array_ops.ones_like(pairwise_distances) - math_ops.cast(array_ops.diag(
+        array_ops.ones([num_data])),tf.double)
     pairwise_distances = math_ops.multiply(pairwise_distances, mask_offdiagonals)
     return pairwise_distances
 
@@ -87,6 +87,9 @@ def masked_minimum(data, mask, dim=1):
 
 
 def triplet_loss_adapted_from_tf(y_true, y_pred):
+    print("*******************")
+    print(y_true)
+    print(y_pred)
     #del y_true #??? why????
     margin = 1.
     #labels = y_pred[:, :1]
@@ -95,7 +98,8 @@ def triplet_loss_adapted_from_tf(y_true, y_pred):
 
     labels = tf.cast(labels, dtype='int32')
 
-    embeddings = y_pred[:, 1:]
+    # embeddings = y_pred[:, 1:]
+    embeddings = y_pred
 
     ### Code from Tensorflow function [tf.contrib.losses.metric_learning.triplet_semihard_loss] starts here:
 
@@ -116,6 +120,9 @@ def triplet_loss_adapted_from_tf(y_true, y_pred):
 
     # Compute the mask.
     pdist_matrix_tile = array_ops.tile(pdist_matrix, [batch_size, 1])
+    print("**********************************")
+    print(adjacency_not)
+    print(array_ops.tile(adjacency_not, [batch_size, 1]))
     mask = math_ops.logical_and(
         array_ops.tile(adjacency_not, [batch_size, 1]),
         math_ops.greater(
