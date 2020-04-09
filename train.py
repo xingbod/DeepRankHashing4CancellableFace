@@ -43,7 +43,7 @@ def main(_):
 
     cfg = load_yaml(FLAGS.cfg_path)
     permKey = None
-    if cfg['train_dataset'] == "IoMHead":#
+    if cfg['head_type'] == "IoMHead":#
         #permKey = generatePermKey(cfg['embd_shape'])
         permKey = tf.eye(cfg['embd_shape']) # for training, we don't permutate, won't influence the performance
     # tf.io.write_file( "./data/permKey.tfrecord", permKey, name="permKey")
