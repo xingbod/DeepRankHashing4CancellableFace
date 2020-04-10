@@ -3,3 +3,4 @@ checkpoints/*
 logs/*
 **/__pycache__/*
 **/*.tfrecord
+.idea
