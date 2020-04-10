@@ -13,7 +13,7 @@ binary_img: True
 num_classes: 85742
 num_samples: 5822653
 epochs: 10
-base_lr: 0.001
+base_lr: 0.01
 w_decay: !!float 5e-4
 save_steps: 10000
 q: 8

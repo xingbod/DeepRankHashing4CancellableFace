@@ -21,7 +21,7 @@ def _pairwise_distances(embeddings, squared=False):
     # Get squared L2 norm for each embedding. We can just take the diagonal of `dot_product`.
     # This also provides more numerical stability (the diagonal of the result will be exactly 0).
     # shape (batch_size,)
-    square_norm = tf.diag_part(dot_product)
+    square_norm = tf.linalg.diag_part(dot_product)
 
     # Compute the pairwise distance matrix as we have:
     # ||a - b||^2 = ||a||^2  - 2 <a, b> + ||b||^2
@@ -34,7 +34,7 @@ def _pairwise_distances(embeddings, squared=False):
     if not squared:
         # Because the gradient of sqrt is infinite when distances == 0.0 (ex: on the diagonal)
         # we need to add a small epsilon where distances == 0.0
-        mask = tf.to_float(tf.equal(distances, 0.0))
+        mask = tf.cast(tf.equal(distances, 0.0),tf.double)
         distances = distances + mask * 1e-16
 
         distances = tf.sqrt(distances)
@@ -153,14 +153,14 @@ def batch_all_triplet_loss(labels, embeddings, margin=1.0, squared=False):
     # Put to zero the invalid triplets
     # (where label(a) != label(p) or label(n) == label(a) or a == p)
     mask = _get_triplet_mask(labels)
-    mask = tf.to_float(mask)
+    mask = tf.cast(mask,tf.double)
     triplet_loss = tf.multiply(mask, triplet_loss)
 
     # Remove negative losses (i.e. the easy triplets)
     triplet_loss = tf.maximum(triplet_loss, 0.0)
 
     # Count number of positive triplets (where triplet_loss > 0)
-    valid_triplets = tf.to_float(tf.greater(triplet_loss, 1e-16))
+    valid_triplets = tf.cast(tf.greater(triplet_loss, 1e-16),tf.double)
     num_positive_triplets = tf.reduce_sum(valid_triplets)
     num_valid_triplets = tf.reduce_sum(mask)
     fraction_positive_triplets = num_positive_triplets / (num_valid_triplets + 1e-16)
@@ -168,7 +168,9 @@ def batch_all_triplet_loss(labels, embeddings, margin=1.0, squared=False):
     # Get final mean triplet loss over the positive valid triplets
     triplet_loss = tf.reduce_sum(triplet_loss) / (num_positive_triplets + 1e-16)
 
-    return triplet_loss, fraction_positive_triplets
+    # return triplet_loss, fraction_positive_triplets
+    # print(fraction_positive_triplets)
+    return triplet_loss
 
 
 def batch_hard_triplet_loss(labels, embeddings, margin, squared=False):

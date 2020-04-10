@@ -9,7 +9,7 @@ from modules.models import ArcFaceModel
 from modules.losses import SoftmaxLoss
 from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf,generatePermKey
 from losses.angular_margin_loss import arcface_loss,cosface_loss,sphereface_loss
-from losses.euclidan_distance_loss import triplet_loss,triplet_loss_vanila,contrastive_loss
+from losses.euclidan_distance_loss import triplet_loss,triplet_loss_vanila,contrastive_loss,triplet_loss_omoindrot
 import modules.dataset as dataset
 from tensorflow import keras
 import tensorflow_addons as tfa
@@ -78,11 +78,11 @@ def main(_):
     learning_rate = tf.constant(cfg['base_lr'])
     optimizer = tf.keras.optimizers.SGD(
         learning_rate=learning_rate, momentum=0.9, nesterov=True)
-    # loss_fn = SoftmaxLoss() #############################################
+    loss_fn = SoftmaxLoss() #############################################
     # loss_fn = triplet_loss_vanila.triplet_loss_adapted_from_tf
-    loss_fn = triplet_loss.semihard_triplet_loss
+    # loss_fn = triplet_loss.semihard_triplet_loss
     # loss_fn = triplet_loss.hardest_triplet_loss
-
+    # loss_fn = triplet_loss_omoindrot.batch_all_triplet_loss
     # loss_fn = tfa.losses.TripletSemiHardLoss()
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
     if ckpt_path is not None:
@@ -112,9 +112,13 @@ def main(_):
 
             with tf.GradientTape() as tape:
                 logist = model(inputs, training=True)
-                reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.double)
+                # print(logist)
+                if cfg['head_type'] == 'IoMHead':
+                    reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.double)
+                else:
+                    reg_loss = tf.reduce_sum(model.losses)
                 pred_loss = loss_fn(labels, logist)
-                total_loss = pred_loss + reg_loss * 0
+                total_loss = pred_loss + reg_loss
 
             grads = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(grads, model.trainable_variables))
