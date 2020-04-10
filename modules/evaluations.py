@@ -22,7 +22,7 @@ def get_val_data(data_path):
     """get validation data"""
     lfw, lfw_issame = get_val_pair(data_path, 'lfw_align_112/lfw')
     agedb_30, agedb_30_issame = get_val_pair(data_path,
-                                             'agedb_align_112/agedb_30')
+                                             'agedb_align_112/AgeDB/agedb_30')
     cfp_fp, cfp_fp_issame = get_val_pair(data_path, 'cfp_align_112/cfp_fp')
 
     return lfw, agedb_30, cfp_fp, lfw_issame, agedb_30_issame, cfp_fp_issame
@@ -99,8 +99,8 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
 def evaluate(embeddings, actual_issame, nrof_folds=10):
     # Calculate evaluation metrics
     thresholds = np.arange(0, 4, 0.01)
-    embeddings1 = embeddings[0::2]
-    embeddings2 = embeddings[1::2]
+    embeddings1 = embeddings[0::2]# 隔行采样
+    embeddings2 = embeddings[1::2]# 隔行采样
     tpr, fpr, accuracy, best_thresholds = calculate_roc(
         thresholds, embeddings1, embeddings2, np.asarray(actual_issame),
         nrof_folds=nrof_folds)
@@ -109,8 +109,10 @@ def evaluate(embeddings, actual_issame, nrof_folds=10):
 
 
 def perform_val(embedding_size, batch_size, model,
-                carray, issame, nrof_folds=10, is_ccrop=False, is_flip=True):
+                carray, issame, nrof_folds=10, is_ccrop=False, is_flip=True,cfg=None):
     """perform val"""
+    if cfg['head_type']=='IoMHead':
+         embedding_size = int(embedding_size / cfg['q'])
     embeddings = np.zeros([len(carray), embedding_size])
 
     for idx in tqdm.tqdm(range(0, len(carray), batch_size)):
@@ -118,15 +120,20 @@ def perform_val(embedding_size, batch_size, model,
         batch = np.transpose(batch, [0, 2, 3, 1]) * 0.5 + 0.5
         if is_ccrop:
             batch = ccrop_batch(batch)
+
         if is_flip:
             fliped = hflip_batch(batch)
             emb_batch = model(batch) + model(fliped)
-            embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
+            # embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         else:
             batch = ccrop_batch(batch)
             emb_batch = model(batch)
-            embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
 
+        if cfg['head_type']=='IoMHead':
+            embeddings[idx:idx + batch_size] = emb_batch
+        else:
+            embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
+        # print(embeddings)
     tpr, fpr, accuracy, best_thresholds = evaluate(
         embeddings, issame, nrof_folds)
 

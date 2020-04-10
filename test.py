@@ -25,10 +25,17 @@ def main(_argv):
     set_memory_growth()
 
     cfg = load_yaml(FLAGS.cfg_path)
+    permKey = None
+    if cfg['head_type'] == 'IoMHead':#
+        #permKey = generatePermKey(cfg['embd_shape'])
+        permKey = tf.eye(cfg['embd_shape']) # for training, we don't permutate, won't influence the performance
 
     model = ArcFaceModel(size=cfg['input_size'],
+                         embd_shape=cfg['embd_shape'],
                          backbone_type=cfg['backbone_type'],
-                         training=False)
+                         head_type=cfg['head_type'],
+                         training=False,
+                         permKey=permKey, cfg=cfg)
 
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
     if ckpt_path is not None:
@@ -55,19 +62,19 @@ def main(_argv):
         print("[*] Perform Evaluation on LFW...")
         acc_lfw, best_th = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, lfw, lfw_issame,
-            is_ccrop=cfg['is_ccrop'])
+            is_ccrop=cfg['is_ccrop'],cfg=cfg)
         print("    acc {:.4f}, th: {:.2f}".format(acc_lfw, best_th))
 
         print("[*] Perform Evaluation on AgeDB30...")
         acc_agedb30, best_th = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, agedb_30,
-            agedb_30_issame, is_ccrop=cfg['is_ccrop'])
+            agedb_30_issame, is_ccrop=cfg['is_ccrop'],cfg=cfg)
         print("    acc {:.4f}, th: {:.2f}".format(acc_agedb30, best_th))
 
         print("[*] Perform Evaluation on CFP-FP...")
         acc_cfp_fp, best_th = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, cfp_fp, cfp_fp_issame,
-            is_ccrop=cfg['is_ccrop'])
+            is_ccrop=cfg['is_ccrop'],cfg=cfg)
         print("    acc {:.4f}, th: {:.2f}".format(acc_cfp_fp, best_th))
 
 

@@ -12,7 +12,7 @@ from losses.angular_margin_loss import arcface_loss,cosface_loss,sphereface_loss
 from losses.euclidan_distance_loss import triplet_loss,triplet_loss_vanila,contrastive_loss
 import modules.dataset as dataset
 from tensorflow import keras
-
+import tensorflow_addons as tfa
 
 flags.DEFINE_string('cfg_path', './configs/iom_res50.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
@@ -53,7 +53,7 @@ def main(_):
                          head_type=cfg['head_type'],
                          embd_shape=cfg['embd_shape'],
                          w_decay=cfg['w_decay'],
-                         training=True,permKey=permKey)
+                         training=True,permKey=permKey,cfg=cfg)
     model.summary(line_length=80)
 
     if cfg['train_dataset']:
@@ -81,6 +81,9 @@ def main(_):
     # loss_fn = SoftmaxLoss() #############################################
     # loss_fn = triplet_loss_vanila.triplet_loss_adapted_from_tf
     loss_fn = triplet_loss.semihard_triplet_loss
+    # loss_fn = triplet_loss.hardest_triplet_loss
+
+    # loss_fn = tfa.losses.TripletSemiHardLoss()
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
     if ckpt_path is not None:
         print("[*] load ckpt from {}".format(ckpt_path))
@@ -100,11 +103,18 @@ def main(_):
 
         while epochs <= cfg['epochs']:
             inputs, labels = next(train_dataset)
+            # if triplet loss
+            if cfg['head_type'] == 'IoMHead':
+                mask = triplet_loss._get_triplet_mask(labels)
+                mask_tmp = tf.reshape(mask, [tf.size(mask).numpy(), 1])
+                if len(mask_tmp[mask_tmp])<0.01*cfg['batch_size']:
+                    continue
+
             with tf.GradientTape() as tape:
                 logist = model(inputs, training=True)
                 reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.double)
                 pred_loss = loss_fn(labels, logist)
-                total_loss = pred_loss + reg_loss
+                total_loss = pred_loss + reg_loss * 1
 
             grads = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(grads, model.trainable_variables))

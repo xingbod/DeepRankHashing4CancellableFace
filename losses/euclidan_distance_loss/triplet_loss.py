@@ -1,5 +1,6 @@
 import tensorflow as tf
-
+from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import math_ops
 
 __all__ = [
     "hardest_triplet_loss", "semihard_triplet_loss"
@@ -35,6 +36,48 @@ postivie is closer to anchor than negative but negative is within margin
 ||f(x_a) - f(x_p)||^2 - ||f(x_a) - f(x_n)||^2 + margin = postive value
 """
 
+def pairwise_distance_vanila(feature, squared=False):
+    """Computes the pairwise distance matrix with numerical stability.
+
+    output[i, j] = || feature[i, :] - feature[j, :] ||_2
+
+    Args:
+      feature: 2-D Tensor of size [number of data, feature dimension].
+      squared: Boolean, whether or not to square the pairwise distances.
+
+    Returns:
+      pairwise_distances: 2-D Tensor of size [number of data, number of data].
+    """
+    pairwise_distances_squared = math_ops.add(
+        math_ops.reduce_sum(math_ops.square(feature), axis=[1], keepdims=True),
+        math_ops.reduce_sum(
+            math_ops.square(array_ops.transpose(feature)),
+            axis=[0],
+            keepdims=True)) - 2.0 * math_ops.matmul(feature,
+                                                    array_ops.transpose(feature))
+
+    # Deal with numerical inaccuracies. Set small negatives to zero.
+    pairwise_distances_squared = math_ops.maximum(pairwise_distances_squared, 0.0)
+    # Get the mask where the zero distances are at.
+    error_mask = math_ops.less_equal(pairwise_distances_squared, 0.0)
+
+    # Optionally take the sqrt.
+    if squared:
+        pairwise_distances = pairwise_distances_squared
+    else:
+        pairwise_distances = math_ops.sqrt(
+            pairwise_distances_squared + tf.cast(error_mask,tf.double) * 1e-16)
+
+    # Undo conditionally adding 1e-16.
+    pairwise_distances = math_ops.multiply(
+        pairwise_distances, math_ops.cast(math_ops.logical_not(error_mask),tf.double))
+
+    num_data = array_ops.shape(feature)[0]
+    # Explicitly set diagonals to zero.
+    mask_offdiagonals = array_ops.ones_like(pairwise_distances) - math_ops.cast(array_ops.diag(
+        array_ops.ones([num_data])),tf.double)
+    pairwise_distances = math_ops.multiply(pairwise_distances, mask_offdiagonals)
+    return pairwise_distances
 
 def pairwise_distances(embeddings):
     # get pariwise-distance matrix
@@ -67,7 +110,7 @@ def hardest_triplet_loss(labels, embeddings, margin=1.0):
 
     # get anchors to positives distances
     mask_ap = anchor_positive_mask(labels)
-    mask_ap = tf.cast(mask_ap, tf.float32)
+    mask_ap = tf.cast(mask_ap, tf.double)
 
     # get hardest positive for each anchor
     ap_dist = tf.multiply(mask_ap, pairwise_dist)
@@ -75,7 +118,7 @@ def hardest_triplet_loss(labels, embeddings, margin=1.0):
 
     # get anchors to negatives distances
     mask_an = anchor_negative_mask(labels)
-    mask_an = tf.cast(mask_an, tf.float32)
+    mask_an = tf.cast(mask_an, tf.double)
 
     # add maximum distance to each positive (so we can get mininum negative distance)
     # get hardest negative for each anchor
@@ -144,9 +187,10 @@ def _get_triplet_mask(labels):
 def semihard_triplet_loss(labels, embeddings, margin=1.0):
     # get pairwise distances of embeddings
     # print("*******************")
-    # print(labels)
+    #print(labels)
     # print(embeddings)
-    pairwise_dist = pairwise_distances(embeddings)
+    # pairwise_dist = pairwise_distances(embeddings)
+    pairwise_dist = pairwise_distance_vanila(embeddings,squared=True)
 
     # build 3d anchor/positive/negative distance tensor
     ap_dist = tf.expand_dims(pairwise_dist, 2)
@@ -157,7 +201,6 @@ def semihard_triplet_loss(labels, embeddings, margin=1.0):
     # mask = triplet_mask(labels)
     mask = _get_triplet_mask(labels)
 
-    mask = tf.cast(mask, tf.float32)
     triplet_loss = tf.multiply(triplet_loss, tf.cast(mask,tf.double))
 
     # remove easy triplets (negative losses)
