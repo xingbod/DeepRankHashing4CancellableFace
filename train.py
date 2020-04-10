@@ -107,14 +107,14 @@ def main(_):
             if cfg['head_type'] == 'IoMHead':
                 mask = triplet_loss._get_triplet_mask(labels)
                 mask_tmp = tf.reshape(mask, [tf.size(mask).numpy(), 1])
-                if len(mask_tmp[mask_tmp])<0.01*cfg['batch_size']:
+                if len(mask_tmp[mask_tmp])<0.0001*cfg['batch_size']*cfg['batch_size']*cfg['batch_size']:
                     continue
 
             with tf.GradientTape() as tape:
                 logist = model(inputs, training=True)
                 reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.double)
                 pred_loss = loss_fn(labels, logist)
-                total_loss = pred_loss + reg_loss * 1
+                total_loss = pred_loss + reg_loss * 0
 
             grads = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(grads, model.trainable_variables))
