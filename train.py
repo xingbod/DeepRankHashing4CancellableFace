@@ -78,9 +78,9 @@ def main(_):
     learning_rate = tf.constant(cfg['base_lr'])
     optimizer = tf.keras.optimizers.SGD(
         learning_rate=learning_rate, momentum=0.9, nesterov=True)
-    loss_fn = SoftmaxLoss() #############################################
+    # loss_fn = SoftmaxLoss() #############################################
     # loss_fn = triplet_loss_vanila.triplet_loss_adapted_from_tf
-    # loss_fn = triplet_loss.semihard_triplet_loss
+    loss_fn = triplet_loss.semihard_triplet_loss
     # loss_fn = triplet_loss.hardest_triplet_loss
     # loss_fn = triplet_loss_omoindrot.batch_all_triplet_loss
     # loss_fn = tfa.losses.TripletSemiHardLoss()
@@ -92,7 +92,7 @@ def main(_):
     else:
         print("[*] training from scratch.")
         epochs, steps = 1, 1
-
+    model.summary(line_length=80)
     if FLAGS.mode == 'eager_tf':
         # Eager mode is great for debugging
         # Non eager graph mode is recommended for real training
