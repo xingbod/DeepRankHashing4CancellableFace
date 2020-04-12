@@ -80,7 +80,7 @@ def main(_):
     iters = iter(ds)
     iters = iter(ds)
     with tf.io.TFRecordWriter("triplets_ds.tfrecord") as writer:
-        for i in tqdm.tqdm(500000):
+        for i in tqdm.tqdm(range(500000)):
             imgs, label = next(iters)
             tf_example = make_example(source_id=label,
                                       img_path=[imgs[0].numpy()[0], imgs[1].numpy()[0], imgs[2].numpy()[0]])
