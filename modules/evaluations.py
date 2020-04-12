@@ -109,7 +109,7 @@ def evaluate(embeddings, actual_issame, nrof_folds=10):
 
 
 def perform_val(embedding_size, batch_size, model,
-                carray, issame, nrof_folds=10, is_ccrop=False, is_flip=True,cfg=None):
+                carray, issame, nrof_folds=10, is_ccrop=False, is_flip=False,cfg=None):
     """perform val"""
     if cfg['head_type']=='IoMHead':
          embedding_size = int(embedding_size / cfg['q'])
