@@ -69,7 +69,7 @@ def IoMHead(m,q,permKey, isTraining=True, name='IoMHead'):
     def iom_head(x_in, y_in):
         x = inputs1 = Input(x_in.shape[1:])
         y = Input(y_in.shape[1:])
-        x = Dense(512, kernel_regularizer=_regularizer(0))(x) # extra connection layer
+        # x = Dense(1024, kernel_regularizer=_regularizer(0))(x) # extra connection layer
         x = PermLayer(permKey)(x) # permutation
         if isTraining:
             x = MaxIndexLinearTraining(units=m,q=q)(x) # permutation

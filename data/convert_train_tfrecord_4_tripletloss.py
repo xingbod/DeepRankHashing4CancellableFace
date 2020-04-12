@@ -73,17 +73,20 @@ def main(_):
     allsubdir = [os.path.join(dataset_path, o) for o in os.listdir(dataset_path)
                  if os.path.isdir(os.path.join(dataset_path, o))]
     path_ds = tf.data.Dataset.from_tensor_slices(allsubdir)
-    ds = path_ds.interleave(lambda x: processOneDir4(x), cycle_length=301, #85742
+    ds = path_ds.interleave(lambda x: processOneDir4(x), cycle_length=301, #85742 301
                             block_length=2,
                             num_parallel_calls=4).batch(4, True).map(pair_parser, -1).batch(1, True).map(
         generateTriplet, -1)
     iters = iter(ds)
-    cnt=0;
+    cnt=0
     with tf.io.TFRecordWriter("triplets_ds.tfrecord") as writer:
-        while cnt<100000:
+        while cnt<1000000:
             imgs, label = next(iters)
             if imgs[0] != imgs[1]:
-                # print(imgs[0])
+                print(cnt)
+                print(imgs[0].numpy())
+                print(imgs[1].numpy())
+                print(imgs[2].numpy())
                 # print(imgs[1])
                 # print(imgs[2])
                 cnt = cnt + 1

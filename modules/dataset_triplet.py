@@ -53,7 +53,7 @@ def _parse_tfrecord(binary_img=False, is_ccrop=False):
 
 
 
-def load_tfrecord_dataset(tfrecord_name, batch_size=16,
+def load_tfrecord_dataset(tfrecord_name, batch_size,
                           binary_img=False, shuffle=False, buffer_size=10240,
                           is_ccrop=False):
     """load dataset from tfrecord"""

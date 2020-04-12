@@ -103,6 +103,8 @@ def main(_):
 
         while epochs <= cfg['epochs']:
             inputs, labels = next(train_dataset)
+            # print("********************")
+            # print(inputs)
             # if triplet loss
             if cfg['head_type'] == 'IoMHead':
                 mask = triplet_loss._get_triplet_mask(labels)

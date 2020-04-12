@@ -103,16 +103,19 @@ def main(_):
 
         while epochs <= cfg['epochs']:
             inputs, labels = next(train_dataset) #print(inputs[0][1][:])  labels[2][:]
+            # print("********************")
             tmp = inputs[0]
             shape = tf.shape(tmp)
             newinput = tf.reshape(tmp, [shape[0] * shape[1], shape[2], shape[3], shape[4]])
             newlabel = tf.reshape(labels, [shape[0] * shape[1]])
+
+            newinput = (newinput,newlabel)
             # if triplet loss
-            if cfg['head_type'] == 'IoMHead':
-                mask = triplet_loss._get_triplet_mask(newlabel)
-                mask_tmp = tf.reshape(mask, [tf.size(mask).numpy(), 1])
-                if len(mask_tmp[mask_tmp])<0.0001*cfg['batch_size']*cfg['batch_size']*cfg['batch_size']:
-                    continue
+            # if cfg['head_type'] == 'IoMHead':
+            #     mask = triplet_loss._get_triplet_mask(newlabel)
+            #     mask_tmp = tf.reshape(mask, [tf.size(mask).numpy(), 1])
+            #     if len(mask_tmp[mask_tmp])<0.0001*cfg['batch_size']*cfg['batch_size']*cfg['batch_size']:
+            #         continue
 
             with tf.GradientTape() as tape:
                 logist = model(newinput, training=True)
@@ -121,7 +124,7 @@ def main(_):
                     reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.double)
                 else:
                     reg_loss = tf.reduce_sum(model.losses)
-                pred_loss = loss_fn(newlabel, logist)
+                pred_loss = loss_fn(newlabel, logist)*50
                 total_loss = pred_loss + reg_loss
 
             grads = tape.gradient(total_loss, model.trainable_variables)
