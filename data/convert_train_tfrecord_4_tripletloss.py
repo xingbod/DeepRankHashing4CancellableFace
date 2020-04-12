@@ -78,9 +78,8 @@ def main(_):
                             num_parallel_calls=4).batch(4, True).map(pair_parser, -1).batch(1, True).map(
         generateTriplet, -1)
     iters = iter(ds)
-    iters = iter(ds)
     with tf.io.TFRecordWriter("triplets_ds.tfrecord") as writer:
-        for i in tqdm.tqdm(range(500000)):
+        for i in tqdm.tqdm(range(100000)):
             imgs, label = next(iters)
             tf_example = make_example(source_id=label,
                                       img_path=[imgs[0].numpy()[0], imgs[1].numpy()[0], imgs[2].numpy()[0]])
