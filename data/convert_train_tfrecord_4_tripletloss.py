@@ -73,17 +73,23 @@ def main(_):
     allsubdir = [os.path.join(dataset_path, o) for o in os.listdir(dataset_path)
                  if os.path.isdir(os.path.join(dataset_path, o))]
     path_ds = tf.data.Dataset.from_tensor_slices(allsubdir)
-    ds = path_ds.interleave(lambda x: processOneDir4(x), cycle_length=85742,
+    ds = path_ds.interleave(lambda x: processOneDir4(x), cycle_length=301, #85742
                             block_length=2,
                             num_parallel_calls=4).batch(4, True).map(pair_parser, -1).batch(1, True).map(
         generateTriplet, -1)
     iters = iter(ds)
+    cnt=0;
     with tf.io.TFRecordWriter("triplets_ds.tfrecord") as writer:
-        for i in tqdm.tqdm(range(100000)):
+        while cnt<100000:
             imgs, label = next(iters)
-            tf_example = make_example(source_id=label,
+            if imgs[0] != imgs[1]:
+                # print(imgs[0])
+                # print(imgs[1])
+                # print(imgs[2])
+                cnt = cnt + 1
+                tf_example = make_example(source_id=label,
                                       img_path=[imgs[0].numpy()[0], imgs[1].numpy()[0], imgs[2].numpy()[0]])
-            writer.write(tf_example.SerializeToString())
+                writer.write(tf_example.SerializeToString())
     # for id_name in tqdm.tqdm(os.listdir(dataset_path)):
     #     img_paths = glob.glob(os.path.join(dataset_path, id_name, '*.png'))
     #     with tf.io.TFRecordWriter("triplet/" + id_name + "_ms1m_triplet.tfrecord") as writer:
