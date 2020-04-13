@@ -36,6 +36,20 @@ semi-hard triplets:
 postivie is closer to anchor than negative but negative is within margin
 ||f(x_a) - f(x_p)||^2 - ||f(x_a) - f(x_n)||^2 + margin = postive value
 """
+from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import math_ops
+
+def pairwise_distance_xingbo(a,b):
+
+    pairwise_distances_squared = math_ops.add(
+        math_ops.reduce_sum(math_ops.square(a), axis=[1]),
+        math_ops.reduce_sum(
+            math_ops.square(array_ops.transpose(b)),
+            axis=[0])) - 2 * tf.linalg.diag_part(math_ops.matmul(a, array_ops.transpose(b)))
+
+    # Deal with numerical inaccuracies. Set small negatives to zero.
+    # pairwise_distances_squared = math_ops.maximum(pairwise_distances_squared, tf.constant(0))
+    return pairwise_distances_squared
 
 def pairwise_distance_vanila(feature, squared=False):
     """Computes the pairwise distance matrix with numerical stability.
@@ -104,15 +118,19 @@ def compute_triplet_loss(anchor_features, positive_features, negative_features, 
         # a_p_product = tf.matmul(anchor_features, positive_features)
         # a_n_product = tf.matmul(anchor_features, negative_features)
 
-        a_p_product = tf.reduce_sum(tf.multiply(anchor_features, positive_features), axis=1)
-        a_n_product = tf.reduce_sum(tf.multiply(anchor_features, negative_features), axis=1)
+        # a_p_product = tf.reduce_sum(tf.multiply(anchor_features, positive_features), axis=1)
+        # a_n_product = tf.reduce_sum(tf.multiply(anchor_features, negative_features), axis=1)
+
+        a_p_product = pairwise_distance_xingbo(anchor_features, positive_features)
+        a_n_product = pairwise_distance_xingbo(anchor_features, negative_features)
 
         # a_p_vec = tf.divide(a_p_product, denom1)
         # a_n_vec = tf.divide(a_n_product, denom2)
 
-        loss = tf.maximum(0., tf.add(tf.subtract(a_p_product, a_n_product), margin))
-        print(loss)
+        loss = tf.maximum(0.0001, tf.add(tf.subtract(a_p_product, a_n_product), margin))
+        # print(loss)
         loss = tf.reduce_mean(loss)
+        # print(loss)
         return loss
 
 
