@@ -16,6 +16,6 @@ epochs: 10
 base_lr: 0.01
 w_decay: !!float 5e-4
 save_steps: 5000
-q: 8
+q: 16
 # test
 test_dataset: './data/test_dataset'
