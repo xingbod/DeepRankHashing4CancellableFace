@@ -101,8 +101,11 @@ def compute_triplet_loss(anchor_features, positive_features, negative_features, 
         # denom1 =  tf.multiply(anchor_features_norm, positive_features_norm)
         # denom2 =  tf.multiply(anchor_features_norm, negative_features_norm)
 
-        a_p_product = tf.matmul(anchor_features, positive_features)
-        a_n_product = tf.matmul(anchor_features, negative_features)
+        # a_p_product = tf.matmul(anchor_features, positive_features)
+        # a_n_product = tf.matmul(anchor_features, negative_features)
+
+        a_p_product = tf.reduce_sum(tf.multiply(anchor_features, positive_features), axis=1)
+        a_n_product = tf.reduce_sum(tf.multiply(anchor_features, negative_features), axis=1)
 
         # a_p_vec = tf.divide(a_p_product, denom1)
         # a_n_vec = tf.divide(a_n_product, denom2)
