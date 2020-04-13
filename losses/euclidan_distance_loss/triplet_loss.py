@@ -110,7 +110,9 @@ def compute_triplet_loss(anchor_features, positive_features, negative_features, 
         # a_p_vec = tf.divide(a_p_product, denom1)
         # a_n_vec = tf.divide(a_n_product, denom2)
 
-        loss =  tf.maximum(0., tf.add(tf.subtract(a_p_product, a_n_product), margin))
+        loss = tf.maximum(0., tf.add(tf.subtract(a_p_product, a_n_product), margin))
+        print(loss)
+        loss = tf.reduce_mean(loss)
         return loss
 
 

@@ -79,8 +79,6 @@ class MaxIndexLinearTraining(tf.keras.layers.Layer):
     self.iteratenum = tf.dtypes.cast(units/self.q, tf.int32)
     self.helpvector =  tf.cast( tf.range(0, self.q , 1) + 1,tf.double)
 
-    #print(self.helpvector.numpy())
-    #print(self.iteratenum.numpy())
 
   def call(self, inputs):
     myvar=[]

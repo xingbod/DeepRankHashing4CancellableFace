@@ -31,9 +31,10 @@ def _parse_tfrecord(binary_img=False, is_ccrop=False):
                'image/img_path2': tf.io.FixedLenFeature([], tf.string),
                'image/img_path3': tf.io.FixedLenFeature([], tf.string)}
             x = tf.io.parse_single_example(tfrecord, features)
-            print(x['image/img_path1'])
-            print(x['image/img_path2'])
-            print(x['image/img_path3'])
+            # print("****************************************************")
+            # print(x['image/img_path1'])
+            # print(x['image/img_path2'])
+            # print(x['image/img_path3'])
             image_encoded1 = tf.io.read_file(x['image/img_path1'])
             image_encoded2 = tf.io.read_file(x['image/img_path2'])
             image_encoded3 = tf.io.read_file(x['image/img_path3'])

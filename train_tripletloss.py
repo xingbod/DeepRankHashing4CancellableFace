@@ -5,7 +5,7 @@ import tensorflow as tf
 
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 
-from modules.models import ArcFaceModel
+from modules.models import IoMFaceModel
 from modules.losses import SoftmaxLoss
 from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf,generatePermKey
 from losses.angular_margin_loss import arcface_loss,cosface_loss,sphereface_loss
@@ -45,9 +45,9 @@ def main(_):
     permKey = None
     if cfg['head_type'] == "IoMHead":#
         #permKey = generatePermKey(cfg['embd_shape'])
-        permKey = tf.eye(cfg['embd_shape']) # for training, we don't permutate, won't influence the performance
+        permKey = tf.eye(cfg['m']*cfg['q']) # for training, we don't permutate, won't influence the performance
     # tf.io.write_file( "./data/permKey.tfrecord", permKey, name="permKey")
-    model = ArcFaceModel(size=cfg['input_size'],
+    model = IoMFaceModel(size=cfg['input_size'],
                          backbone_type=cfg['backbone_type'],
                          num_classes=cfg['num_classes'],
                          head_type=cfg['head_type'],
@@ -66,21 +66,15 @@ def main(_):
     else:
         logging.info("load fake dataset.")
         steps_per_epoch = 1
-        # train_dataset = dataset.load_fake_dataset(cfg['input_size'])
-        # (x_train1, y_train1), (x_test1, y_test1) = keras.datasets.cifar10.load_data()
-        # from keras.preprocessing.image import ImageDataGenerator
-        # datagen = ImageDataGenerator(rescale=1. / 255,
-        #                              shear_range=0.2,
-        #                              zoom_range=0.2,
-        #                              horizontal_flip=True)
-        # train_dataset = datagen.flow(x_train1, y_train1, batch_size=cfg['batch_size'])
 
     learning_rate = tf.constant(cfg['base_lr'])
-    optimizer = tf.keras.optimizers.SGD(
-        learning_rate=learning_rate, momentum=0.9, nesterov=True)
+    # optimizer = tf.keras.optimizers.SGD(
+    #     learning_rate=learning_rate, momentum=0.9, nesterov=True)
+    optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
+
     # loss_fn = SoftmaxLoss() #############################################
     # loss_fn = triplet_loss_vanila.triplet_loss_adapted_from_tf
-    loss_fn = triplet_loss.semihard_triplet_loss
+    loss_fn = triplet_loss.compute_triplet_loss
     # loss_fn = triplet_loss.hardest_triplet_loss
     # loss_fn = triplet_loss_omoindrot.batch_all_triplet_loss
     # loss_fn = tfa.losses.TripletSemiHardLoss()
@@ -92,7 +86,6 @@ def main(_):
     else:
         print("[*] training from scratch.")
         epochs, steps = 1, 1
-    model.summary(line_length=80)
     if FLAGS.mode == 'eager_tf':
         # Eager mode is great for debugging
         # Non eager graph mode is recommended for real training
@@ -103,9 +96,8 @@ def main(_):
 
         while epochs <= cfg['epochs']:
             inputs, labels = next(train_dataset) #print(inputs[0][1][:])  labels[2][:]
-            # print("********************")
             tmp = inputs[0]
-            shape = tf.shape(tmp)
+            shape = tf.shape(tmp) # [  3  66 112 112   3]
             newinput = tf.reshape(tmp, [shape[0] * shape[1], shape[2], shape[3], shape[4]])
             newlabel = tf.reshape(labels, [shape[0] * shape[1]])
 
@@ -119,13 +111,16 @@ def main(_):
 
             with tf.GradientTape() as tape:
                 logist = model(newinput, training=True)
-                # print(logist)
+                anchor_features = logist[:shape[1]]
+                positive_features = logist[shape[1]:shape[1]*2]
+                negative_features = logist[shape[1]*2:]
                 if cfg['head_type'] == 'IoMHead':
                     reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.double)
                 else:
                     reg_loss = tf.reduce_sum(model.losses)
-                pred_loss = loss_fn(newlabel, logist)*50
-                total_loss = pred_loss + reg_loss
+                # pred_loss = loss_fn(newlabel, logist)*50
+                pred_loss = loss_fn(anchor_features, positive_features,negative_features)
+                total_loss = pred_loss + reg_loss*0.1
 
             grads = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(grads, model.trainable_variables))

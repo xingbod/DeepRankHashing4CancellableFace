@@ -56,7 +56,7 @@ def calculate_accuracy(threshold, dist, actual_issame):
 
 
 def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
-                  nrof_folds=10):
+                  nrof_folds=10,cfg=None):
     assert (embeddings1.shape[0] == embeddings2.shape[0])
     assert (embeddings1.shape[1] == embeddings2.shape[1])
     nrof_pairs = min(len(actual_issame), embeddings1.shape[0])
@@ -71,7 +71,8 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
 
     diff = np.subtract(embeddings1, embeddings2)
     dist = np.sum(np.square(diff), 1)
-
+    if cfg['head_type'] == 'IoMHead':
+        dist = dist/(cfg['q']*cfg['embd_shape']) # should divide by the largest distance
     for fold_idx, (train_set, test_set) in enumerate(k_fold.split(indices)):
         # Find the best threshold for the fold
         acc_train = np.zeros((nrof_thresholds))
@@ -96,14 +97,14 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
     return tpr, fpr, accuracy, best_thresholds
 
 
-def evaluate(embeddings, actual_issame, nrof_folds=10):
+def evaluate(embeddings, actual_issame, nrof_folds=10,cfg=None):
     # Calculate evaluation metrics
     thresholds = np.arange(0, 4, 0.01)
     embeddings1 = embeddings[0::2]# 隔行采样
     embeddings2 = embeddings[1::2]# 隔行采样
     tpr, fpr, accuracy, best_thresholds = calculate_roc(
         thresholds, embeddings1, embeddings2, np.asarray(actual_issame),
-        nrof_folds=nrof_folds)
+        nrof_folds=nrof_folds, cfg=cfg)
 
     return tpr, fpr, accuracy, best_thresholds
 
@@ -130,11 +131,12 @@ def perform_val(embedding_size, batch_size, model,
             emb_batch = model(batch)
 
         if cfg['head_type']=='IoMHead':
-            embeddings[idx:idx + batch_size] = emb_batch
+            embeddings[idx:idx + batch_size] = emb_batch # not working? why
         else:
             embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
-        # print(embeddings)
+        # embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
+        # print(emb_batch)
     tpr, fpr, accuracy, best_thresholds = evaluate(
-        embeddings, issame, nrof_folds)
+        embeddings, issame, nrof_folds,cfg)
 
     return accuracy.mean(), best_thresholds.mean()

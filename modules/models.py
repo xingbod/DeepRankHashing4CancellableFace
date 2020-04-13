@@ -69,13 +69,12 @@ def IoMHead(m,q,permKey, isTraining=True, name='IoMHead'):
     def iom_head(x_in, y_in):
         x = inputs1 = Input(x_in.shape[1:])
         y = Input(y_in.shape[1:])
-        x = Dense(1024*16,kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None), kernel_regularizer=_regularizer(1))(x) # extra connection layer
         x = PermLayer(permKey)(x) # permutation
         if isTraining:
-            x = MaxIndexLinearTraining(units=m,q=q)(x) # permutation
+            x = MaxIndexLinearTraining(units=m*q,q=q)(x) # permutation
             return Model((inputs1, y), x, name=name)((x_in, y_in))
         else:
-            x = MaxIndexLinearForeward(units=m,q=q)(x) # permutation
+            x = MaxIndexLinearForeward(units=m*q,q=q)(x) # permutation
             return Model(inputs1, x, name=name)(x_in)
     return iom_head
 
@@ -117,3 +116,27 @@ def ArcFaceModel(size=None, channels=3, num_classes=None, name='arcface_model',
             return Model(inputs, logist, name=name)
         else:
             return Model(inputs, embds, name=name)
+
+def IoMFaceModel(size=None, channels=3, num_classes=None, name='IoMface_model',
+                 margin=0.5, logist_scale=64, embd_shape=512,
+                 head_type='ArcHead', backbone_type='ResNet50',
+                 w_decay=5e-4, use_pretrain=True, training=False,permKey=None,cfg=None):
+    """Arc Face Model"""
+    x = inputs = Input([size, size, channels], name='input_image')
+
+    x = Backbone(backbone_type=backbone_type, use_pretrain=use_pretrain)(x)
+
+    x = OutputLayer(embd_shape, w_decay=w_decay)(x)
+
+    x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),name="IoMProjectionlayer")(
+        x)  # extra connection layer
+
+    if training:
+        assert num_classes is not None
+        labels = Input([], name='label')
+        logist = IoMHead(m=cfg['m'],q=cfg['q'],permKey=permKey, isTraining=training)(x, labels) # loss need to change
+        return Model((inputs, labels), logist, name=name)
+    else:
+        labels = Input([], name='label')
+        logist = IoMHead(m=cfg['m'], q=cfg['q'], permKey=permKey, isTraining=training)(x,labels)  # loss need to change
+        return Model(inputs, logist, name=name)
