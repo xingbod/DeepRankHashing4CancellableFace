@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import math_ops
+from modules.utils import set_memory_growth, load_yaml, l2_norm
 
 __all__ = [
     "hardest_triplet_loss", "semihard_triplet_loss"
@@ -88,6 +89,26 @@ def pairwise_distances(embeddings):
     p_dist_mat = tf.expand_dims(square_norm, 0) - 2.0 * dot_product + tf.expand_dims(square_norm, 1)
     p_dist_mat = tf.maximum(0.0, p_dist_mat)
     return p_dist_mat
+
+
+
+def compute_triplet_loss(anchor_features, positive_features, negative_features, margin=1):
+    with tf.name_scope("triplet_loss"):
+        # anchor_features_norm = l2_norm(anchor_features)
+        # positive_features_norm = l2_norm(positive_features)
+        # negative_features_norm = l2_norm(negative_features)
+
+        # denom1 =  tf.multiply(anchor_features_norm, positive_features_norm)
+        # denom2 =  tf.multiply(anchor_features_norm, negative_features_norm)
+
+        a_p_product = tf.matmul(anchor_features, positive_features)
+        a_n_product = tf.matmul(anchor_features, negative_features)
+
+        # a_p_vec = tf.divide(a_p_product, denom1)
+        # a_n_vec = tf.divide(a_n_product, denom2)
+
+        loss =  tf.maximum(0., tf.add(tf.subtract(a_p_product, a_n_product), margin))
+        return loss
 
 
 def anchor_positive_mask(labels):
