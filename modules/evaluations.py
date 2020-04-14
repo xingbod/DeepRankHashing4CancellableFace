@@ -9,7 +9,10 @@ import tqdm
 from sklearn.model_selection import KFold
 import tensorflow as tf
 from .utils import l2_norm
-
+# sklearn scipy used for EER cal.
+from sklearn import metrics
+from scipy.optimize import brentq
+from scipy import interpolate
 
 def get_val_pair(path, name):
     carray = bcolz.carray(rootdir=os.path.join(path, name), mode='r')
@@ -96,7 +99,13 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
 
     tpr = np.mean(tprs, 0)
     fpr = np.mean(fprs, 0)
-    return tpr, fpr, accuracy, best_thresholds
+
+    auc = metrics.auc(fpr, tpr)
+    # print('Area Under Curve (AUC): %1.3f' % auc)
+    eer = brentq(lambda x: 1. - x - interpolate.interp1d(fpr, tpr)(x), 0., 1.)
+    # print('Equal Error Rate (EER): %1.3f' % eer)
+
+    return tpr, fpr, accuracy, best_thresholds,auc,eer
 
 
 def calculate_roc_cosine(thresholds, embeddings1, embeddings2, actual_issame,
@@ -156,11 +165,11 @@ def evaluate(embeddings, actual_issame, nrof_folds=10,cfg=None):
     thresholds = np.arange(0, 4, 0.01)
     embeddings1 = embeddings[0::2]# 隔行采样
     embeddings2 = embeddings[1::2]# 隔行采样
-    tpr, fpr, accuracy, best_thresholds = calculate_roc(
+    tpr, fpr, accuracy, best_thresholds,auc,eer= calculate_roc(
         thresholds, embeddings1, embeddings2, np.asarray(actual_issame),
         nrof_folds=nrof_folds, cfg=cfg)
 
-    return tpr, fpr, accuracy, best_thresholds
+    return tpr, fpr, accuracy, best_thresholds,auc,eer
 
 
 def perform_val(embedding_size, batch_size, model,
@@ -190,7 +199,7 @@ def perform_val(embedding_size, batch_size, model,
             embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         # embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         # print(embeddings)
-    tpr, fpr, accuracy, best_thresholds = evaluate(
+    tpr, fpr, accuracy, best_thresholds,auc,eer = evaluate(
         embeddings, issame, nrof_folds,cfg)
 
-    return accuracy.mean(), best_thresholds.mean()
+    return accuracy.mean(), best_thresholds.mean(),auc,eer
