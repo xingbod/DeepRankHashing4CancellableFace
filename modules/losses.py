@@ -11,5 +11,3 @@ def SoftmaxLoss():
                                                             logits=y_pred)
         return tf.reduce_mean(ce)
     return softmax_loss
-
-
