@@ -71,22 +71,33 @@ def main(_argv):
             get_val_data(cfg['test_dataset'])
 
         print("[*] Perform Evaluation on LFW...")
-        acc_lfw, best_th, auc, eer = perform_val(
+        acc_lfw, best_th_lfw, auc_lfw, eer_lfw = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, lfw, lfw_issame,
-            is_ccrop=cfg['is_ccrop'],cfg=cfg)
-        print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th, auc, eer))
+            is_ccrop=cfg['is_ccrop'], cfg=cfg)
+        print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
 
         print("[*] Perform Evaluation on AgeDB30...")
-        acc_agedb30, best_th, auc, eer = perform_val(
+        acc_agedb30, best_th_agedb30, auc_agedb30, eer_agedb30 = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, agedb_30,
-            agedb_30_issame, is_ccrop=cfg['is_ccrop'],cfg=cfg)
-        print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_agedb30, best_th, auc, eer))
+            agedb_30_issame, is_ccrop=cfg['is_ccrop'], cfg=cfg)
+        print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_agedb30, best_th_agedb30, auc_agedb30, eer_agedb30))
 
         print("[*] Perform Evaluation on CFP-FP...")
-        acc_cfp_fp, best_th,auc,eer = perform_val(
+        acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp, eer_cfp_fp = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, cfp_fp, cfp_fp_issame,
-            is_ccrop=cfg['is_ccrop'],cfg=cfg)
-        print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_cfp_fp, best_th, auc, eer))
+            is_ccrop=cfg['is_ccrop'], cfg=cfg)
+        print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp, eer_cfp_fp))
+
+        print(''' q = {:.2f}, m = {:.2f} | LFW | AgeDB30 | CFP - FP
+        --- | --- | --- | ---
+        Accuracy | {:.4f} | {:.4f} | {:.4f} 
+        EER  | {:.4f} | {:.4f} | {:.4f} 
+        AUC  | {:.4f} | {:.4f} | {:.4f} 
+        Threshold  | {:.4f} | {:.4f} | {:.4f} '''.format(q, m,
+                                                         acc_lfw, acc_agedb30, acc_cfp_fp ,
+                                                         eer_lfw, eer_agedb30, eer_cfp_fp ,
+                                                         auc_lfw, auc_agedb30, auc_cfp_fp ,
+                                                         best_th_lfw, best_th_agedb30,best_th_cfp_fp))
 
 
 if __name__ == '__main__':
