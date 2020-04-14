@@ -51,7 +51,7 @@ def main(_):
                          embd_shape=cfg['embd_shape'],
                          backbone_type=cfg['backbone_type'],
                          head_type='ArcHead',
-                         training=False,
+                         training=False, # here equal false, just get the model without acrHead, to load the model trained by arcface
                          permKey=permKey, cfg=cfg)
 
     if cfg['train_dataset']:
@@ -73,6 +73,7 @@ def main(_):
     # loss_fn = SoftmaxLoss() #############################################
     # loss_fn = triplet_loss_vanila.triplet_loss_adapted_from_tf
     loss_fn = triplet_loss.compute_triplet_loss
+    loss_fn_quanti = triplet_loss.compute_quanti_loss
     # loss_fn = triplet_loss.hardest_triplet_loss
     # loss_fn = triplet_loss_omoindrot.batch_all_triplet_loss
     # loss_fn = tfa.losses.TripletSemiHardLoss()
@@ -137,7 +138,8 @@ def main(_):
                     reg_loss = tf.reduce_sum(model.losses)
                 # pred_loss = loss_fn(newlabel, logist)*50
                 pred_loss = loss_fn(anchor_features, positive_features,negative_features)
-                total_loss = pred_loss + reg_loss
+                quanti_loss = loss_fn_quanti(logist)
+                total_loss = pred_loss + reg_loss + quanti_loss*0.5
 
             grads = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(grads, model.trainable_variables))
@@ -157,6 +159,8 @@ def main(_):
                         'loss/pred loss', pred_loss, step=steps)
                     tf.summary.scalar(
                         'loss/reg loss', reg_loss, step=steps)
+                    tf.summary.scalar(
+                        'loss/quanti loss', quanti_loss, step=steps)
                     tf.summary.scalar(
                         'learning rate', optimizer.lr, step=steps)
 

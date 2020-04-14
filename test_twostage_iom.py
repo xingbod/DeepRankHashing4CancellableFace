@@ -71,22 +71,22 @@ def main(_argv):
             get_val_data(cfg['test_dataset'])
 
         print("[*] Perform Evaluation on LFW...")
-        acc_lfw, best_th = perform_val(
+        acc_lfw, best_th, auc, eer = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, lfw, lfw_issame,
             is_ccrop=cfg['is_ccrop'],cfg=cfg)
-        print("    acc {:.4f}, th: {:.2f}".format(acc_lfw, best_th))
+        print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th, auc, eer))
 
         print("[*] Perform Evaluation on AgeDB30...")
-        acc_agedb30, best_th = perform_val(
+        acc_agedb30, best_th, auc, eer = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, agedb_30,
             agedb_30_issame, is_ccrop=cfg['is_ccrop'],cfg=cfg)
-        print("    acc {:.4f}, th: {:.2f}".format(acc_agedb30, best_th))
+        print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_agedb30, best_th, auc, eer))
 
         print("[*] Perform Evaluation on CFP-FP...")
-        acc_cfp_fp, best_th = perform_val(
+        acc_cfp_fp, best_th,auc,eer = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, cfp_fp, cfp_fp_issame,
             is_ccrop=cfg['is_ccrop'],cfg=cfg)
-        print("    acc {:.4f}, th: {:.2f}".format(acc_cfp_fp, best_th))
+        print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_cfp_fp, best_th, auc, eer))
 
 
 if __name__ == '__main__':

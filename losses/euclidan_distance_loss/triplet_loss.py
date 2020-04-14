@@ -106,7 +106,7 @@ def pairwise_distances(embeddings):
 
 
 
-def compute_triplet_loss(anchor_features, positive_features, negative_features, margin=1):
+def compute_triplet_loss(anchor_features, positive_features, negative_features, margin=1,alpha=200):
     with tf.name_scope("triplet_loss"):
         # anchor_features_norm = l2_norm(anchor_features)
         # positive_features_norm = l2_norm(positive_features)
@@ -121,8 +121,8 @@ def compute_triplet_loss(anchor_features, positive_features, negative_features, 
         # a_p_product = tf.reduce_sum(tf.multiply(anchor_features, positive_features), axis=1)
         # a_n_product = tf.reduce_sum(tf.multiply(anchor_features, negative_features), axis=1)
 
-        a_p_product = pairwise_distance_xingbo(anchor_features, positive_features)
-        a_n_product = pairwise_distance_xingbo(anchor_features, negative_features)
+        a_p_product = pairwise_distance_xingbo(anchor_features, positive_features)*alpha
+        a_n_product = pairwise_distance_xingbo(anchor_features, negative_features)*alpha
 
         # a_p_vec = tf.divide(a_p_product, denom1)
         # a_n_vec = tf.divide(a_n_product, denom2)
@@ -133,6 +133,15 @@ def compute_triplet_loss(anchor_features, positive_features, negative_features, 
         # print(loss)
         return loss
 
+
+def compute_quanti_loss(features):
+    with tf.name_scope("quanti_loss"):
+        features_rounded = tf.round(features)
+
+        a_p_product = pairwise_distance_xingbo(features_rounded, features)
+        loss = tf.reduce_mean(a_p_product)
+        # print(loss)
+        return loss
 
 def anchor_positive_mask(labels):
     diag = tf.cast(tf.eye(tf.shape(labels)[0]), tf.bool)

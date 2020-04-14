@@ -76,8 +76,8 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
     dist = np.sum(np.square(diff), 1)
     if cfg['head_type'] == 'IoMHead':
         # dist = dist/(cfg['q']*cfg['embd_shape']) # should divide by the largest distance
-        dist = dist / (cfg['q']*100 )  # should divide by the largest distance
-    print(dist)
+        dist = dist / (tf.math.reduce_max(dist).numpy()+10)  # should divide by the largest distance
+    print("[*] dist {}".format(dist))
     for fold_idx, (train_set, test_set) in enumerate(k_fold.split(indices)):
         # Find the best threshold for the fold
         acc_train = np.zeros((nrof_thresholds))
@@ -136,7 +136,7 @@ def calculate_roc_cosine(thresholds, embeddings1, embeddings2, actual_issame,
     # if cfg['head_type'] == 'IoMHead':
     #     # dist = dist/(cfg['q']*cfg['embd_shape']) # should divide by the largest distance
     #     dist = dist / (cfg['q']*100 )  # should divide by the largest distance
-    print(dist)
+    # print(dist)
     for fold_idx, (train_set, test_set) in enumerate(k_fold.split(indices)):
         # Find the best threshold for the fold
         acc_train = np.zeros((nrof_thresholds))

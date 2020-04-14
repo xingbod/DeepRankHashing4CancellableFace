@@ -11,7 +11,7 @@ from modules.models import ArcFaceModel
 from modules.utils import set_memory_growth, load_yaml, l2_norm
 
 
-flags.DEFINE_string('cfg_path', './configs/iom_res50.yaml', 'config file path')
+flags.DEFINE_string('cfg_path', './configs/iom_res50_random.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_string('img_path', '', 'path to input image')
 
@@ -38,20 +38,21 @@ def main(_argv):
                          training=False,
                          permKey=permKey, cfg=cfg)
 
-    ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
+    ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50' )
     if ckpt_path is not None:
         print("[*] load ckpt from {}".format(ckpt_path))
         model.load_weights(ckpt_path)
     else:
         print("[*] Cannot find ckpt from {}.".format(ckpt_path))
         exit()
-    m= 512
+    m = 256
+    q = 8
     model = tf.keras.Sequential([
         model,
-        tf.keras.layers.Dense(m * 16, kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None)),
-        modules.layers.MaxIndexLinearForeward(units=m*16 , q=16)
+        tf.keras.layers.Dense(m * q, kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None)),
+        modules.layers.MaxIndexLinearForeward(units=m*q , q=q)
     ])
-    cfg['embd_shape'] = m * 16
+    cfg['embd_shape'] = m * q
     if FLAGS.img_path:
         print("[*] Encode {} to ./output_embeds.npy".format(FLAGS.img_path))
         img = cv2.imread(FLAGS.img_path)
@@ -67,22 +68,22 @@ def main(_argv):
             get_val_data(cfg['test_dataset'])
 
         print("[*] Perform Evaluation on LFW...")
-        acc_lfw, best_th = perform_val(
+        acc_lfw, best_th, auc, eer = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, lfw, lfw_issame,
-            is_ccrop=cfg['is_ccrop'],cfg=cfg)
-        print("    acc {:.4f}, th: {:.2f}".format(acc_lfw, best_th))
+            is_ccrop=cfg['is_ccrop'], cfg=cfg)
+        print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th, auc, eer))
 
         print("[*] Perform Evaluation on AgeDB30...")
-        acc_agedb30, best_th = perform_val(
+        acc_agedb30, best_th, auc, eer = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, agedb_30,
-            agedb_30_issame, is_ccrop=cfg['is_ccrop'],cfg=cfg)
-        print("    acc {:.4f}, th: {:.2f}".format(acc_agedb30, best_th))
+            agedb_30_issame, is_ccrop=cfg['is_ccrop'], cfg=cfg)
+        print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_agedb30, best_th, auc, eer))
 
         print("[*] Perform Evaluation on CFP-FP...")
-        acc_cfp_fp, best_th = perform_val(
+        acc_cfp_fp, best_th, auc, eer = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, cfp_fp, cfp_fp_issame,
-            is_ccrop=cfg['is_ccrop'],cfg=cfg)
-        print("    acc {:.4f}, th: {:.2f}".format(acc_cfp_fp, best_th))
+            is_ccrop=cfg['is_ccrop'], cfg=cfg)
+        print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_cfp_fp, best_th, auc, eer))
 
 
 if __name__ == '__main__':
