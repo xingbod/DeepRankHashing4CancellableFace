@@ -23,8 +23,14 @@ def processOneDir4(basedir):
     return list_ds
 
 
-def generateTriplet(imgs, label):
-    labels = [int(tf.strings.split(imgs[0], os.path.sep)[0, -2]), int(tf.strings.split(imgs[1], os.path.sep)[0, -2]),
+def generateTriplet(imgs, label, dataset='VGG2'):
+    if dataset == 'VGG2':
+        labels = [int(tf.strings.split(imgs[0], os.path.sep)[0, -2][1:]),
+                  int(tf.strings.split(imgs[1], os.path.sep)[0, -2][1:]),
+                  int(tf.strings.split(imgs[2], os.path.sep)[0, -2][1:])]
+        print("[*] ", labels)
+    else:
+        labels = [int(tf.strings.split(imgs[0], os.path.sep)[0, -2]), int(tf.strings.split(imgs[1], os.path.sep)[0, -2]),
               int(tf.strings.split(imgs[2], os.path.sep)[0, -2])]
     return (imgs), (labels)
 
@@ -80,7 +86,7 @@ def main(_):
     iters = iter(ds)
     cnt=0
     with tf.io.TFRecordWriter("triplets_ds.tfrecord") as writer:
-        while cnt<1000000:
+        while cnt<4000000:
             imgs, label = next(iters)
             if imgs[0] != imgs[1]:
                 print(cnt)
