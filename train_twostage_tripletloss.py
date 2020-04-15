@@ -91,10 +91,13 @@ def main(_):
     q = cfg['q']
     model = tf.keras.Sequential([
         model,
+        tf.keras.layers.Dense(1024,
+                              kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
+                              name='IoMProjection0'),
         tf.keras.layers.Dense(m * q,
                               kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),name='IoMProjection'),
         modules.layers.MaxIndexLinearTraining(units=m * q, q=q)
-    ])
+    ],name = 'DeepIoM')
     model.layers[0].trainable  = False
     # for layer in model.layers:
     #     print(layer.name)
