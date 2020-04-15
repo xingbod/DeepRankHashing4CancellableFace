@@ -2,7 +2,7 @@ from absl import app, flags, logging
 from absl.flags import FLAGS
 import os
 import tensorflow as tf
-
+import time
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 
 from modules.models import IoMFaceModel, ArcFaceModel
@@ -116,6 +116,8 @@ def main(_):
         train_dataset = iter(train_dataset)
 
         while epochs <= cfg['epochs']:
+            if steps % 5 == 0:
+                start = time.time()
             inputs, labels = next(train_dataset) #print(inputs[0][1][:])  labels[2][:]
             tmp = inputs[0]
             shape = tf.shape(tmp) # [  3  66 112 112   3]
@@ -148,12 +150,13 @@ def main(_):
             optimizer.apply_gradients(zip(grads, model.trainable_variables))
 
             if steps % 5 == 0:
-                verb_str = "Epoch {}/{}: {}/{}, loss={:.2f}, lr={:.4f}"
+                end = time.time()
+                verb_str = "Epoch {}/{}: {}/{}, loss={:.2f}, lr={:.4f}, time per step={:.2f}, remainin time={:.2f}"
                 print(verb_str.format(epochs, cfg['epochs'],
                                       steps % steps_per_epoch,
                                       steps_per_epoch,
                                       total_loss.numpy(),
-                                      learning_rate.numpy()))
+                                      learning_rate.numpy(),end - start,steps * (end - start) // steps_per_epoch ))
 
                 with summary_writer.as_default():
                     tf.summary.scalar(
