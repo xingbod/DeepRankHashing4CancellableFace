@@ -102,15 +102,6 @@ def main(_):
                                           source_id=label,
                                       img_path=[imgs[0].numpy()[0], imgs[1].numpy()[0], imgs[2].numpy()[0]])
                 writer.write(tf_example.SerializeToString())
-    # for id_name in tqdm.tqdm(os.listdir(dataset_path)):
-    #     img_paths = glob.glob(os.path.join(dataset_path, id_name, '*.png'))
-    #     with tf.io.TFRecordWriter("triplet/" + id_name + "_ms1m_triplet.tfrecord") as writer:
-    #         for img_path in img_paths:
-    #             filename = os.path.join(id_name, os.path.basename(img_path))
-    #             tf_example = make_example(img_str=open(img_path, 'rb').read(),
-    #                                   source_id=int(id_name),
-    #                                   filename=str.encode(filename))
-    #             writer.write(tf_example.SerializeToString())
 
 if __name__ == '__main__':
     try:
