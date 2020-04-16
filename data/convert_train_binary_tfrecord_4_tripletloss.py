@@ -19,7 +19,7 @@ def pair_parser(imgs):
 
 
 def processOneDir4(basedir):
-    list_ds = tf.data.Dataset.list_files(basedir + "/*.jpg").shuffle(100).repeat()
+    list_ds = tf.data.Dataset.list_files(basedir + "/*.png").shuffle(100).repeat()
     return list_ds
 
 
