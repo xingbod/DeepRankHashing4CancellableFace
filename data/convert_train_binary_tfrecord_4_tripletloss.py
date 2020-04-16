@@ -5,11 +5,11 @@ import tqdm
 import glob
 import random
 import tensorflow as tf
+import time
 
-
-flags.DEFINE_string('dataset_path', '../Dataset/ms1m_align_112/imgs',
+flags.DEFINE_string('dataset_path', '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160/',
                     'path to dataset')
-flags.DEFINE_string('output_path', './data/ms1m_triplet.tfrecord',
+flags.DEFINE_string('output_path', 'vgg16_binary_triplet.tfrecord',
                     'path to ouput tfrecord')
 
 
@@ -22,13 +22,12 @@ def processOneDir4(basedir):
     list_ds = tf.data.Dataset.list_files(basedir + "/*.png").shuffle(100).repeat()
     return list_ds
 
-
 def generateTriplet(imgs, label, dataset='VGG2'):
     if dataset == 'VGG2':
-        labels = [int(tf.strings.split(imgs[0], os.path.sep)[0, -2][1:]),
-                  int(tf.strings.split(imgs[1], os.path.sep)[0, -2][1:]),
-                  int(tf.strings.split(imgs[2], os.path.sep)[0, -2][1:])]
-        print("[*] ", labels)
+        tmp1=tf.strings.substr(tf.strings.split(imgs[0], os.path.sep)[0, -2], pos=1, len=6)
+        tmp2=tf.strings.substr(tf.strings.split(imgs[1], os.path.sep)[0, -2], pos=1, len=6)
+        tmp3=tf.strings.substr(tf.strings.split(imgs[2], os.path.sep)[0, -2], pos=1, len=6)
+        labels = [int(tmp1),int(tmp2),int(tmp3)]
     else:
         labels = [int(tf.strings.split(imgs[0], os.path.sep)[0, -2]), int(tf.strings.split(imgs[1], os.path.sep)[0, -2]),
               int(tf.strings.split(imgs[2], os.path.sep)[0, -2])]
@@ -80,7 +79,7 @@ def main(_):
     allsubdir = [os.path.join(dataset_path, o) for o in os.listdir(dataset_path)
                  if os.path.isdir(os.path.join(dataset_path, o))]
     path_ds = tf.data.Dataset.from_tensor_slices(allsubdir)
-    ds = path_ds.interleave(lambda x: processOneDir4(x), cycle_length=301, #85742 301
+    ds = path_ds.interleave(lambda x: processOneDir4(x), cycle_length=1024, #85742 301
                             block_length=2,
                             num_parallel_calls=4).batch(4, True).map(pair_parser, -1).batch(1, True).map(
         generateTriplet, -1)
@@ -88,12 +87,14 @@ def main(_):
     cnt=0
     with tf.io.TFRecordWriter(FLAGS.output_path) as writer:
         while cnt<1000000:
+            if cnt % 5 == 0:
+                start = time.time()
             imgs, label = next(iters)
             if imgs[0] != imgs[1]:
-                print(cnt)
-                print(imgs[0].numpy())
-                print(imgs[1].numpy())
-                print(imgs[2].numpy())
+                # print(cnt)
+                # print(imgs[0].numpy())
+                # print(imgs[1].numpy())
+                # print(imgs[2].numpy())
                 # print(imgs[1])
                 # print(imgs[2])
                 img_str = [open(imgs[0].numpy()[0], 'rb').read(), open(imgs[1].numpy()[0], 'rb').read(), open(imgs[2].numpy()[0], 'rb').read()]
@@ -102,6 +103,11 @@ def main(_):
                                           source_id=label,
                                       img_path=[imgs[0].numpy()[0], imgs[1].numpy()[0], imgs[2].numpy()[0]])
                 writer.write(tf_example.SerializeToString())
+            if cnt % 5 == 0:
+                end = time.time()
+                verb_str = "now={:.2f}, time per step={:.2f}s, remaining time={:.2f}min"
+                print(verb_str.format(cnt, end - start,
+                                      (1000000-cnt) * (end - start) / 60.0))
 
 if __name__ == '__main__':
     try:

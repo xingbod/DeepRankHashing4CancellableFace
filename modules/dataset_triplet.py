@@ -67,6 +67,7 @@ def load_tfrecord_dataset(tfrecord_name, batch_size,
         num_parallel_calls=tf.data.experimental.AUTOTUNE)
     dataset = dataset.batch(int(batch_size/3))
     dataset = dataset.prefetch(
-        buffer_size=tf.data.experimental.AUTOTUNE)
+        buffer_size=buffer_size)
+    # buffer_size = tf.data.experimental.AUTOTUNE)
     return dataset
 

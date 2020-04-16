@@ -46,10 +46,13 @@ def main(_argv):
     else:
         print("[*] Cannot find ckpt from {}.".format(ckpt_path))
         exit()
-    m = 256
-    q = 8
+    m = cfg['m']
+    q = cfg['q']
     model = tf.keras.Sequential([
         model,
+        tf.keras.layers.Dense(1024,
+                              kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
+                              name='IoMProjection0'),
         tf.keras.layers.Dense(m * q, kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None)),
         modules.layers.MaxIndexLinearForeward(units=m*q , q=q)
     ])
@@ -87,13 +90,13 @@ def main(_argv):
             is_ccrop=cfg['is_ccrop'], cfg=cfg)
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp,
                                                                           eer_cfp_fp))
-        with open('embeddings_lfw.csv', 'w', newline='') as file:
+        with open('./embeddings/embeddings_lfw.csv', 'w', newline='') as file:
             writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
             writer.writerows(embeddings_lfw)
-        with open('embeddings_agedb30.csv', 'w', newline='') as file:
+        with open('./embeddings/embeddings_agedb30.csv', 'w', newline='') as file:
             writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
             writer.writerows(embeddings_agedb30)
-        with open('embeddings_cfp_fp.csv', 'w', newline='') as file:
+        with open('./embeddings/embeddings_cfp_fp.csv', 'w', newline='') as file:
             writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
             writer.writerows(embeddings_cfp_fp)
 

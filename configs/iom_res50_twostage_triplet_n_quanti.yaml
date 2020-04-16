@@ -5,24 +5,25 @@ input_size: 112
 embd_shape: 512
 #iom_res50_twostage_triplet -- only two stage with triplet loss
 #iom_res50_twostage_triplet and quantization loss -- triplet loss + quantization loss
-sub_name: 'iom_res50_twostage_triplet_quanti'
+sub_name: 'iom_res50_twostage_triplet_2_512_margin_1000_twolayers'
 backbone_type: 'ResNet50' # 'ResNet50', 'MobileNetV2'
 head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
 
-# train
-train_dataset: './data/triplets_ds.tfrecord'
+# train triplets_ds.tfrecord _vgg2
+train_dataset: './data/triplets_ds_vgg2.tfrecord'
 # triplet loss not binary
 binary_img: False
 num_classes: 85742
 # I generate 1 milion triplets
 num_samples: 3000000
 epochs: 5
-base_lr: 0.001
+base_lr: 0.01
 w_decay: !!float 5e-4
-save_steps: 5000
-q: 8
+save_steps: 2000
+triplet_margin: 10
+q: 2
 # m, the projection length would be m x q
-m: 256
+m: 512
 # test
 test_dataset: './data/test_dataset'

@@ -52,6 +52,7 @@ def main(_argv):
     ])
 
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
+    # ckpt_path = './checkpoints/' + cfg['sub_name']+'/e_1_b_5000.ckpt'
     if ckpt_path is not None:
         print("[*] load ckpt from {}".format(ckpt_path))
         model.load_weights(ckpt_path)
@@ -91,13 +92,13 @@ def main(_argv):
             cfg['embd_shape'], cfg['batch_size'], model, cfp_fp, cfp_fp_issame,
             is_ccrop=cfg['is_ccrop'], cfg=cfg)
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp, eer_cfp_fp))
-        with open('embeddings_lfw.csv', 'w', newline='') as file:
+        with open('./embeddings/embeddings_lfw.csv', 'w', newline='') as file:
             writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
             writer.writerows(embeddings_lfw)
-        with open('embeddings_agedb30.csv', 'w', newline='') as file:
+        with open('./embeddings/embeddings_agedb30.csv', 'w', newline='') as file:
             writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
             writer.writerows(embeddings_agedb30)
-        with open('embeddings_cfp_fp.csv', 'w', newline='') as file:
+        with open('./embeddings/embeddings_cfp_fp.csv', 'w', newline='') as file:
             writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
             writer.writerows(embeddings_cfp_fp)
         print(''' q = {:.2f}, m = {:.2f} | LFW | AgeDB30 | CFP - FP

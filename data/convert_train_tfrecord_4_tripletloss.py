@@ -19,16 +19,16 @@ def pair_parser(imgs):
 
 
 def processOneDir4(basedir):
-    list_ds = tf.data.Dataset.list_files(basedir + "/*.jpg").shuffle(100).repeat()
+    list_ds = tf.data.Dataset.list_files(basedir + "/*.png").shuffle(100).repeat()
     return list_ds
 
 
 def generateTriplet(imgs, label, dataset='VGG2'):
     if dataset == 'VGG2':
-        labels = [int(tf.strings.split(imgs[0], os.path.sep)[0, -2][1:]),
-                  int(tf.strings.split(imgs[1], os.path.sep)[0, -2][1:]),
-                  int(tf.strings.split(imgs[2], os.path.sep)[0, -2][1:])]
-        print("[*] ", labels)
+        tmp1=tf.strings.substr(tf.strings.split(imgs[0], os.path.sep)[0, -2], pos=1, len=6)
+        tmp2=tf.strings.substr(tf.strings.split(imgs[1], os.path.sep)[0, -2], pos=1, len=6)
+        tmp3=tf.strings.substr(tf.strings.split(imgs[2], os.path.sep)[0, -2], pos=1, len=6)
+        labels = [int(tmp1),int(tmp2),int(tmp3)]
     else:
         labels = [int(tf.strings.split(imgs[0], os.path.sep)[0, -2]), int(tf.strings.split(imgs[1], os.path.sep)[0, -2]),
               int(tf.strings.split(imgs[2], os.path.sep)[0, -2])]
@@ -79,21 +79,21 @@ def main(_):
     allsubdir = [os.path.join(dataset_path, o) for o in os.listdir(dataset_path)
                  if os.path.isdir(os.path.join(dataset_path, o))]
     path_ds = tf.data.Dataset.from_tensor_slices(allsubdir)
-    ds = path_ds.interleave(lambda x: processOneDir4(x), cycle_length=301, #85742 301
+    ds = path_ds.interleave(lambda x: processOneDir4(x), cycle_length=1000, #85742 301
                             block_length=2,
                             num_parallel_calls=4).batch(4, True).map(pair_parser, -1).batch(1, True).map(
         generateTriplet, -1)
     iters = iter(ds)
     cnt=0
-    with tf.io.TFRecordWriter("triplets_ds.tfrecord") as writer:
-        while cnt<4000000:
+    with tf.io.TFRecordWriter("triplets_ds_vgg2.tfrecord") as writer:
+        while cnt < 1000000:
             imgs, label = next(iters)
             if imgs[0] != imgs[1]:
                 print(cnt)
                 print(imgs[0].numpy())
                 print(imgs[1].numpy())
                 print(imgs[2].numpy())
-                # print(imgs[1])
+                # print(label)
                 # print(imgs[2])
                 cnt = cnt + 1
                 tf_example = make_example(source_id=label,

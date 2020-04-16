@@ -82,7 +82,7 @@ def main(_argv):
         Accuracy | {:.4f} | {:.4f} | {:.4f} 
         EER  | {:.4f} | {:.4f} | {:.4f} 
         AUC  | {:.4f} | {:.4f} | {:.4f} 
-        Threshold  | {:.4f} | {:.4f} | {:.4f} '''.format(q, m,
+        Threshold  | {:.4f} | {:.4f} | {:.4f} '''.format(0, 0,
                                                          acc_lfw, acc_agedb30, acc_cfp_fp ,
                                                          eer_lfw, eer_agedb30, eer_cfp_fp ,
                                                          auc_lfw, auc_agedb30, auc_cfp_fp ,
