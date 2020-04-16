@@ -73,7 +73,8 @@ def main(_):
 
     # loss_fn = SoftmaxLoss() #############################################
     # loss_fn = triplet_loss_vanila.triplet_loss_adapted_from_tf
-    loss_fn = triplet_loss.compute_triplet_loss
+    # loss_fn = triplet_loss.compute_triplet_loss
+    loss_fn = triplet_loss.compute_triplet_loss_jaccard
     loss_fn_quanti = triplet_loss.compute_quanti_loss
     # loss_fn = triplet_loss.hardest_triplet_loss
     # loss_fn = triplet_loss_omoindrot.batch_all_triplet_loss

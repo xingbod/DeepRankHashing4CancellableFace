@@ -97,9 +97,10 @@ def main(_):
                             num_parallel_calls=-1).batch(4, True).map(pair_parser, -1).batch(1, True).map(
         generateTriplet, -1)
     iters = iter(ds)
-    cnt=0
+    total = 1000000
     with tf.io.TFRecordWriter(FLAGS.output_path) as writer:
-        while cnt<1000000:
+        cnt = 0
+        while cnt<total:
             if cnt % 5 == 0:
                 start = time.time()
             imgs, label = next(iters)
@@ -121,7 +122,7 @@ def main(_):
                 end = time.time()
                 verb_str = "now={:.2f}, time per step={:.2f}s, remaining time={:.2f}min"
                 print(verb_str.format(cnt, end - start,
-                                      (1000000-cnt) * (end - start) / 60.0))
+                                      (total-cnt) * (end - start) / 60.0))
                 gc.collect()
 
 if __name__ == '__main__':

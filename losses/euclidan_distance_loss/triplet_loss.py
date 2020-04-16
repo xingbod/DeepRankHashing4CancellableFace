@@ -51,6 +51,20 @@ def pairwise_distance_xingbo(a,b):
     # pairwise_distances_squared = math_ops.maximum(pairwise_distances_squared, tf.constant(0))
     return pairwise_distances_squared
 
+def pairwise_distance_jaccard(a,b):
+    '''
+    :param a:
+    :param b:
+    :return: it will return a distance range from 0 to 1, it measures how many same elements among a and b
+    '''
+    a = tf.round(a)
+    b = tf.round(b)
+    distances_jaccard = 1-tf.multiply(tf.cast(tf.math.count_nonzero(tf.math.subtract(a,b),axis=1),tf.double), 1/tf.cast(tf.shape(a)[1],tf.double))
+
+    # Deal with numerical inaccuracies. Set small negatives to zero.
+    # pairwise_distances_squared = math_ops.maximum(pairwise_distances_squared, tf.constant(0))
+    return distances_jaccard
+
 def pairwise_distance_vanila(feature, squared=False):
     """Computes the pairwise distance matrix with numerical stability.
 
@@ -106,7 +120,7 @@ def pairwise_distances(embeddings):
 
 
 
-def compute_triplet_loss(anchor_features, positive_features, negative_features, margin=1,alpha=200):
+def compute_triplet_loss(anchor_features, positive_features, negative_features, margin=1,alpha=1):
     with tf.name_scope("triplet_loss"):
         # anchor_features_norm = l2_norm(anchor_features)
         # positive_features_norm = l2_norm(positive_features)
@@ -133,6 +147,18 @@ def compute_triplet_loss(anchor_features, positive_features, negative_features, 
         # print(loss)
         return loss
 
+def compute_triplet_loss_jaccard(anchor_features, positive_features, negative_features, margin=1,alpha=100):
+    with tf.name_scope("triplet_loss_jaccard"):
+
+        a_p_product = pairwise_distance_jaccard(anchor_features, positive_features)*alpha
+        a_n_product = pairwise_distance_jaccard(anchor_features, negative_features)*alpha
+
+        loss = tf.maximum(0.0001, tf.add(tf.subtract(a_p_product, a_n_product), margin))
+        # print(loss)
+        loss = tf.reduce_mean(loss)
+        # print(loss)
+        return loss
+
 
 def compute_quanti_loss(features):
     with tf.name_scope("quanti_loss"):
@@ -142,6 +168,13 @@ def compute_quanti_loss(features):
         loss = tf.reduce_mean(a_p_product)
         # print(loss)
         return loss
+
+def pairwise_feature_orth(anc,neg,q):
+    a = anc - q/2.0
+    b = neg - q/2.0
+    pairwise_distances = tf.linalg.diag_part(math_ops.matmul(a, array_ops.transpose(b)))
+    return pairwise_distances
+
 
 def anchor_positive_mask(labels):
     diag = tf.cast(tf.eye(tf.shape(labels)[0]), tf.bool)

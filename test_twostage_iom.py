@@ -51,6 +51,8 @@ def main(_argv):
         modules.layers.MaxIndexLinearForeward(units=m * q, q=q)
     ])
 
+    checkpoint = tf.train.Checkpoint(model=model)
+    checkpoint.restore('./checkpoints/' + cfg['sub_name']).assert_consumed()
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
     # ckpt_path = './checkpoints/' + cfg['sub_name']+'/e_1_b_5000.ckpt'
     if ckpt_path is not None:
