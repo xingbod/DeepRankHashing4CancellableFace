@@ -202,4 +202,4 @@ def perform_val(embedding_size, batch_size, model,
     tpr, fpr, accuracy, best_thresholds,auc,eer = evaluate(
         embeddings, issame, nrof_folds,cfg)
 
-    return accuracy.mean(), best_thresholds.mean(),auc,eer
+    return accuracy.mean(), best_thresholds.mean(),auc,eer,embeddings
