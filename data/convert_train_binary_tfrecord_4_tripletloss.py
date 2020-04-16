@@ -6,12 +6,25 @@ import glob
 import random
 import tensorflow as tf
 import time
+import gc
 
 flags.DEFINE_string('dataset_path', '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160/',
                     'path to dataset')
 flags.DEFINE_string('output_path', 'vgg16_binary_triplet.tfrecord',
                     'path to ouput tfrecord')
 
+gpus = tf.config.experimental.list_physical_devices('GPU')
+print("Num GPUs Available: ", len(gpus))
+if gpus:
+  try:
+    # Currently, memory growth needs to be the same across GPUs
+    for gpu in gpus:
+      tf.config.experimental.set_memory_growth(gpu, True)
+    logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+    print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+  except RuntimeError as e:
+    # Memory growth must be set before GPUs have been initialized
+    print(e)
 
 def pair_parser(imgs):
     # Note y_true shape will be [batch,3]
@@ -79,9 +92,9 @@ def main(_):
     allsubdir = [os.path.join(dataset_path, o) for o in os.listdir(dataset_path)
                  if os.path.isdir(os.path.join(dataset_path, o))]
     path_ds = tf.data.Dataset.from_tensor_slices(allsubdir)
-    ds = path_ds.interleave(lambda x: processOneDir4(x), cycle_length=1024, #85742 301
+    ds = path_ds.interleave(lambda x: processOneDir4(x), cycle_length=256, #85742 301
                             block_length=2,
-                            num_parallel_calls=4).batch(4, True).map(pair_parser, -1).batch(1, True).map(
+                            num_parallel_calls=-1).batch(4, True).map(pair_parser, -1).batch(1, True).map(
         generateTriplet, -1)
     iters = iter(ds)
     cnt=0
@@ -99,15 +112,17 @@ def main(_):
                 # print(imgs[2])
                 img_str = [open(imgs[0].numpy()[0], 'rb').read(), open(imgs[1].numpy()[0], 'rb').read(), open(imgs[2].numpy()[0], 'rb').read()]
                 cnt = cnt + 1
-                tf_example = make_example(img_str = img_str,
+                tf_example = make_example(img_str=img_str,
                                           source_id=label,
                                       img_path=[imgs[0].numpy()[0], imgs[1].numpy()[0], imgs[2].numpy()[0]])
                 writer.write(tf_example.SerializeToString())
+                del img_str
             if cnt % 5 == 0:
                 end = time.time()
                 verb_str = "now={:.2f}, time per step={:.2f}s, remaining time={:.2f}min"
                 print(verb_str.format(cnt, end - start,
                                       (1000000-cnt) * (end - start) / 60.0))
+                gc.collect()
 
 if __name__ == '__main__':
     try:
