@@ -42,17 +42,15 @@ def main(_argv):
     q = cfg['q']
     model = tf.keras.Sequential([
         model,
-        tf.keras.layers.Dense(1024,
-                              kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-                              name='IoMProjection0'),
+        # tf.keras.layers.Dense(1024,
+        #                       kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
+        #                       name='IoMProjection0'),
         tf.keras.layers.Dense(m * q,
                               kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
                               name='IoMProjection'),
         modules.layers.MaxIndexLinearForeward(units=m * q, q=q)
     ])
 
-    checkpoint = tf.train.Checkpoint(model=model)
-    checkpoint.restore('./checkpoints/' + cfg['sub_name']).assert_consumed()
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
     # ckpt_path = './checkpoints/' + cfg['sub_name']+'/e_1_b_5000.ckpt'
     if ckpt_path is not None:

@@ -86,9 +86,9 @@ def main(_):
         # here I add the extra IoM layer and head
         model = tf.keras.Sequential([
             model,
-            tf.keras.layers.Dense(1024,
-                                  kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-                                  name='IoMProjection0'),
+            # tf.keras.layers.Dense(1024,
+            #                       kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
+            #                       name='IoMProjection0'),
             tf.keras.layers.Dense(m * q,
                                   kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
                                   name='IoMProjection'),
@@ -115,9 +115,9 @@ def main(_):
         # here I add the extra IoM layer and head
         model = tf.keras.Sequential([
             model,
-            tf.keras.layers.Dense(1024,
-                                  kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-                                  name='IoMProjection0'),
+            # tf.keras.layers.Dense(1024,
+            #                       kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
+            #                       name='IoMProjection0'),
             tf.keras.layers.Dense(m * q,
                                   kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
                                   name='IoMProjection'),
@@ -169,7 +169,7 @@ def main(_):
                 # pred_loss = loss_fn(newlabel, logist)*50
                 pred_loss = loss_fn(anchor_features, positive_features,negative_features, margin=cfg['triplet_margin'])
                 quanti_loss = loss_fn_quanti(logist)
-                total_loss = pred_loss + reg_loss + quanti_loss
+                total_loss = pred_loss + reg_loss * 0.5 + quanti_loss * 0.5
 
             grads = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(grads, model.trainable_variables))
