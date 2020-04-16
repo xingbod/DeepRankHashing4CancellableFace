@@ -5,6 +5,7 @@ import os
 import numpy as np
 import tensorflow as tf
 import modules
+import csv
 
 from modules.evaluations import get_val_data, perform_val
 from modules.models import ArcFaceModel
@@ -74,23 +75,31 @@ def main(_argv):
             get_val_data(cfg['test_dataset'])
 
         print("[*] Perform Evaluation on LFW...")
-        acc_lfw, best_th_lfw, auc_lfw, eer_lfw = perform_val(
+        acc_lfw, best_th_lfw, auc_lfw, eer_lfw,embeddings_lfw = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, lfw, lfw_issame,
             is_ccrop=cfg['is_ccrop'], cfg=cfg)
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
 
         print("[*] Perform Evaluation on AgeDB30...")
-        acc_agedb30, best_th_agedb30, auc_agedb30, eer_agedb30 = perform_val(
+        acc_agedb30, best_th_agedb30, auc_agedb30, eer_agedb30,embeddings_agedb30 = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, agedb_30,
             agedb_30_issame, is_ccrop=cfg['is_ccrop'], cfg=cfg)
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_agedb30, best_th_agedb30, auc_agedb30, eer_agedb30))
 
         print("[*] Perform Evaluation on CFP-FP...")
-        acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp, eer_cfp_fp = perform_val(
+        acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp, eer_cfp_fp,embeddings_cfp_fp = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, cfp_fp, cfp_fp_issame,
             is_ccrop=cfg['is_ccrop'], cfg=cfg)
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp, eer_cfp_fp))
-
+        with open('embeddings_lfw.csv', 'w', newline='') as file:
+            writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
+            writer.writerows(embeddings_lfw)
+        with open('embeddings_agedb30.csv', 'w', newline='') as file:
+            writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
+            writer.writerows(embeddings_agedb30)
+        with open('embeddings_cfp_fp.csv', 'w', newline='') as file:
+            writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
+            writer.writerows(embeddings_cfp_fp)
         print(''' q = {:.2f}, m = {:.2f} | LFW | AgeDB30 | CFP - FP
         --- | --- | --- | ---
         Accuracy | {:.4f} | {:.4f} | {:.4f} 
