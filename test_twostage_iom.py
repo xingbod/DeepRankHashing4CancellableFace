@@ -42,12 +42,15 @@ def main(_argv):
     q = cfg['q']
     model = tf.keras.Sequential([
         model,
-        # tf.keras.layers.Dense(1024,
-        #                       kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-        #                       name='IoMProjection0'),
+        tf.keras.layers.Dense(512,
+                              kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
+                              name='IoMProjection0'),
+        tf.keras.layers.Dense(512,
+                              kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
+                              name='IoMProjection1'),
         tf.keras.layers.Dense(m * q,
                               kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-                              name='IoMProjection'),
+                              name='IoMProjection2'),
         modules.layers.MaxIndexLinearForeward(units=m * q, q=q)
     ])
 

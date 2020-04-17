@@ -21,6 +21,6 @@ w_decay: !!float 5e-4
 save_steps: 10000
 q: 2
 # m, the projection length would be m x q
-m: 256
+m: 512
 # test
 test_dataset: './data/test_dataset'

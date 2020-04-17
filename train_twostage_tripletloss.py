@@ -79,19 +79,22 @@ def main(_):
     # loss_fn = triplet_loss.hardest_triplet_loss
     # loss_fn = triplet_loss_omoindrot.batch_all_triplet_loss
     # loss_fn = tfa.losses.TripletSemiHardLoss()
-    isContinueTrain = False
+    isContinueTrain = True
     m = cfg['m']
     q = cfg['q']
     if isContinueTrain:
         # here I add the extra IoM layer and head
         model = tf.keras.Sequential([
             model,
-            # tf.keras.layers.Dense(1024,
-            #                       kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-            #                       name='IoMProjection0'),
+            tf.keras.layers.Dense(512,
+                                  kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
+                                  name='IoMProjection0'),
+            tf.keras.layers.Dense(512,
+                                  kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
+                                  name='IoMProjection1'),
             tf.keras.layers.Dense(m * q,
                                   kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-                                  name='IoMProjection'),
+                                  name='IoMProjection3'),
             modules.layers.MaxIndexLinearTraining(units=m * q, q=q)
         ], name='DeepIoM')
         ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
@@ -115,12 +118,15 @@ def main(_):
         # here I add the extra IoM layer and head
         model = tf.keras.Sequential([
             model,
-            # tf.keras.layers.Dense(1024,
-            #                       kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-            #                       name='IoMProjection0'),
+            tf.keras.layers.Dense(512,
+                                  kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
+                                  name='IoMProjection0'),
+            tf.keras.layers.Dense(512,
+                                  kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
+                                  name='IoMProjection1'),
             tf.keras.layers.Dense(m * q,
                                   kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-                                  name='IoMProjection'),
+                                  name='IoMProjection2'),
             modules.layers.MaxIndexLinearTraining(units=m * q, q=q)
         ], name='DeepIoM')
 
@@ -181,7 +187,7 @@ def main(_):
                                       steps % steps_per_epoch,
                                       steps_per_epoch,
                                       total_loss.numpy(),
-                                      learning_rate.numpy(),end - start,( steps_per_epoch -steps) * (end - start) /60.0))
+                                      learning_rate.numpy(),end - start,(steps_per_epoch -(steps % steps_per_epoch)) * (end - start) /60.0))
 
                 with summary_writer.as_default():
                     tf.summary.scalar(
