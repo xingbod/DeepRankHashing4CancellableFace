@@ -130,7 +130,6 @@ def IoMFaceModel(size=None, channels=3, num_classes=None, name='IoMface_model',
     x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),name="IoMProjection")(
         x)  # extra connection layer
     if training:
-        assert num_classes is not None
         labels = Input([], name='label')
         logist = IoMHead(m=cfg['m'],q=cfg['q'],permKey=permKey, isTraining=training)(x, labels) # loss need to change
         return Model((inputs, labels), logist, name=name)
@@ -138,3 +137,24 @@ def IoMFaceModel(size=None, channels=3, num_classes=None, name='IoMface_model',
         labels = Input([], name='label')
         logist = IoMHead(m=cfg['m'], q=cfg['q'], permKey=permKey, isTraining=training)(x,labels)  # loss need to change
         return Model(inputs, logist, name=name)
+
+def IoMFaceModelFromArFace(size=None, channels=3, arcmodel=None, name='IoMface_model',
+                 margin=0.5, logist_scale=64, embd_shape=512,
+                 head_type='ArcHead', backbone_type='ResNet50',
+                 w_decay=5e-4, use_pretrain=True, training=False,permKey=None,cfg=None):
+    """IoMFaceModelFromArFace Model"""
+    x = inputs = Input([size, size, channels], name='input_image')
+    x = arcmodel(x)
+    # if permKey!=None:
+    x = PermLayer(permKey)(x)  # permutation before project to IoM hash code
+    x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),name="IoMProjection")(
+        x)  # extra connection layer
+    if training:
+        labels = Input([], name='label')
+        logist = IoMHead(m=cfg['m'],q=cfg['q'],permKey=permKey, isTraining=training)(x, labels) # loss need to change
+        return Model((inputs, labels), logist, name=name)
+    else:
+        labels = Input([], name='label')
+        logist = IoMHead(m=cfg['m'], q=cfg['q'], permKey=permKey, isTraining=training)(x,labels)  # loss need to change
+        return Model(inputs, logist, name=name)
+

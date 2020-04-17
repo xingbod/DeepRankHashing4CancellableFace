@@ -1,6 +1,6 @@
 from absl import app, flags, logging
 from absl.flags import FLAGS
-import cv2
+# import cv2
 import os
 import numpy as np
 import tensorflow as tf
@@ -8,13 +8,26 @@ import modules
 import csv
 
 from modules.evaluations import get_val_data, perform_val
-from modules.models import ArcFaceModel
+from modules.models import ArcFaceModel, IoMFaceModelFromArFace
 from modules.utils import set_memory_growth, load_yaml, l2_norm
 
 
 flags.DEFINE_string('cfg_path', './configs/iom_res50_random.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_string('img_path', '', 'path to input image')
+
+gpus = tf.config.experimental.list_physical_devices('GPU')
+print("Num GPUs Available: ", len(gpus))
+if gpus:
+  try:
+    # Currently, memory growth needs to be the same across GPUs
+    for gpu in gpus:
+      tf.config.experimental.set_memory_growth(gpu, True)
+    logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+    print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+  except RuntimeError as e:
+    # Memory growth must be set before GPUs have been initialized
+    print(e)
 
 
 def main(_argv):
@@ -48,24 +61,27 @@ def main(_argv):
         exit()
     m = cfg['m']
     q = cfg['q']
-    model = tf.keras.Sequential([
-        model,
-        tf.keras.layers.Dense(1024,
-                              kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-                              name='IoMProjection0'),
-        tf.keras.layers.Dense(m * q, kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None)),
-        modules.layers.MaxIndexLinearForeward(units=m*q , q=q)
-    ])
+    model = IoMFaceModelFromArFace(size=cfg['input_size'],
+                                   embd_shape=cfg['embd_shape'],
+                                   arcmodel=model,
+                                   head_type='ArcHead',
+                                   training=False,
+                                   # here equal false, just get the model without acrHead, to load the model trained by arcface
+                                   permKey=permKey, cfg=cfg)
+    model.layers[0].trainable = False
+    for layer in model.layers:
+        print(layer.name)
+        layer.trainable = False
     cfg['embd_shape'] = m * q
     if FLAGS.img_path:
         print("[*] Encode {} to ./output_embeds.npy".format(FLAGS.img_path))
-        img = cv2.imread(FLAGS.img_path)
-        img = cv2.resize(img, (cfg['input_size'], cfg['input_size']))
-        img = img.astype(np.float32) / 255.
-        if len(img.shape) == 3:
-            img = np.expand_dims(img, 0)
-        embeds = l2_norm(model(img))
-        np.save('./output_embeds.npy', embeds)
+        # img = cv2.imread(FLAGS.img_path)
+        # img = cv2.resize(img, (cfg['input_size'], cfg['input_size']))
+        # img = img.astype(np.float32) / 255.
+        # if len(img.shape) == 3:
+        #     img = np.expand_dims(img, 0)
+        # embeds = l2_norm(model(img))
+        # np.save('./output_embeds.npy', embeds)
     else:
         print("[*] Loading LFW, AgeDB30 and CFP-FP...")
         lfw, agedb_30, cfp_fp, lfw_issame, agedb_30_issame, cfp_fp_issame = \

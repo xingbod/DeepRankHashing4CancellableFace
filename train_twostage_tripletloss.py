@@ -5,7 +5,7 @@ import tensorflow as tf
 import time
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 
-from modules.models import IoMFaceModel, ArcFaceModel
+from modules.models import IoMFaceModel, ArcFaceModel,IoMFaceModelFromArFace
 from modules.losses import SoftmaxLoss
 from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf,generatePermKey
 from losses.angular_margin_loss import arcface_loss,cosface_loss,sphereface_loss
@@ -116,24 +116,16 @@ def main(_):
             epochs, steps = 1, 1
         epochs, steps = 1, 1
         # here I add the extra IoM layer and head
-        model = tf.keras.Sequential([
-            model,
-            tf.keras.layers.Dense(512,
-                                  kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-                                  name='IoMProjection0'),
-            tf.keras.layers.Dense(512,
-                                  kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-                                  name='IoMProjection1'),
-            tf.keras.layers.Dense(m * q,
-                                  kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-                                  name='IoMProjection2'),
-            modules.layers.MaxIndexLinearTraining(units=m * q, q=q)
-        ], name='DeepIoM')
-
+        model = IoMFaceModelFromArFace(size=cfg['input_size'],
+                         embd_shape=cfg['embd_shape'],
+                         arcmodel=model,
+                         head_type='ArcHead',
+                         training=False, # here equal false, just get the model without acrHead, to load the model trained by arcface
+                         permKey=permKey, cfg=cfg)
     model.layers[0].trainable  = False
-    # for layer in model.layers:
-    #     print(layer.name)
-    #     layer.trainable = False
+    for layer in model.layers:
+        print(layer.name)
+        layer.trainable = False
     # 可训练层
     for x in model.trainable_weights:
         print("trainable:",x.name)

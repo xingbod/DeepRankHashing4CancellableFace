@@ -8,7 +8,7 @@ import modules
 import csv
 
 from modules.evaluations import get_val_data, perform_val
-from modules.models import ArcFaceModel
+from modules.models import ArcFaceModel,IoMFaceModelFromArFace,IoMFaceModel
 from modules.utils import set_memory_growth, load_yaml, l2_norm
 
 
@@ -31,28 +31,14 @@ def main(_argv):
     if cfg['head_type'] == 'IoMHead':  #
         # permKey = generatePermKey(cfg['embd_shape'])
         permKey = tf.eye(cfg['embd_shape'])  # for training, we don't permutate, won't influence the performance
-
-    model = ArcFaceModel(size=cfg['input_size'],
-                         embd_shape=cfg['embd_shape'],
-                         backbone_type=cfg['backbone_type'],
-                         head_type='ArcHead',
-                         training=False,
-                         permKey=permKey, cfg=cfg)
     m = cfg['m']
     q = cfg['q']
-    model = tf.keras.Sequential([
-        model,
-        tf.keras.layers.Dense(512,
-                              kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-                              name='IoMProjection0'),
-        tf.keras.layers.Dense(512,
-                              kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-                              name='IoMProjection1'),
-        tf.keras.layers.Dense(m * q,
-                              kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-                              name='IoMProjection2'),
-        modules.layers.MaxIndexLinearForeward(units=m * q, q=q)
-    ])
+    model = IoMFaceModel(size=cfg['input_size'],
+                                   embd_shape=cfg['embd_shape'],
+                                   backbone_type=cfg['backbone_type'],
+                                   head_type='ArcHead',
+                                   training=False,
+                                   permKey=permKey, cfg=cfg)
 
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
     # ckpt_path = './checkpoints/' + cfg['sub_name']+'/e_1_b_5000.ckpt'
