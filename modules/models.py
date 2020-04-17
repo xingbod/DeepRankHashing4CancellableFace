@@ -69,7 +69,6 @@ def IoMHead(m,q,permKey, isTraining=True, name='IoMHead'):
     def iom_head(x_in, y_in):
         x = inputs1 = Input(x_in.shape[1:])
         y = Input(y_in.shape[1:])
-        x = PermLayer(permKey)(x) # permutation
         if isTraining:
             x = MaxIndexLinearTraining(units=m*q,q=q)(x) # permutation
             return Model((inputs1, y), x, name=name)((x_in, y_in))
@@ -125,12 +124,11 @@ def IoMFaceModel(size=None, channels=3, num_classes=None, name='IoMface_model',
     x = inputs = Input([size, size, channels], name='input_image')
 
     x = Backbone(backbone_type=backbone_type, use_pretrain=use_pretrain)(x)
-
     x = OutputLayer(embd_shape, w_decay=w_decay)(x)
-
-    x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),name="IoMProjectionlayer")(
+    if permKey:
+        x = PermLayer(permKey)(x)  # permutation before project to IoM hash code
+    x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),name="IoMProjection")(
         x)  # extra connection layer
-
     if training:
         assert num_classes is not None
         labels = Input([], name='label')
