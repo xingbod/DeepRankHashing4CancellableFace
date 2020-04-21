@@ -79,24 +79,18 @@ def main(_):
     # loss_fn = triplet_loss.hardest_triplet_loss
     # loss_fn = triplet_loss_omoindrot.batch_all_triplet_loss
     # loss_fn = tfa.losses.TripletSemiHardLoss()
-    isContinueTrain = True
+    isContinueTrain = False
     m = cfg['m']
     q = cfg['q']
     if isContinueTrain:
         # here I add the extra IoM layer and head
-        model = tf.keras.Sequential([
-            model,
-            tf.keras.layers.Dense(512,
-                                  kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-                                  name='IoMProjection0'),
-            tf.keras.layers.Dense(512,
-                                  kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-                                  name='IoMProjection1'),
-            tf.keras.layers.Dense(m * q,
-                                  kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-                                  name='IoMProjection3'),
-            modules.layers.MaxIndexLinearTraining(units=m * q, q=q)
-        ], name='DeepIoM')
+        model = IoMFaceModelFromArFace(size=cfg['input_size'],
+                                       embd_shape=cfg['embd_shape'],
+                                       arcmodel=model,
+                                       head_type='ArcHead',
+                                       training=True,
+                                       # here equal false, just get the model without acrHead, to load the model trained by arcface
+                                       permKey=permKey, cfg=cfg)
         ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
         if ckpt_path is not None:
             print("[*] load ckpt from {}".format(ckpt_path))
@@ -120,13 +114,14 @@ def main(_):
                          embd_shape=cfg['embd_shape'],
                          arcmodel=model,
                          head_type='ArcHead',
-                         training=False, # here equal false, just get the model without acrHead, to load the model trained by arcface
+                         training=True, # here equal false, just get the model without acrHead, to load the model trained by arcface
                          permKey=permKey, cfg=cfg)
-    model.layers[0].trainable  = False
     for layer in model.layers:
         print(layer.name)
-        layer.trainable = False
+        if layer.name == 'arcface_model':
+            layer.trainable = False
     # 可训练层
+    # model.layers[0].trainable  = True
     for x in model.trainable_weights:
         print("trainable:",x.name)
     print('\n')

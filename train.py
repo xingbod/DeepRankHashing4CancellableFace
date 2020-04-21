@@ -42,18 +42,13 @@ def main(_):
     set_memory_growth()
 
     cfg = load_yaml(FLAGS.cfg_path)
-    permKey = None
-    if cfg['head_type'] == "IoMHead":#
-        #permKey = generatePermKey(cfg['embd_shape'])
-        permKey = tf.eye(cfg['embd_shape']) # for training, we don't permutate, won't influence the performance
-    # tf.io.write_file( "./data/permKey.tfrecord", permKey, name="permKey")
     model = ArcFaceModel(size=cfg['input_size'],
                          backbone_type=cfg['backbone_type'],
                          num_classes=cfg['num_classes'],
                          head_type=cfg['head_type'],
                          embd_shape=cfg['embd_shape'],
                          w_decay=cfg['w_decay'],
-                         training=True,permKey=permKey,cfg=cfg)
+                         training=True, cfg=cfg)
     model.summary(line_length=80)
 
     if cfg['train_dataset']:
@@ -78,12 +73,7 @@ def main(_):
     learning_rate = tf.constant(cfg['base_lr'])
     optimizer = tf.keras.optimizers.SGD(
         learning_rate=learning_rate, momentum=0.9, nesterov=True)
-    # loss_fn = SoftmaxLoss() #############################################
-    # loss_fn = triplet_loss_vanila.triplet_loss_adapted_from_tf
-    loss_fn = triplet_loss.semihard_triplet_loss
-    # loss_fn = triplet_loss.hardest_triplet_loss
-    # loss_fn = triplet_loss_omoindrot.batch_all_triplet_loss
-    # loss_fn = tfa.losses.TripletSemiHardLoss()
+    loss_fn = SoftmaxLoss() #############################################
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
     if ckpt_path is not None:
         print("[*] load ckpt from {}".format(ckpt_path))
@@ -103,14 +93,6 @@ def main(_):
 
         while epochs <= cfg['epochs']:
             inputs, labels = next(train_dataset)
-            # print("********************")
-            # print(inputs)
-            # if triplet loss
-            if cfg['head_type'] == 'IoMHead':
-                mask = triplet_loss._get_triplet_mask(labels)
-                mask_tmp = tf.reshape(mask, [tf.size(mask).numpy(), 1])
-                if len(mask_tmp[mask_tmp])<0.0001*cfg['batch_size']*cfg['batch_size']*cfg['batch_size']:
-                    continue
 
             with tf.GradientTape() as tape:
                 logist = model(inputs, training=True)

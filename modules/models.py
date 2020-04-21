@@ -89,7 +89,7 @@ def NormHead(num_classes, w_decay=5e-4, name='NormHead'):
 def ArcFaceModel(size=None, channels=3, num_classes=None, name='arcface_model',
                  margin=0.5, logist_scale=64, embd_shape=512,
                  head_type='ArcHead', backbone_type='ResNet50',
-                 w_decay=5e-4, use_pretrain=True, training=False,permKey=None,cfg=None):
+                 w_decay=5e-4, use_pretrain=True, training=False,cfg=None):
     """Arc Face Model"""
     x = inputs = Input([size, size, channels], name='input_image')
 
@@ -104,14 +104,14 @@ def ArcFaceModel(size=None, channels=3, num_classes=None, name='arcface_model',
             logist = ArcHead(num_classes=num_classes, margin=margin,
                              logist_scale=logist_scale)(embds, labels)
         elif head_type == 'IoMHead':
-            logist = IoMHead(m=embd_shape,q=cfg['q'],permKey=permKey, isTraining=training)(embds, labels) # loss need to change
+            logist = IoMHead(m=embd_shape,q=cfg['q'],permKey=None, isTraining=training)(embds, labels) # loss need to change
         else:
             logist = NormHead(num_classes=num_classes, w_decay=w_decay)(embds)
         return Model((inputs, labels), logist, name=name)
     else:
         if  head_type == 'IoMHead':
             labels = Input([], name='label')
-            logist = IoMHead(m=embd_shape, q=cfg['q'], permKey=permKey, isTraining=training)(embds,labels)  # loss need to change
+            logist = IoMHead(m=embd_shape, q=cfg['q'], permKey=None, isTraining=training)(embds,labels)  # loss need to change
             return Model(inputs, logist, name=name)
         else:
             return Model(inputs, embds, name=name)
@@ -125,7 +125,7 @@ def IoMFaceModel(size=None, channels=3, num_classes=None, name='IoMface_model',
 
     x = Backbone(backbone_type=backbone_type, use_pretrain=use_pretrain)(x)
     x = OutputLayer(embd_shape, w_decay=w_decay)(x)
-    if permKey:
+    if permKey is not None:
         x = PermLayer(permKey)(x)  # permutation before project to IoM hash code
     x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),name="IoMProjection")(
         x)  # extra connection layer
