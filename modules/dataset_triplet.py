@@ -1,4 +1,6 @@
 import tensorflow as tf
+import os
+
 
 def _transform_images(is_ccrop=False):
     def transform_images(x_train):
@@ -71,3 +73,48 @@ def load_tfrecord_dataset(tfrecord_name, batch_size,
     buffer_size = tf.data.experimental.AUTOTUNE)
     return dataset
 
+########################################################################################################################
+def ListFiles(basedir,ext):
+    list_ds = tf.data.Dataset.list_files(basedir+"/*."+ext).repeat()
+    return list_ds
+def pair_parser(imgs,totalsamples, dataset='VGG2'):
+    images = imgs
+    labels = []
+    if dataset == 'VGG2':
+        for i in range(totalsamples):
+            labels.append(tf.strings.to_number( tf.strings.substr(tf.strings.split(imgs[None,i], os.path.sep)[0, -2], pos=1, len=6), out_type=tf.dtypes.int32))
+    else:
+        for i in range(totalsamples):
+            labels.append(tf.strings.to_number( tf.strings.split(imgs[None,i],os.path.sep)[0,-2], out_type=tf.dtypes.int32))
+    return images,labels
+
+def preprocess_image(image,totalsamples,is_ccrop=False):
+    images = []
+    for i in range(totalsamples):
+        img = tf.image.decode_jpeg(image[i], channels=3)
+        img = _transform_images(is_ccrop=is_ccrop)(img)
+        images.append(img)
+    return images
+
+def load_and_preprocess_image(path,labels,totalsamples,is_ccrop=False):
+    image = []
+    for i in range(totalsamples):
+        image.append(tf.io.read_file(path[i]))
+    return preprocess_image(image,totalsamples,is_ccrop=False),labels
+
+def load_online_pair_wise_dataset(dbdir,ext = 'jpg',dataset_ext = 'ms',samples_per_class = 3,classes_per_batch = 4,is_ccrop = False):
+    # dataset_ext = 'ms'  # VGG2
+    # block_length how many samples per class
+    # samples_per_class = 3
+    # how many classes for each batch
+    # classes_per_batch = 4
+    allsubdir = [os.path.join(dbdir, o) for o in os.listdir(dbdir)
+                 if os.path.isdir(os.path.join(dbdir, o))]
+    path_ds = tf.data.Dataset.from_tensor_slices(allsubdir)
+    ds = path_ds.shuffle(tf.data.experimental.AUTOTUNE).interleave(lambda x: ListFiles(x, ext), cycle_length=tf.data.experimental.AUTOTUNE,
+                                           block_length=samples_per_class,
+                                           num_parallel_calls=8).batch(classes_per_batch * samples_per_class, True).map(
+        lambda x: pair_parser(x, classes_per_batch * samples_per_class, dataset=dataset_ext), -1).map(
+        lambda path, labels: load_and_preprocess_image(path, labels, classes_per_batch * samples_per_class,is_ccrop=is_ccrop),
+        num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    return ds

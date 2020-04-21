@@ -62,6 +62,7 @@ def main(_):
         train_dataset = dataset_triplet.load_tfrecord_dataset(
             cfg['train_dataset'], cfg['batch_size'], cfg['binary_img'],
             is_ccrop=cfg['is_ccrop'])
+        # load_online_pair_wise_dataset(cfg['train_dataset'],ext = 'jpg',dataset_ext = 'ms',samples_per_class = 3,classes_per_batch = 4,is_ccrop = False):
     else:
         logging.info("load fake dataset.")
         steps_per_epoch = 1
