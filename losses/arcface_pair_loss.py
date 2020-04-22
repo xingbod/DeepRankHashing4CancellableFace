@@ -2,7 +2,6 @@ import tensorflow as tf
 import tensorflow.keras.layers as L
 import tensorflow.keras.backend as K
 
-
 __all__ = [
     "ArcFace"
 ]
@@ -22,50 +21,122 @@ x = x* / ||x*||
 cos(theta_{j, i}) = W_j.T * x_i
 """
 
+import tensorflow as tf
+import tensorflow.keras.backend as K
 
 
+def _pairwise_angle(embeddings, squared=False):
+    """Compute the 2D matrix of distances between all the embeddings.
+
+    Args:
+        embeddings: tensor of shape (batch_size, embed_dim)
+        squared: Boolean. If true, output is the pairwise squared euclidean distance matrix.
+                 If false, output is the pairwise euclidean distance matrix.
+
+    Returns:
+        pairwise_distances: tensor of shape (batch_size, batch_size)
+    """
+
+    # get logits from multiplying embeddings (batch_size, embedding_size)
+    logits = tf.matmul(embeddings, tf.transpose(embeddings))
+    # clip logits to prevent zero division when backward
+    theta = tf.acos(K.clip(logits, -1.0 + K.epsilon(), 1.0 - K.epsilon()))
+    return theta
 
 
+def _get_triplet_mask(labels):
+    """Return a 3D mask where mask[a, p, n] is True iff the triplet (a, p, n) is valid.
 
-class ArcFace(L.Layer):
-    def __init__(self, num_classes=10, scale=30.0, margin=0.50, **kwargs):
-        super(ArcFace, self).__init__(**kwargs)
-        self.num_classes = num_classes
-        self.scale = scale
-        self.margin = margin
+    A triplet (i, j, k) is valid if:
+        - i, j, k are distinct
+        - labels[i] == labels[j] and labels[i] != labels[k]
 
-    def build(self, input_shape):
-        self.W = self.add_weight(name='W',
-                                 shape=(input_shape[0][-1], self.num_classes),
-                                 initializer='glorot_uniform',
-                                 trainable=True)
+    Args:
+        labels: tf.int32 `Tensor` with shape [batch_size]
+    """
+    # Check that i, j and k are distinct
+    indices_equal = tf.cast(tf.eye(tf.shape(labels)[0]), tf.bool)
+    indices_not_equal = tf.logical_not(indices_equal)
+    i_not_equal_j = tf.expand_dims(indices_not_equal, 2)
+    i_not_equal_k = tf.expand_dims(indices_not_equal, 1)
+    j_not_equal_k = tf.expand_dims(indices_not_equal, 0)
 
-    def call(self, inputs):
-        # get embeddings and one hot labels from inputs
-        embeddings, onehot_labels = inputs
-        # normalize final W layer
-        W = tf.nn.l2_normalize(self.W, axis=0)
-        # get logits from multiplying embeddings (batch_size, embedding_size) and W (embedding_size, num_classes)
-        logits = tf.matmul(embeddings, W)
-        # clip logits to prevent zero division when backward
-        theta = tf.acos(K.clip(logits, -1.0 + K.epsilon(), 1.0 - K.epsilon()))
-        # subtract margin from logits
-        target_logits = tf.cos(theta + self.margin)
-        # get cross entropy
-        logits = logits * (1 - onehot_labels) + target_logits * onehot_labels
-        # apply scaling
-        logits = logits * self.scale
-        # get class probability distribution
-        predictions = tf.nn.softmax(logits)
-        return predictions
+    distinct_indices = tf.logical_and(tf.logical_and(i_not_equal_j, i_not_equal_k), j_not_equal_k)
 
-    def compute_output_shape(self, input_shape):
-        return (None, self.num_classes)
+    # Check if labels[i] == labels[j] and labels[i] != labels[k]
+    label_equal = tf.equal(tf.expand_dims(labels, 0), tf.expand_dims(labels, 1))
+    i_equal_j = tf.expand_dims(label_equal, 2)
+    i_equal_k = tf.expand_dims(label_equal, 1)
 
-    def get_config(self):
-        config = super().get_config().copy()
-        config.update({
-            "num_classes": self.num_classes,
-            "scale": self.scale,
-            "margin": self.margin})
-        return config
+    valid_labels = tf.logical_and(i_equal_j, tf.logical_not(i_equal_k))
+
+    # Combine the two masks
+    mask = tf.logical_and(distinct_indices, valid_labels)
+
+    return mask
+
+
+def batch_all_triplet_arcloss(labels, embeddings, arc_margin=1.0,scala=20):
+    """Build the triplet loss over a batch of embeddings.
+
+    We generate all the valid triplets and average the loss over the positive ones.
+
+    Args:
+        labels: labels of the batch, of size (batch_size,)
+        embeddings: tensor of shape (batch_size, embed_dim)
+        margin: margin for triplet loss 0 5.4 -1 are better options for arctriplet loss
+        squared: Boolean. If true, output is the pairwise squared euclidean distance matrix.
+                 If false, output is the pairwise euclidean distance matrix.
+
+    Returns:
+        triplet_loss: scalar tensor containing the triplet loss
+    """
+    # Get the pairwise distance matrix
+    pairwise_angle = _pairwise_angle(embeddings)
+
+    # shape (batch_size, batch_size, 1)
+    anchor_positive_angle = tf.expand_dims(pairwise_angle, 2)
+    assert anchor_positive_angle.shape[2] == 1, "{}".format(anchor_positive_angle.shape)
+    # shape (batch_size, 1, batch_size)
+    anchor_negative_angle = tf.expand_dims(pairwise_angle, 1)
+    assert anchor_negative_angle.shape[1] == 1, "{}".format(anchor_negative_angle.shape)
+
+    # Compute a 3D tensor of size (batch_size, batch_size, batch_size)
+    # triplet_loss[i, j, k] will contain the triplet loss of anchor=i, positive=j, negative=k
+    # Uses broadcasting where the 1st argument has shape (batch_size, batch_size, 1)
+    # and the 2nd (batch_size, 1, batch_size)
+    # L_{i j}=s_{i j}\left(\frac{\exp (\cos (\theta+m))}{\exp (\cos (\theta+m))+\exp (\sin (\theta))}\right)+(1\left.-s_{i j}\right)\left(\frac{\exp (\sin (\theta+m))}{\exp (\sin (\theta+m))+\exp (\cos (\theta))}\right)
+
+    # triplet_arcloss = tf.math.exp(tf.math.cos(anchor_positive_angle+arc_margin)) / (tf.math.exp(tf.math.cos(anchor_positive_angle+arc_margin))+tf.math.exp(tf.math.sin(anchor_positive_angle))) +  \
+    # tf.math.exp(tf.math.sin(anchor_negative_angle+arc_margin)) / \
+    # (tf.math.exp(tf.math.sin(anchor_negative_angle+arc_margin))+tf.math.exp(tf.math.cos(anchor_negative_angle)))
+
+    triplet_arcloss = tf.math.exp(tf.math.cos(anchor_negative_angle + arc_margin)) / (
+            tf.math.exp(tf.math.cos(anchor_negative_angle + arc_margin)) + tf.math.exp(
+        tf.math.sin(anchor_negative_angle))) + \
+                      tf.math.exp(tf.math.sin(anchor_positive_angle + arc_margin)) / \
+                      (tf.math.exp(tf.math.sin(anchor_positive_angle + arc_margin)) + tf.math.exp(
+                          tf.math.cos(anchor_positive_angle)))
+
+    # Put to zero the invalid triplets
+    # (where label(a) != label(p) or label(n) == label(a) or a == p)
+    mask = _get_triplet_mask(labels)
+    mask = tf.cast(mask, tf.double)
+    triplet_arcloss = tf.cast(triplet_arcloss, tf.double)
+    triplet_arcloss = tf.multiply(mask, triplet_arcloss)
+
+    # Remove negative losses (i.e. the easy triplets)
+    triplet_arcloss = tf.maximum(triplet_arcloss, 0.0)
+
+    # Count number of positive triplets (where triplet_arcloss > 0)
+    valid_triplets = tf.cast(tf.greater(triplet_arcloss, 1e-16), tf.double)
+    num_positive_triplets = tf.reduce_sum(valid_triplets)
+    num_valid_triplets = tf.reduce_sum(mask)
+    fraction_positive_triplets = num_positive_triplets / (num_valid_triplets + 1e-16)
+
+    # Get final mean triplet loss over the positive valid triplets
+    triplet_arcloss = tf.reduce_sum(triplet_arcloss) * scala / (num_positive_triplets + 1e-16)
+
+    # return triplet_loss, fraction_positive_triplets
+    # print(fraction_positive_triplets)
+    return triplet_arcloss

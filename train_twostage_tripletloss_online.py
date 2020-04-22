@@ -10,6 +10,7 @@ from modules.losses import SoftmaxLoss
 from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf,generatePermKey
 from losses.angular_margin_loss import arcface_loss,cosface_loss,sphereface_loss
 from losses.euclidan_distance_loss import triplet_loss,triplet_loss_vanila,contrastive_loss,triplet_loss_omoindrot
+from losses import arcface_pair_loss
 import modules.dataset_triplet as dataset_triplet
 import modules
 from tensorflow import keras
@@ -104,7 +105,8 @@ def main(_):
                 # pred_loss = loss_fn(newlabel, logist)*50
                 # pred_loss = triplet_loss.hardest_triplet_loss(labels, logist)
                 # pred_loss = triplet_loss.semihard_triplet_loss(labels, logist)
-                pred_loss = triplet_loss_omoindrot.batch_all_triplet_loss(labels, logist)
+                # pred_loss = triplet_loss_omoindrot.batch_all_triplet_loss(labels, logist)
+                pred_loss = arcface_pair_loss.batch_all_triplet_arcloss(labels, logist,arc_margin=-1)
 
                 quanti_loss = loss_fn_quanti(logist)
                 total_loss = pred_loss + reg_loss * 0.5 + quanti_loss * 0
