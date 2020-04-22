@@ -1,7 +1,7 @@
 # general
 samples_per_class: 4
-classes_per_batch: 4
-batch_size: 16
+classes_per_batch: 32
+batch_size: 128
 input_size: 112
 # embd_shape is for the Resnet, backbone
 embd_shape: 512
@@ -12,12 +12,12 @@ backbone_type: 'ResNet50' # 'ResNet50', 'MobileNetV2'
 head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
 
-# train
-train_dataset: './data/split'
+# train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split
+train_dataset: '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160'
 binary_img: False
 num_classes: 85742
 # I generate 1 milion triplets
-num_samples: 3000000
+num_samples: 1000000
 epochs: 5
 base_lr: 0.001
 w_decay: !!float 5e-4
