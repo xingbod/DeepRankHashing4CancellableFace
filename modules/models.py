@@ -131,11 +131,11 @@ def IoMFaceModel(size=None, channels=3, num_classes=None, name='IoMface_model',
         x)  # extra connection layer
     if training:
         labels = Input([], name='label')
-        logist = IoMHead(m=cfg['m'],q=cfg['q'],permKey=permKey, isTraining=training)(x, labels) # loss need to change
+        logist = IoMHead(m=cfg['m'],q=cfg['q'] ,isTraining=training)(x, labels) # loss need to change
         return Model((inputs, labels), logist, name=name)
     else:
         labels = Input([], name='label')
-        logist = IoMHead(m=cfg['m'], q=cfg['q'], permKey=permKey, isTraining=training)(x,labels)  # loss need to change
+        logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x,labels)  # loss need to change
         return Model(inputs, logist, name=name)
 
 def IoMFaceModelFromArFace(size=None, channels=3, arcmodel=None, name='IoMface_model',
