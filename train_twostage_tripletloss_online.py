@@ -47,7 +47,8 @@ def main(_):
         logging.info("load dataset from "+cfg['train_dataset'])
         dataset_len = cfg['num_samples']
         steps_per_epoch = dataset_len // cfg['batch_size']
-        train_dataset = dataset_triplet.load_online_pair_wise_dataset(cfg['train_dataset'],ext = 'jpg',dataset_ext = 'ms',samples_per_class = cfg['samples_per_class'],classes_per_batch = cfg['classes_per_batch'],is_ccrop = False)
+        train_dataset = dataset_triplet.load_online_pair_wise_dataset(cfg['train_dataset'],ext = 'png',dataset_ext = 'VGG2',samples_per_class = cfg['samples_per_class'],classes_per_batch = cfg['classes_per_batch'],is_ccrop = False)
+        # train_dataset = dataset_triplet.load_online_pair_wise_dataset(cfg['train_dataset'],ext = 'jpg',dataset_ext = 'ms',samples_per_class = cfg['samples_per_class'],classes_per_batch = cfg['classes_per_batch'],is_ccrop = False)
     else:
         logging.info("load fake dataset.")
         steps_per_epoch = 1
@@ -140,7 +141,8 @@ def main(_):
             steps += 1
             epochs = steps // steps_per_epoch + 1
     else:
-        model.compile(optimizer=optimizer, loss=loss_fn)
+        1==1
+        # model.compile(optimizer=optimizer, loss=loss_fn)
 
 
     print("[*] training done!")
