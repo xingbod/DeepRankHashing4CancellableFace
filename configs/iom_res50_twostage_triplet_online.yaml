@@ -14,6 +14,9 @@ is_ccrop: False # central-cropping or not
 
 # train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split
 train_dataset: '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160'
+# for metric learning, we have 1. triplet_semi batch_hard_triplet 2. batch_all_triplet_loss 3. batch_all_arc_triplet_loss
+loss_fun: 'batch_all_arc_triplet_loss'
+triplet_margin: 1
 binary_img: False
 num_classes: 85742
 # I generate 1 milion triplets
