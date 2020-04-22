@@ -120,9 +120,6 @@ def triplet_loss_adapted_from_tf(y_true, y_pred):
 
     # Compute the mask.
     pdist_matrix_tile = array_ops.tile(pdist_matrix, [batch_size, 1])
-    print("**********************************")
-    print(adjacency_not)
-    print(array_ops.tile(adjacency_not, [batch_size, 1]))
     mask = math_ops.logical_and(
         array_ops.tile(adjacency_not, [batch_size, 1]),
         math_ops.greater(

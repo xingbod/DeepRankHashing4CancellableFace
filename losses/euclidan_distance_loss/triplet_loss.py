@@ -193,6 +193,7 @@ def anchor_negative_mask(labels):
 def hardest_triplet_loss(labels, embeddings, margin=1.0):
     # get pairwise distances of embeddings
     pairwise_dist = pairwise_distances(embeddings)
+    # pairwise_dist = pairwise_distance_xingbo(embeddings,embeddings)
 
     # get anchors to positives distances
     mask_ap = anchor_positive_mask(labels)
@@ -286,7 +287,6 @@ def semihard_triplet_loss(labels, embeddings, margin=1.0):
     # remove invalid triplets
     # mask = triplet_mask(labels)
     mask = _get_triplet_mask(labels)
-
     triplet_loss = tf.multiply(triplet_loss, tf.cast(mask,tf.double))
 
     # remove easy triplets (negative losses)

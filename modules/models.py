@@ -64,7 +64,7 @@ def ArcHead(num_classes, margin=0.5, logist_scale=64, name='ArcHead'):
         return Model((inputs1, y), x, name=name)((x_in, y_in))
     return arc_head
 
-def IoMHead(m,q,permKey, isTraining=True, name='IoMHead'):
+def IoMHead(m,q, isTraining=True, name='IoMHead'):
     """Arc Head"""
     def iom_head(x_in, y_in):
         x = inputs1 = Input(x_in.shape[1:])
@@ -145,16 +145,16 @@ def IoMFaceModelFromArFace(size=None, channels=3, arcmodel=None, name='IoMface_m
     """IoMFaceModelFromArFace Model"""
     x = inputs = Input([size, size, channels], name='input_image')
     x = arcmodel(x)
-    # if permKey!=None:
-    x = PermLayer(permKey)(x)  # permutation before project to IoM hash code
+    if not (permKey is None):
+        x = PermLayer(permKey)(x)  # permutation before project to IoM hash code
     x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),name="IoMProjection")(
         x)  # extra connection layer
     if training:
         labels = Input([], name='label')
-        logist = IoMHead(m=cfg['m'],q=cfg['q'],permKey=permKey, isTraining=training)(x, labels) # loss need to change
+        logist = IoMHead(m=cfg['m'],q=cfg['q'], isTraining=training)(x, labels) # loss need to change
         return Model((inputs, labels), logist, name=name)
     else:
         labels = Input([], name='label')
-        logist = IoMHead(m=cfg['m'], q=cfg['q'], permKey=permKey, isTraining=training)(x,labels)  # loss need to change
+        logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x,labels)  # loss need to change
         return Model(inputs, logist, name=name)
 

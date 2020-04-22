@@ -16,18 +16,7 @@ flags.DEFINE_string('cfg_path', './configs/iom_res50_random.yaml', 'config file 
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_string('img_path', '', 'path to input image')
 
-gpus = tf.config.experimental.list_physical_devices('GPU')
-print("Num GPUs Available: ", len(gpus))
-if gpus:
-  try:
-    # Currently, memory growth needs to be the same across GPUs
-    for gpu in gpus:
-      tf.config.experimental.set_memory_growth(gpu, True)
-    logical_gpus = tf.config.experimental.list_logical_devices('GPU')
-    print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
-  except RuntimeError as e:
-    # Memory growth must be set before GPUs have been initialized
-    print(e)
+# modules.utils.set_memory_growth()
 
 
 def main(_argv):
@@ -50,7 +39,7 @@ def main(_argv):
                          backbone_type=cfg['backbone_type'],
                          head_type='ArcHead',
                          training=False,
-                         permKey=permKey, cfg=cfg)
+                         cfg=cfg)
 
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50' )
     if ckpt_path is not None:

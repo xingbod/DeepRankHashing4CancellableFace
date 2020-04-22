@@ -14,12 +14,13 @@ import modules.dataset_triplet as dataset_triplet
 import modules
 from tensorflow import keras
 
-flags.DEFINE_string('cfg_path', './configs/iom_res50_triplet.yaml', 'config file path')
+flags.DEFINE_string('cfg_path', './configs/iom_res50_twostage_triplet_online.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
-flags.DEFINE_enum('mode', 'fit', ['fit', 'eager_tf'],
+flags.DEFINE_enum('mode', 'eager_tf', ['fit', 'eager_tf'],
                   'fit: model.fit, eager_tf: custom GradientTape')
 
-modules.utils.set_memory_growth()
+# modules.utils.set_memory_growth()
+
 
 def main(_):
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -36,22 +37,17 @@ def main(_):
         #permKey = generatePermKey(cfg['embd_shape'])
         permKey = tf.eye(cfg['embd_shape']) # for training, we don't permutate, won't influence the performance
 
-    model = ArcFaceModel(size=cfg['input_size'],
+    arcmodel = ArcFaceModel(size=cfg['input_size'],
                          embd_shape=cfg['embd_shape'],
                          backbone_type=cfg['backbone_type'],
                          head_type='ArcHead',
                          training=False, # here equal false, just get the model without acrHead, to load the model trained by arcface
-                         permKey=permKey, cfg=cfg)
-
-
+                         cfg=cfg)
     if cfg['train_dataset']:
         logging.info("load dataset from "+cfg['train_dataset'])
         dataset_len = cfg['num_samples']
         steps_per_epoch = dataset_len // cfg['batch_size']
-        train_dataset = dataset_triplet.load_tfrecord_dataset(
-            cfg['train_dataset'], cfg['batch_size'], cfg['binary_img'],
-            is_ccrop=cfg['is_ccrop'])
-        # load_online_pair_wise_dataset(cfg['train_dataset'],ext = 'jpg',dataset_ext = 'ms',samples_per_class = 3,classes_per_batch = 4,is_ccrop = False):
+        train_dataset = dataset_triplet.load_online_pair_wise_dataset(cfg['train_dataset'],ext = 'jpg',dataset_ext = 'ms',samples_per_class = cfg['samples_per_class'],classes_per_batch = cfg['classes_per_batch'],is_ccrop = False)
     else:
         logging.info("load fake dataset.")
         steps_per_epoch = 1
@@ -62,50 +58,22 @@ def main(_):
     # optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 
     # loss_fn = SoftmaxLoss() #############################################
-    # loss_fn = triplet_loss_vanila.triplet_loss_adapted_from_tf
-    # loss_fn = triplet_loss.compute_triplet_loss
-    loss_fn = triplet_loss.compute_triplet_loss_jaccard
     loss_fn_quanti = triplet_loss.compute_quanti_loss
-    # loss_fn = triplet_loss.hardest_triplet_loss
-    # loss_fn = triplet_loss_omoindrot.batch_all_triplet_loss
-    # loss_fn = tfa.losses.TripletSemiHardLoss()
-    isContinueTrain = False
     m = cfg['m']
     q = cfg['q']
-    if isContinueTrain:
-        # here I add the extra IoM layer and head
-        model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                       embd_shape=cfg['embd_shape'],
-                                       arcmodel=model,
-                                       head_type='ArcHead',
-                                       training=True,
-                                       # here equal false, just get the model without acrHead, to load the model trained by arcface
-                                       permKey=permKey, cfg=cfg)
-        ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
-        if ckpt_path is not None:
-            print("[*] load ckpt from {}".format(ckpt_path))
-            model.load_weights(ckpt_path)
-            epochs, steps = get_ckpt_inf(ckpt_path, steps_per_epoch)
-        else:
-            print("[*] training from scratch.")
-            epochs, steps = 1, 1
+    ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50/')
+    if ckpt_path is not None:
+        print("[*] load ckpt from {}".format(ckpt_path))
+        arcmodel.load_weights(ckpt_path)
+        # epochs, steps = get_ckpt_inf(ckpt_path, steps_per_epoch)
     else:
-        ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50/')
-        if ckpt_path is not None:
-            print("[*] load ckpt from {}".format(ckpt_path))
-            model.load_weights(ckpt_path)
-            # epochs, steps = get_ckpt_inf(ckpt_path, steps_per_epoch)
-        else:
-            print("[*] training from scratch.")
-            epochs, steps = 1, 1
+        print("[*] training from scratch.")
         epochs, steps = 1, 1
-        # here I add the extra IoM layer and head
-        model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                         embd_shape=cfg['embd_shape'],
-                         arcmodel=model,
-                         head_type='ArcHead',
-                         training=True, # here equal false, just get the model without acrHead, to load the model trained by arcface
-                         permKey=permKey, cfg=cfg)
+    epochs, steps = 1, 1
+    # here I add the extra IoM layer and head
+    model = IoMFaceModelFromArFace(size=cfg['input_size'],
+                                   arcmodel=arcmodel, training=True,
+                                   permKey=permKey, cfg=cfg)
     for layer in model.layers:
         print(layer.name)
         if layer.name == 'arcface_model':
@@ -128,31 +96,17 @@ def main(_):
             if steps % 5 == 0:
                 start = time.time()
             inputs, labels = next(train_dataset) #print(inputs[0][1][:])  labels[2][:]
-            tmp = inputs[0]
-            shape = tf.shape(tmp) # [  3  66 112 112   3]
-            newinput = tf.reshape(tmp, [shape[0] * shape[1], shape[2], shape[3], shape[4]])
-            newlabel = tf.reshape(labels, [shape[0] * shape[1]])
-            newinput = (newinput,newlabel)
-            # if triplet loss
-            # if cfg['head_type'] == 'IoMHead':
-            #     mask = triplet_loss._get_triplet_mask(newlabel)
-            #     mask_tmp = tf.reshape(mask, [tf.size(mask).numpy(), 1])
-            #     if len(mask_tmp[mask_tmp])<0.0001*cfg['batch_size']*cfg['batch_size']*cfg['batch_size']:
-            #         continue
-
             with tf.GradientTape() as tape:
-                logist = model(newinput, training=True)
-                anchor_features = logist[:shape[1]]
-                positive_features = logist[shape[1]:shape[1]*2]
-                negative_features = logist[shape[1]*2:]
-                if cfg['head_type'] == 'IoMHead':
-                    reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.double)
-                else:
-                    reg_loss = tf.reduce_sum(model.losses)
+                logist = model((inputs, labels), training=True)
+
+                reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.double)
                 # pred_loss = loss_fn(newlabel, logist)*50
-                pred_loss = loss_fn(anchor_features, positive_features,negative_features, margin=cfg['triplet_margin'])
+                # pred_loss = triplet_loss.hardest_triplet_loss(labels, logist)
+                # pred_loss = triplet_loss.semihard_triplet_loss(labels, logist)
+                pred_loss = triplet_loss_omoindrot.batch_all_triplet_loss(labels, logist)
+
                 quanti_loss = loss_fn_quanti(logist)
-                total_loss = pred_loss + reg_loss * 0.5 + quanti_loss * 0.5
+                total_loss = pred_loss + reg_loss * 0.5 + quanti_loss * 0
 
             grads = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(grads, model.trainable_variables))
