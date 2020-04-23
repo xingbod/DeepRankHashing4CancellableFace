@@ -14,7 +14,7 @@ from losses import arcface_pair_loss
 import modules.dataset_triplet as dataset_triplet
 import modules
 from tensorflow import keras
-
+from modules.evaluations import val_LFW
 flags.DEFINE_string('cfg_path', './configs/iom_res50_twostage_triplet_online.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_enum('mode', 'eager_tf', ['fit', 'eager_tf'],
@@ -140,7 +140,12 @@ def main(_):
                 print('[*] save ckpt file!')
                 model.save_weights('checkpoints/{}/e_{}_b_{}.ckpt'.format(
                     cfg['sub_name'], epochs, steps % steps_per_epoch))
-
+            if steps % steps_per_epoch == 0:
+                acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = val_LFW(model,cfg)
+                print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
+                with summary_writer.as_default():
+                    tf.summary.scalar( 'metric/epoch_acc', acc_lfw, step=epochs)
+                    tf.summary.scalar('metric/epoch_eer', acc_lfw, step=epochs)
             steps += 1
             epochs = steps // steps_per_epoch + 1
     else:

@@ -203,3 +203,11 @@ def perform_val(embedding_size, batch_size, model,
         embeddings, issame, nrof_folds,cfg)
 
     return accuracy.mean(), best_thresholds.mean(),auc,eer,embeddings
+
+
+def val_LFW(model,cfg):
+    lfw, lfw_issame = get_val_pair(cfg['test_dataset'], 'lfw_align_112/lfw')
+    return perform_val(
+        cfg['embd_shape'], cfg['batch_size'], model, lfw, lfw_issame,
+        is_ccrop=cfg['is_ccrop'], cfg=cfg)
+
