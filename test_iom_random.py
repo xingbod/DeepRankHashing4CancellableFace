@@ -34,7 +34,7 @@ def main(_argv):
         #permKey = generatePermKey(cfg['embd_shape'])
         permKey = tf.eye(cfg['embd_shape']) # for training, we don't permutate, won't influence the performance
 
-    model = ArcFaceModel(size=cfg['input_size'],
+    arcmodel = ArcFaceModel(size=cfg['input_size'],
                          embd_shape=cfg['embd_shape'],
                          backbone_type=cfg['backbone_type'],
                          head_type='ArcHead',
@@ -44,19 +44,16 @@ def main(_argv):
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50' )
     if ckpt_path is not None:
         print("[*] load ckpt from {}".format(ckpt_path))
-        model.load_weights(ckpt_path)
+        arcmodel.load_weights(ckpt_path)
     else:
         print("[*] Cannot find ckpt from {}.".format(ckpt_path))
         exit()
     m = cfg['m']
     q = cfg['q']
     model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                   embd_shape=cfg['embd_shape'],
-                                   arcmodel=model,
-                                   head_type='ArcHead',
-                                   training=False,
-                                   # here equal false, just get the model without acrHead, to load the model trained by arcface
+                                   arcmodel=arcmodel, training=False,
                                    permKey=permKey, cfg=cfg)
+    model.summary(line_length=80)
     model.layers[0].trainable = False
     for layer in model.layers:
         print(layer.name)

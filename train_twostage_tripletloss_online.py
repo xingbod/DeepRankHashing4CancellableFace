@@ -5,7 +5,7 @@ import tensorflow as tf
 import time
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 
-from modules.models import IoMFaceModel, ArcFaceModel,IoMFaceModelFromArFace
+from modules.models import  ArcFaceModel,IoMFaceModelFromArFace
 from modules.losses import SoftmaxLoss
 from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf,generatePermKey
 from losses.angular_margin_loss import arcface_loss,cosface_loss,sphereface_loss
@@ -48,8 +48,7 @@ def main(_):
         logging.info("load dataset from "+cfg['train_dataset'])
         dataset_len = cfg['num_samples']
         steps_per_epoch = dataset_len // cfg['batch_size']
-        train_dataset = dataset_triplet.load_online_pair_wise_dataset(cfg['train_dataset'],ext = 'png',dataset_ext = 'VGG2',samples_per_class = cfg['samples_per_class'],classes_per_batch = cfg['classes_per_batch'],is_ccrop = False)
-        # train_dataset = dataset_triplet.load_online_pair_wise_dataset(cfg['train_dataset'],ext = 'jpg',dataset_ext = 'ms',samples_per_class = cfg['samples_per_class'],classes_per_batch = cfg['classes_per_batch'],is_ccrop = False)
+        train_dataset = dataset_triplet.load_online_pair_wise_dataset(cfg['train_dataset'],ext = cfg['img_ext'],dataset_ext = cfg['dataset_ext'],samples_per_class = cfg['samples_per_class'],classes_per_batch = cfg['classes_per_batch'],is_ccrop = False)
     else:
         logging.info("load fake dataset.")
         steps_per_epoch = 1
@@ -108,9 +107,10 @@ def main(_):
                     pred_loss = triplet_loss_omoindrot.batch_all_triplet_loss(labels, logist,margin=cfg['triplet_margin'])
                 elif cfg['loss_fun'] == 'batch_all_arc_triplet_loss':
                     pred_loss = arcface_pair_loss.batch_all_triplet_arcloss(labels, logist, arc_margin=-1)
-
+                elif cfg['loss_fun'] == 'semihard_triplet_loss':
+                    pred_loss = triplet_loss.semihard_triplet_loss(labels, logist, margin=1)
                 quanti_loss = loss_fn_quanti(logist)
-                total_loss = pred_loss + reg_loss * 0.5 + quanti_loss * 0
+                total_loss = pred_loss + reg_loss * 0.5 + quanti_loss * 0.5
 
             grads = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(grads, model.trainable_variables))
@@ -144,7 +144,7 @@ def main(_):
             steps += 1
             epochs = steps // steps_per_epoch + 1
     else:
-        1==1
+        print("[*] only support eager_tf!")
         # model.compile(optimizer=optimizer, loss=loss_fn)
 
 
