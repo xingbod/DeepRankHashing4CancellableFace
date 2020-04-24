@@ -113,8 +113,8 @@ def load_online_pair_wise_dataset(dbdir,ext = 'jpg',dataset_ext = 'ms',samples_p
     path_ds = tf.data.Dataset.from_tensor_slices(allsubdir)
     ds = path_ds.shuffle(buffer_size).interleave(lambda x: ListFiles(x, ext), cycle_length=tf.data.experimental.AUTOTUNE,
                                            block_length=samples_per_class,
-                                           num_parallel_calls=8).batch(classes_per_batch * samples_per_class, True).map(
+                                           num_parallel_calls=tf.data.experimental.AUTOTUNE).batch(classes_per_batch * samples_per_class, True).map(
         lambda x: pair_parser(x, classes_per_batch * samples_per_class, dataset=dataset_ext), -1).map(
         lambda path, labels: load_and_preprocess_image(path, labels, classes_per_batch * samples_per_class,is_ccrop=is_ccrop),
-        num_parallel_calls=tf.data.experimental.AUTOTUNE).prefetch(buffer_size)
+        num_parallel_calls=tf.data.experimental.AUTOTUNE).prefetch(tf.data.experimental.AUTOTUNE)
     return ds

@@ -67,10 +67,7 @@ def main(_):
         print("[*] load ckpt from {}".format(ckpt_path))
         arcmodel.load_weights(ckpt_path)
         # epochs, steps = get_ckpt_inf(ckpt_path, steps_per_epoch)
-    else:
-        print("[*] training from scratch.")
-        epochs, steps = 1, 1
-    epochs, steps = 1, 1
+
     # here I add the extra IoM layer and head
     model = IoMFaceModelFromArFace(size=cfg['input_size'],
                                    arcmodel=arcmodel, training=True,
@@ -85,6 +82,16 @@ def main(_):
         print("trainable:",x.name)
     print('\n')
     model.summary(line_length=80)
+
+    ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
+    if ckpt_path is not None:
+        print("[*] load ckpt from {}".format(ckpt_path))
+        model.load_weights(ckpt_path)
+        epochs, steps = get_ckpt_inf(ckpt_path, steps_per_epoch)
+    else:
+        print("[*] training from scratch.")
+        epochs, steps = 1, 1
+
     if FLAGS.mode == 'eager_tf':
         # Eager mode is great for debugging
         # Non eager graph mode is recommended for real training
@@ -141,11 +148,13 @@ def main(_):
                 model.save_weights('checkpoints/{}/e_{}_b_{}.ckpt'.format(
                     cfg['sub_name'], epochs, steps % steps_per_epoch))
             if steps % steps_per_epoch == 0:
-                acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = val_LFW(model,cfg)
-                print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
-                with summary_writer.as_default():
-                    tf.summary.scalar( 'metric/epoch_acc', acc_lfw, step=epochs)
-                    tf.summary.scalar('metric/epoch_eer', acc_lfw, step=epochs)
+                # acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = val_LFW(model,cfg)
+                # print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
+                # with summary_writer.as_default():
+                #     tf.summary.scalar( 'metric/epoch_acc', acc_lfw, step=epochs)
+                #     tf.summary.scalar('metric/epoch_eer', acc_lfw, step=epochs)
+                model.save_weights('checkpoints/{}/e_{}_b_{}.ckpt'.format(
+                    cfg['sub_name'], epochs, steps % steps_per_epoch))
             steps += 1
             epochs = steps // steps_per_epoch + 1
     else:

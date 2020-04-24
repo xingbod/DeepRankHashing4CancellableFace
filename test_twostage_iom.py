@@ -8,7 +8,7 @@ import modules
 import csv
 
 from modules.evaluations import get_val_data, perform_val
-from modules.models import ArcFaceModel,IoMFaceModelFromArFace,IoMFaceModel
+from modules.models import ArcFaceModel,IoMFaceModelFromArFace
 from modules.utils import set_memory_growth, load_yaml, l2_norm
 
 
@@ -44,8 +44,8 @@ def main(_argv):
                                    arcmodel=arcmodel, training=False,
                                    permKey=permKey, cfg=cfg)
     model.summary(line_length=80)
-    # ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
-    ckpt_path = './checkpoints/' + cfg['sub_name']+'/e_1_b_100.ckpt'
+    ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
+    # ckpt_path = './checkpoints/' + cfg['sub_name']+'/e_1_b_100.ckpt'
     if ckpt_path is not None:
         print("[*] load ckpt from {}".format(ckpt_path))
         model.load_weights(ckpt_path)

@@ -208,6 +208,6 @@ def perform_val(embedding_size, batch_size, model,
 def val_LFW(model,cfg):
     lfw, lfw_issame = get_val_pair(cfg['test_dataset'], 'lfw_align_112/lfw')
     return perform_val(
-        cfg['embd_shape'], cfg['batch_size'], model, lfw, lfw_issame,
+        cfg['q']*cfg['m'], 32, model, lfw, lfw_issame,
         is_ccrop=cfg['is_ccrop'], cfg=cfg)
 
