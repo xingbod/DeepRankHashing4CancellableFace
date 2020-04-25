@@ -11,7 +11,7 @@ from modules.evaluations import get_val_data, perform_val
 from modules.models import ArcFaceModel,IoMFaceModelFromArFace
 from modules.utils import set_memory_growth, load_yaml, l2_norm
 
-
+# modules.utils.set_memory_growth()
 flags.DEFINE_string('cfg_path', './configs/iom_res50.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_string('img_path', '', 'path to input image')
@@ -45,7 +45,7 @@ def main(_argv):
                                    permKey=permKey, cfg=cfg)
     model.summary(line_length=80)
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
-    # ckpt_path = './checkpoints/' + cfg['sub_name']+'/e_1_b_100.ckpt'
+    # ckpt_path = './checkpoints/' + cfg['sub_name']+'/e_6_b_5000.ckpt'
     if ckpt_path is not None:
         print("[*] load ckpt from {}".format(ckpt_path))
         model.load_weights(ckpt_path)
