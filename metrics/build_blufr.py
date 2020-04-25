@@ -34,7 +34,6 @@ def createVerificationForBlufr(path_to_save, trails_list, labels):
                     all_data = (genuine_pairs, impostor_pairs)
                     filename = os.path.join(path_to_save, blurf_config.blufr_lfw_test_ver_path.format(num_train, num_part))
                     # save_cPickle(all_data, filename)# save the file
-                    filename = os.path.join(path_to_save, blurf_config.blufr_lfw_test_ver_path)
                     np.save(filename, all_data)
                     list_filename.append(filename)
                     num_part += 1
