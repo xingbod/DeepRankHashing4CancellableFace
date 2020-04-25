@@ -44,8 +44,8 @@ def main(_argv):
                                    arcmodel=arcmodel, training=False,
                                    permKey=permKey, cfg=cfg)
     model.summary(line_length=80)
-    ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
-    # ckpt_path = './checkpoints/' + cfg['sub_name']+'/e_6_b_5000.ckpt'
+    # ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
+    ckpt_path = './checkpoints/' + cfg['sub_name']+'/e_12_b_5000.ckpt'
     if ckpt_path is not None:
         print("[*] load ckpt from {}".format(ckpt_path))
         model.load_weights(ckpt_path)
