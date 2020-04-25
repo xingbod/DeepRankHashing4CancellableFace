@@ -11,7 +11,7 @@ from modules.evaluations import get_val_data, perform_val
 from modules.models import ArcFaceModel,IoMFaceModelFromArFace
 from modules.utils import set_memory_growth, load_yaml, l2_norm
 
-# modules.utils.set_memory_growth()
+modules.utils.set_memory_growth()
 flags.DEFINE_string('cfg_path', './configs/iom_res50.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_string('img_path', '', 'path to input image')
