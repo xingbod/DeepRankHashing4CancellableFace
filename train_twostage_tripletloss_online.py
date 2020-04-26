@@ -115,7 +115,7 @@ def main(_):
                 elif cfg['loss_fun'] == 'batch_all_triplet_loss':
                     pred_loss = triplet_loss_omoindrot.batch_all_triplet_loss(labels, logist,margin=cfg['triplet_margin'])
                 elif cfg['loss_fun'] == 'batch_all_arc_triplet_loss':
-                    pred_loss, triplet_arcloss_positive ,triplet_arcloss_negetive= arcface_pair_loss.batch_all_triplet_arcloss(labels, logist, arc_margin=0)
+                    pred_loss, _ ,_= arcface_pair_loss.batch_all_triplet_arcloss(labels, logist, arc_margin=cfg['triplet_margin'],scala=100)
                 elif cfg['loss_fun'] == 'semihard_triplet_loss':
                     pred_loss = triplet_loss.semihard_triplet_loss(labels, logist, margin=cfg['triplet_margin'])
                 quanti_loss = loss_fn_quanti(logist)

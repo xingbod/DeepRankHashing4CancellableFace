@@ -109,7 +109,7 @@ def batch_all_triplet_arcloss(labels, embeddings, arc_margin=1.0,scala=20):
     """
     # Get the pairwise distance matrix
     pairwise_angle = _pairwise_angle(embeddings)
-    print(pairwise_angle)
+    # print(pairwise_angle)
     # shape (batch_size, batch_size, 1)
     anchor_positive_angle = tf.expand_dims(pairwise_angle, 2)
     assert anchor_positive_angle.shape[2] == 1, "{}".format(anchor_positive_angle.shape)
