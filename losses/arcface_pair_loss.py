@@ -1,10 +1,3 @@
-import tensorflow as tf
-import tensorflow.keras.layers as L
-import tensorflow.keras.backend as K
-
-__all__ = [
-    "ArcFace"
-]
 
 """
 ArcFace: Additive Angular Margin Loss for Deep Face Recognition (CVPR '19)
@@ -25,6 +18,26 @@ import tensorflow as tf
 import tensorflow.keras.backend as K
 
 
+def cosine_distance(a, b=None):
+    """Compute element-wise cosine distance between `a` and `b`.
+    Parameters
+    ----------
+    a : tf.Tensor
+        A matrix of shape NxL with N row-vectors of dimensionality L.
+    b : tf.Tensor
+        A matrix of shape NxL with N row-vectors of dimensionality L.
+    Returns
+    -------
+    tf.Tensor
+        A matrix of shape NxM where element (i, j) contains the cosine distance
+        between elements `a[i]` and `b[j]`.
+    """
+    a_normed = tf.nn.l2_normalize(a, axis=1)
+    b_normed = a_normed if b is None else tf.nn.l2_normalize(b, axis=1)
+    return (
+        tf.constant(1.0, tf.double) -
+        tf.matmul(a_normed, tf.transpose(b_normed)))
+
 def _pairwise_angle(embeddings, squared=False):
     """Compute the 2D matrix of distances between all the embeddings.
 
@@ -38,9 +51,15 @@ def _pairwise_angle(embeddings, squared=False):
     """
 
     # get logits from multiplying embeddings (batch_size, embedding_size)
-    logits = tf.matmul(embeddings, tf.transpose(embeddings))
+    # logits = tf.matmul(embeddings, tf.transpose(embeddings))
+    logits = cosine_distance(embeddings, embeddings)
+    # print(logits)
+    # logits = logits / (tf.reduce_sum(embeddings)*tf.reduce_sum(embeddings))
     # clip logits to prevent zero division when backward
     theta = tf.acos(K.clip(logits, -1.0 + K.epsilon(), 1.0 - K.epsilon()))
+
+
+
     return theta
 
 
@@ -93,7 +112,7 @@ def batch_all_triplet_arcloss(labels, embeddings, arc_margin=1.0,scala=20):
     """
     # Get the pairwise distance matrix
     pairwise_angle = _pairwise_angle(embeddings)
-
+    print(pairwise_angle)
     # shape (batch_size, batch_size, 1)
     anchor_positive_angle = tf.expand_dims(pairwise_angle, 2)
     assert anchor_positive_angle.shape[2] == 1, "{}".format(anchor_positive_angle.shape)
@@ -111,13 +130,15 @@ def batch_all_triplet_arcloss(labels, embeddings, arc_margin=1.0,scala=20):
     # tf.math.exp(tf.math.sin(anchor_negative_angle+arc_margin)) / \
     # (tf.math.exp(tf.math.sin(anchor_negative_angle+arc_margin))+tf.math.exp(tf.math.cos(anchor_negative_angle)))
 
-    triplet_arcloss = tf.math.exp(tf.math.cos(anchor_negative_angle + arc_margin)) / (
+    triplet_arcloss_positive = tf.math.exp(tf.math.cos(anchor_negative_angle + arc_margin)) / (
             tf.math.exp(tf.math.cos(anchor_negative_angle + arc_margin)) + tf.math.exp(
-        tf.math.sin(anchor_negative_angle))) + \
-                      tf.math.exp(tf.math.sin(anchor_positive_angle + arc_margin)) / \
+        tf.math.sin(anchor_negative_angle)))
+
+    triplet_arcloss_negetive = tf.math.exp(tf.math.sin(anchor_positive_angle + arc_margin)) / \
                       (tf.math.exp(tf.math.sin(anchor_positive_angle + arc_margin)) + tf.math.exp(
                           tf.math.cos(anchor_positive_angle)))
 
+    triplet_arcloss = triplet_arcloss_positive + triplet_arcloss_negetive
     # Put to zero the invalid triplets
     # (where label(a) != label(p) or label(n) == label(a) or a == p)
     mask = _get_triplet_mask(labels)
@@ -139,4 +160,4 @@ def batch_all_triplet_arcloss(labels, embeddings, arc_margin=1.0,scala=20):
 
     # return triplet_loss, fraction_positive_triplets
     # print(fraction_positive_triplets)
-    return triplet_arcloss
+    return triplet_arcloss,tf.reduce_mean(triplet_arcloss_positive) ,tf.reduce_mean(triplet_arcloss_negetive)

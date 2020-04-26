@@ -13,6 +13,7 @@ from modules.utils import set_memory_growth, load_yaml, l2_norm
 
 modules.utils.set_memory_growth()
 flags.DEFINE_string('cfg_path', './configs/iom_res50.yaml', 'config file path')
+flags.DEFINE_string('ckpt_epoch', '', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_string('img_path', '', 'path to input image')
 
@@ -44,8 +45,10 @@ def main(_argv):
                                    arcmodel=arcmodel, training=False,
                                    permKey=permKey, cfg=cfg)
     model.summary(line_length=80)
-    # ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
-    ckpt_path = './checkpoints/' + cfg['sub_name']+'/e_12_b_5000.ckpt'
+    if FLAGS.ckpt_epoch == '':
+        ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
+    else:
+        ckpt_path = './checkpoints/' + cfg['sub_name']+'/'+FLAGS.ckpt_epoch
     if ckpt_path is not None:
         print("[*] load ckpt from {}".format(ckpt_path))
         model.load_weights(ckpt_path)
@@ -70,19 +73,19 @@ def main(_argv):
 
         print("[*] Perform Evaluation on LFW...")
         acc_lfw, best_th_lfw, auc_lfw, eer_lfw,embeddings_lfw = perform_val(
-            cfg['embd_shape'], cfg['batch_size'], model, lfw, lfw_issame,
+            cfg['embd_shape'], cfg['eval_batch_size'], model, lfw, lfw_issame,
             is_ccrop=cfg['is_ccrop'], cfg=cfg)
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
 
         print("[*] Perform Evaluation on AgeDB30...")
         acc_agedb30, best_th_agedb30, auc_agedb30, eer_agedb30,embeddings_agedb30 = perform_val(
-            cfg['embd_shape'], cfg['batch_size'], model, agedb_30,
+            cfg['embd_shape'], cfg['eval_batch_size'], model, agedb_30,
             agedb_30_issame, is_ccrop=cfg['is_ccrop'], cfg=cfg)
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_agedb30, best_th_agedb30, auc_agedb30, eer_agedb30))
 
         print("[*] Perform Evaluation on CFP-FP...")
         acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp, eer_cfp_fp,embeddings_cfp_fp = perform_val(
-            cfg['embd_shape'], cfg['batch_size'], model, cfp_fp, cfp_fp_issame,
+            cfg['embd_shape'], cfg['eval_batch_size'], model, cfp_fp, cfp_fp_issame,
             is_ccrop=cfg['is_ccrop'], cfg=cfg)
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp, eer_cfp_fp))
         with open('./embeddings/embeddings_lfw.csv', 'w', newline='') as file:

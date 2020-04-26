@@ -62,10 +62,12 @@ def main(_):
     loss_fn_quanti = triplet_loss.compute_quanti_loss
     m = cfg['m']
     q = cfg['q']
-    ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50/')
-    if ckpt_path is not None:
-        print("[*] load ckpt from {}".format(ckpt_path))
-        arcmodel.load_weights(ckpt_path)
+
+    arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50/')
+    ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
+    if (not ckpt_path) & (arc_ckpt_path is not None):
+        print("[*] load ckpt from {}".format(arc_ckpt_path))
+        arcmodel.load_weights(arc_ckpt_path)
         # epochs, steps = get_ckpt_inf(ckpt_path, steps_per_epoch)
 
     # here I add the extra IoM layer and head
@@ -113,9 +115,9 @@ def main(_):
                 elif cfg['loss_fun'] == 'batch_all_triplet_loss':
                     pred_loss = triplet_loss_omoindrot.batch_all_triplet_loss(labels, logist,margin=cfg['triplet_margin'])
                 elif cfg['loss_fun'] == 'batch_all_arc_triplet_loss':
-                    pred_loss = arcface_pair_loss.batch_all_triplet_arcloss(labels, logist, arc_margin=-1)
+                    pred_loss, triplet_arcloss_positive ,triplet_arcloss_negetive= arcface_pair_loss.batch_all_triplet_arcloss(labels, logist, arc_margin=0)
                 elif cfg['loss_fun'] == 'semihard_triplet_loss':
-                    pred_loss = triplet_loss.semihard_triplet_loss(labels, logist, margin=1)
+                    pred_loss = triplet_loss.semihard_triplet_loss(labels, logist, margin=cfg['triplet_margin'])
                 quanti_loss = loss_fn_quanti(logist)
                 total_loss = pred_loss + reg_loss * 0.5 + quanti_loss * 0.5
 
@@ -136,6 +138,10 @@ def main(_):
                         'loss/total loss', total_loss, step=steps)
                     tf.summary.scalar(
                         'loss/pred loss', pred_loss, step=steps)
+                    # tf.summary.scalar(
+                    #     'loss/triplet_arcloss_positive', triplet_arcloss_positive, step=steps)
+                    # tf.summary.scalar(
+                    #     'loss/triplet_arcloss_negetive', triplet_arcloss_negetive, step=steps)
                     tf.summary.scalar(
                         'loss/reg loss', reg_loss, step=steps)
                     tf.summary.scalar(
