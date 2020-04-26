@@ -12,9 +12,6 @@ from losses.angular_margin_loss import arcface_loss,cosface_loss,sphereface_loss
 from losses.euclidan_distance_loss import triplet_loss,triplet_loss_vanila,contrastive_loss,triplet_loss_omoindrot
 from losses import arcface_pair_loss
 import modules.dataset_triplet as dataset_triplet
-import modules
-from tensorflow import keras
-from modules.evaluations import val_LFW
 flags.DEFINE_string('cfg_path', './configs/iom_res50_twostage_triplet_online.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_enum('mode', 'eager_tf', ['fit', 'eager_tf'],
