@@ -3,13 +3,14 @@ from absl.flags import FLAGS
 import os
 import tensorflow as tf
 import time
-from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 
-from .modules.models import  ArcFaceModel,IoMFaceModelFromArFace
-from .modules.utils import set_memory_growth, load_yaml, get_ckpt_inf,generatePermKey
-from .losses.euclidan_distance_loss import triplet_loss,triplet_loss_vanila,contrastive_loss,triplet_loss_omoindrot
-from .losses import arcface_pair_loss
+import modules
+from modules.models import  ArcFaceModel,IoMFaceModelFromArFace
+from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf,generatePermKey
+from losses.euclidan_distance_loss import triplet_loss,triplet_loss_vanila,contrastive_loss,triplet_loss_omoindrot
+from losses import arcface_pair_loss
 import modules.dataset_triplet as dataset_triplet
+
 flags.DEFINE_string('cfg_path', './configs/iom_res50_twostage_triplet_online.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_enum('mode', 'eager_tf', ['fit', 'eager_tf'],
