@@ -4,8 +4,7 @@ import os
 import tensorflow as tf
 import time
 
-import modules
-from modules.models import  ArcFaceModel,IoMFaceModelFromArFace
+from modules.models import ArcFaceModel,IoMFaceModelFromArFace
 from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf,generatePermKey
 from losses.euclidan_distance_loss import triplet_loss,triplet_loss_vanila,contrastive_loss,triplet_loss_omoindrot
 from losses import arcface_pair_loss
