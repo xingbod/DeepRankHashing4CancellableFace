@@ -51,15 +51,12 @@ def _pairwise_angle(embeddings, squared=False):
     """
 
     # get logits from multiplying embeddings (batch_size, embedding_size)
-    # logits = tf.matmul(embeddings, tf.transpose(embeddings))
-    logits = cosine_distance(embeddings, embeddings)
-    # print(logits)
-    # logits = logits / (tf.reduce_sum(embeddings)*tf.reduce_sum(embeddings))
-    # clip logits to prevent zero division when backward
+    logits = tf.matmul(embeddings, tf.transpose(embeddings))
+    # norm of the vector
+    embeddings_norm1 = tf.sqrt(tf.reduce_sum(tf.square(embeddings), axis=1))
+    embeddings_norm2 = embeddings_norm1
+    logits = tf.math.divide(logits, embeddings_norm1 * embeddings_norm2)
     theta = tf.acos(K.clip(logits, -1.0 + K.epsilon(), 1.0 - K.epsilon()))
-
-
-
     return theta
 
 
@@ -161,3 +158,10 @@ def batch_all_triplet_arcloss(labels, embeddings, arc_margin=1.0,scala=20):
     # return triplet_loss, fraction_positive_triplets
     # print(fraction_positive_triplets)
     return triplet_arcloss,tf.reduce_mean(triplet_arcloss_positive) ,tf.reduce_mean(triplet_arcloss_negetive)
+
+if __name__ == '__main__':
+    embeddings = [[6.0, 4, 7, 5, 4, 6, 4, 5, 0, 2],
+                  [1, 4, 0, 5, 1, 4, 5, 5, 5, 2],
+                  [6, 0, 2, 0, 2, 3, 5, 3, 4, 4],
+                  [6, 0, 0, 0, 3, 6, 5, 1, 4, 3]]
+    print(_pairwise_angle(embeddings))
