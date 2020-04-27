@@ -100,6 +100,14 @@ def main(_):
         while epochs <= cfg['epochs']:
             if steps % 5 == 0:
                 start = time.time()
+            if steps % steps_per_epoch == 0: #reshuffle and generate every epoch
+                train_dataset = dataset_triplet.load_online_pair_wise_dataset(cfg['train_dataset'], ext=cfg['img_ext'],
+                                                                              dataset_ext=cfg['dataset_ext'],
+                                                                              samples_per_class=cfg[
+                                                                                  'samples_per_class'],
+                                                                              classes_per_batch=cfg[
+                                                                                  'classes_per_batch'], is_ccrop=False)
+                train_dataset = iter(train_dataset)
             inputs, labels = next(train_dataset) #print(inputs[0][1][:])  labels[2][:]
             with tf.GradientTape() as tape:
                 logist = model((inputs, labels), training=True)
