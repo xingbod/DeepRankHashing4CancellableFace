@@ -204,7 +204,9 @@ def perform_val(embedding_size, batch_size, model,
 
     return accuracy.mean(), best_thresholds.mean(),auc,eer,embeddings
 
-
+'''
+new add, in case val during train
+'''
 def val_LFW(model,cfg):
     lfw, lfw_issame = get_val_pair(cfg['test_dataset'], 'lfw_align_112/lfw')
     return perform_val(
