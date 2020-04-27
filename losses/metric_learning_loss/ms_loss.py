@@ -17,7 +17,7 @@ import sys
 import numpy as np
 import tensorflow as tf
 
-def ms_loss(labels, embeddings, alpha=2.0, beta=50.0, lamb=1.0, eps=0.1, ms_mining=False):
+def ms_loss(labels, embeddings, alpha=2.0, beta=50.0, lamb=1.0, eps=0.1, ms_mining=False,scala=100):
     '''
     ref: http://openaccess.thecvf.com/content_CVPR_2019/papers/Wang_Multi-Similarity_Loss_With_General_Pair_Weighting_for_Deep_Metric_Learning_CVPR_2019_paper.pdf
     official codes: https://github.com/MalongTech/research-ms-loss
@@ -61,9 +61,9 @@ def ms_loss(labels, embeddings, alpha=2.0, beta=50.0, lamb=1.0, eps=0.1, ms_mini
     neg_exp = tf.exp(beta * (neg_mat - lamb))
     neg_exp = tf.where(mask_neg > 0.0, neg_exp, tf.zeros_like(neg_exp))
 
-    pos_term = tf.log(1.0 + tf.reduce_sum(pos_exp, axis=1)) / alpha
-    neg_term = tf.log(1.0 + tf.reduce_sum(neg_exp, axis=1)) / beta
+    pos_term = tf.math.log(1.0 + tf.reduce_sum(pos_exp, axis=1)) / alpha
+    neg_term = tf.math.log(1.0 + tf.reduce_sum(neg_exp, axis=1)) / beta
 
-    loss = tf.reduce_mean(pos_term + neg_term)
+    loss = tf.reduce_mean(pos_term + neg_term) * scala
 
     return loss

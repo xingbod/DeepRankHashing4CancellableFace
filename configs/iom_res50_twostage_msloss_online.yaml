@@ -14,10 +14,10 @@ head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
 
 # train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split VGG png MS jpg
-#train_dataset: '/media/xingbo/Storage/facedata/ms1m_align_112/imgs'
-train_dataset: '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160'
-img_ext: 'png'
-dataset_ext: 'VGG2'
+train_dataset: '/home/xingbo/facedata/ms1m_align_112/imgs'
+#train_dataset: '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160'
+img_ext: 'jpg'
+dataset_ext: 'ms'
 # for metric learning, we have 1.  batch_hard_triplet 2. batch_all_triplet_loss 3. batch_all_arc_triplet_loss 4. semihard_triplet_loss
 loss_fun: 'ms_loss'
 triplet_margin: 0
