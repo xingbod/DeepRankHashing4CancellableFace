@@ -23,7 +23,7 @@ def ms_loss(labels, embeddings, alpha=2.0, beta=50.0, lamb=1.0, eps=0.1, ms_mini
     official codes: https://github.com/MalongTech/research-ms-loss
     '''
     # make sure emebedding should be l2-normalized
-    embeddings = tf.nn.l2_normalize(embeddings, axis=1)
+    # embeddings = tf.nn.l2_normalize(embeddings, axis=1)
     labels = tf.reshape(labels, [-1, 1])
 
     batch_size = embeddings.get_shape().as_list()[0]
@@ -31,10 +31,14 @@ def ms_loss(labels, embeddings, alpha=2.0, beta=50.0, lamb=1.0, eps=0.1, ms_mini
     adjacency = tf.equal(labels, tf.transpose(labels))
     adjacency_not = tf.logical_not(adjacency)
 
-    mask_pos = tf.cast(adjacency, dtype=tf.float32) - tf.eye(batch_size, dtype=tf.float32)
-    mask_neg = tf.cast(adjacency_not, dtype=tf.float32)
+    mask_pos = tf.cast(adjacency, dtype=tf.double) - tf.eye(batch_size, dtype=tf.double)
+    mask_neg = tf.cast(adjacency_not, dtype=tf.double)
 
     sim_mat = tf.matmul(embeddings, embeddings, transpose_a=False, transpose_b=True)
+    # below two lines process norm
+    embeddings_norm1 = tf.sqrt(tf.reduce_sum(tf.square(embeddings), axis=1))
+    sim_mat = tf.math.divide(sim_mat, embeddings_norm1 * embeddings_norm1)
+
     sim_mat = tf.maximum(sim_mat, 0.0)
 
     pos_mat = tf.multiply(sim_mat, mask_pos)
