@@ -102,7 +102,7 @@ def load_and_preprocess_image(path,labels,totalsamples,is_ccrop=False):
         image.append(tf.io.read_file(path[i]))
     return preprocess_image(image,totalsamples,is_ccrop=False),labels
 
-def load_online_pair_wise_dataset(dbdir,ext = 'jpg',dataset_ext = 'ms',samples_per_class = 3,classes_per_batch = 4,is_ccrop = False, buffer_size=10240):
+def load_online_pair_wise_dataset(dbdir,ext = 'jpg',dataset_ext = 'ms',samples_per_class = 3,classes_per_batch = 4,is_ccrop = False, buffer_size=50240):
     # dataset_ext = 'ms'  # VGG2
     # block_length how many samples per class
     # samples_per_class = 3
@@ -111,7 +111,7 @@ def load_online_pair_wise_dataset(dbdir,ext = 'jpg',dataset_ext = 'ms',samples_p
     allsubdir = [os.path.join(dbdir, o) for o in os.listdir(dbdir)
                  if os.path.isdir(os.path.join(dbdir, o))]
     path_ds = tf.data.Dataset.from_tensor_slices(allsubdir).repeat()
-    ds = path_ds.shuffle(buffer_size).interleave(lambda x: ListFiles(x, ext), cycle_length=3500,# every time, cycle_length classes are taken out to do the maping MS 85742
+    ds = path_ds.shuffle(buffer_size).interleave(lambda x: ListFiles(x, ext), cycle_length=3000,# every time, cycle_length classes are taken out to do the maping MS 85742
                                            block_length=samples_per_class,
                                            num_parallel_calls=tf.data.experimental.AUTOTUNE).batch(classes_per_batch * samples_per_class, True).map(
         lambda x: pair_parser(x, classes_per_batch * samples_per_class, dataset=dataset_ext), -1).map(
