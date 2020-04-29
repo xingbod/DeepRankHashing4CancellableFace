@@ -1,5 +1,5 @@
 import tensorflow as tf
-
+import os
 
 def _parse_tfrecord(binary_img=False, is_ccrop=False):
     def parse_tfrecord(tfrecord):
@@ -69,3 +69,30 @@ def load_fake_dataset(size):
     y_train = tf.expand_dims(y_train, axis=0)
 
     return tf.data.Dataset.from_tensor_slices((x_train, y_train))
+
+'''
+load_data_split is used to evaluate y.t.f and f.s dataset
+'''
+def transform_test_images(img):
+    img = tf.image.resize(img, (112, 112))
+    img = img / 255
+    return img
+
+def load_data_split(save_path,BATCH_SIZE=16,subset='train_gallery',img_ext='jpg'):
+    def get_label_withname( file_path):
+        # convert the path to a list of path components
+        parts = tf.strings.split(file_path, os.path.sep)
+        # The second to last is the class-directory
+        wh =  parts[-2]
+        return wh
+    def process_path_withname(file_path):
+      label = get_label_withname(file_path)
+      img = tf.io.read_file(file_path)
+      img = tf.image.decode_jpeg(img, channels=3)
+      img = transform_test_images(img)
+      return img, label
+    list_gallery_ds = tf.data.Dataset.list_files(save_path +'/'+subset+'/*.'+img_ext)
+    labeled_gallery_ds = list_gallery_ds.map(lambda x:process_path_withname(x), num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    dataset = labeled_gallery_ds.batch(BATCH_SIZE)
+    return dataset
+

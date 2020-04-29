@@ -13,6 +13,11 @@ from .utils import l2_norm
 from sklearn import metrics
 from scipy.optimize import brentq
 from scipy import interpolate
+from modules.dataset import load_data_split
+from metrics.retrieval import streaming_mean_averge_precision,streaming_mean_cmc_at_k
+from sklearn import preprocessing
+
+
 
 def get_val_pair(path, name):
     carray = bcolz.carray(rootdir=os.path.join(path, name), mode='r')
@@ -179,7 +184,7 @@ def perform_val(embedding_size, batch_size, model,
          embedding_size = int(embedding_size / cfg['q'])
     embeddings = np.zeros([len(carray), embedding_size])
 
-    for idx in tqdm.tqdm(range(0, len(carray), batch_size)):
+    for idx in tqdm.tqdm(range(0, len(carray), batch_size),ascii = True):
         batch = carray[idx:idx + batch_size]
         batch = np.transpose(batch, [0, 2, 3, 1]) * 0.5 + 0.5
         if is_ccrop:
@@ -213,3 +218,32 @@ def val_LFW(model,cfg):
         cfg['q']*cfg['m'], 32, model, lfw, lfw_issame,
         is_ccrop=cfg['is_ccrop'], cfg=cfg)
 
+'''
+2020/04/29 new add by Xingbo, evaluate y.t.f and f.s
+ds_path = 'E:/my research/etri2020/facedataset/facescrub_images_112x112'
+
+'''
+def perform_val_yts(batch_size, model,ds_path,is_ccrop=False, is_flip=False,cfg=None,img_ext='png'):
+    """perform val for youtube face and facescrb"""
+    def extractFeat(dataset,model):
+        feats = []
+        names = []
+        n = 0
+        for image_batch, label_batch in dataset:
+            feature = model(image_batch)
+            for i in range(feature.shape[0]):
+                n = n + 1
+                feats.append(feature[i])
+                mylabel = label_batch[i].numpy()
+                names.append(mylabel)
+        print(f"finanly we have {n} samples extracted features")
+        feats = np.array(feats)
+        names = np.array(names)
+        return feats,names
+    gallery = load_data_split(ds_path, batch_size, subset='train_gallery', img_ext=img_ext)
+    probes = load_data_split(ds_path, batch_size, subset='test', img_ext=img_ext)
+    gallery_feats, gallery_names = extractFeat(gallery, model)
+    probes_feats, probes_names = extractFeat(probes, model)
+    mAp = streaming_mean_averge_precision(probes_feats, probes_names, gallery_feats, gallery_names,k=50)
+    rr = streaming_mean_cmc_at_k(probes_feats, probes_names, gallery_feats, gallery_names, 10)
+    return mAp,rr
