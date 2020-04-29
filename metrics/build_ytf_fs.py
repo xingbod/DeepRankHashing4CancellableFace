@@ -66,15 +66,13 @@ def splitDS(ds_path, save_dir, SPLIT_WEIGHTS=[40,5], ds='ytf'):
             copy(images, dst_dir)
 
 if __name__ == '__main__':
+    ds_path = './data/test_dataset/facescrub_images_112x112/112x112'
+    save_path = './data/test_dataset/facescrub_images_112x112/'
+    splitDS(ds_path, save_path, SPLIT_WEIGHTS=[120, 5], ds='fs')
 
-
-    ds_path = 'E:/my research/etri2020/facedataset/facescrub_images_112x112/112x112'
-    save_path = 'E:/my research/etri2020/facedataset/facescrub_images_112x112'
-    splitDS(ds_path, save_path, SPLIT_WEIGHTS=[40, 5], img_ext='png')
-
-    ds_path = 'E:/my research/etri2020/facedataset/aligned_images_DB_YTF/aligned_images_DB_YTF/aligned_images_DB/'
-    save_path = 'E:/my research/etri2020/facedataset/aligned_images_DB_YTF/aligned_images_DB_YTF'
-    splitDS(ds_path, save_path, SPLIT_WEIGHTS=[120, 5], img_ext='jpg')
+    ds_path = './data/test_dataset/aligned_images_DB_YTF/aligned_images_DB/'
+    save_path = './data/test_dataset/aligned_images_DB_YTF/'
+    splitDS(ds_path, save_path, SPLIT_WEIGHTS=[40, 5], ds='ytf')
 
     # splitDS(ds_path, save_path, SPLIT_WEIGHTS=[120, 5], ds='fs')
     # dataset = load_data_split(save_path,BATCH_SIZE=16,img_ext='png')
