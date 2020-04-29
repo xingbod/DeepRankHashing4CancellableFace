@@ -34,5 +34,5 @@ q: 8
 m: 256
 # test
 test_dataset: './data/test_dataset'
-test_dataset_ytf: 'E:/my research/etri2020/facedataset/aligned_images_DB_YTF/aligned_images_DB_YTF'
-test_dataset_fs: 'E:/my research/etri2020/facedataset/facescrub_images_112x112'
+test_dataset_ytf: './data/test_dataset/aligned_images_DB_YTF/aligned_images_DB_YTF'
+test_dataset_fs: './data/test_dataset/facescrub_images_112x112/112x112'
