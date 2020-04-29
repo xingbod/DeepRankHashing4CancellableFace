@@ -123,7 +123,7 @@ def recognition_rate_at_k(probe_x, probe_y, gallery_x, gallery_y, k,
 
 
 def streaming_mean_cmc_at_k(probe_x, probe_y, gallery_x, gallery_y, k,
-                            measure=pdist):
+                            measure=cosine_distance):
     """Compute cumulated matching characteristics (CMC) at level `k` over
     a stream of data (i.e., multiple batches).
     The function is compatible with TensorFlow-Slim's streaming metrics
@@ -158,7 +158,7 @@ def streaming_mean_cmc_at_k(probe_x, probe_y, gallery_x, gallery_y, k,
     return myrecognition_rate
 
 
-def streaming_mean_averge_precision(probe_x, probe_y, gallery_x, gallery_y,k=10,
+def streaming_mean_averge_precision(probe_x, probe_y, gallery_x, gallery_y,k=50,
                                     measure=cosine_distance):
     """Compute mean average precision (mAP) over a stream of data.
     Parameters
@@ -188,11 +188,11 @@ def streaming_mean_averge_precision(probe_x, probe_y, gallery_x, gallery_y,k=10,
     # Compute matrix of predicted labels.
     # k = tf.shape(gallery_y)[0]
     _, prediction_indices = tf.nn.top_k(predictions, k=k)
-    print('prediction_indices',prediction_indices)
-    print('gallery_y',gallery_y)
+    # print('prediction_indices',prediction_indices)
+    # print('gallery_y',gallery_y)
     predicted_label_mat = tf.gather(gallery_y, prediction_indices)
-    print('predicted_label_mat',predicted_label_mat)
-    print('probe_y',tf.reshape(probe_y, (-1, 1)))
+    # print('predicted_label_mat',predicted_label_mat)
+    # print('probe_y',tf.reshape(probe_y, (-1, 1)))
     label_eq_mat = tf.cast(tf.equal(predicted_label_mat, tf.reshape(probe_y, (-1, 1))), tf.float32)
 
     # Compute statistics.

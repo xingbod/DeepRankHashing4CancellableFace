@@ -236,9 +236,9 @@ def perform_val_yts(batch_size, model,ds_path,is_ccrop=False, is_flip=False,cfg=
                 feats.append(feature[i])
                 mylabel = label_batch[i].numpy()
                 names.append(mylabel)
-        print(f"finanly we have {n} samples extracted features")
-        feats = np.array(feats)
-        names = np.array(names)
+        print(f"[*] finanly we have {n} extracted samples features")
+        # feats = np.array(feats)
+        # names = np.array(names)
         return feats,names
     gallery = load_data_split(ds_path, batch_size, subset='train_gallery', img_ext=img_ext)
     probes = load_data_split(ds_path, batch_size, subset='test', img_ext=img_ext)

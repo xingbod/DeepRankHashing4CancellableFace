@@ -83,7 +83,7 @@ def load_data_split(save_path,BATCH_SIZE=16,subset='train_gallery',img_ext='jpg'
         # convert the path to a list of path components
         parts = tf.strings.split(file_path, os.path.sep)
         # The second to last is the class-directory
-        wh =  parts[-2]
+        wh = parts[-2]
         return wh
     def process_path_withname(file_path):
       label = get_label_withname(file_path)
@@ -91,7 +91,7 @@ def load_data_split(save_path,BATCH_SIZE=16,subset='train_gallery',img_ext='jpg'
       img = tf.image.decode_jpeg(img, channels=3)
       img = transform_test_images(img)
       return img, label
-    list_gallery_ds = tf.data.Dataset.list_files(save_path +'/'+subset+'/*.'+img_ext)
+    list_gallery_ds = tf.data.Dataset.list_files(save_path +'/'+subset+'/*/*.'+img_ext)
     labeled_gallery_ds = list_gallery_ds.map(lambda x:process_path_withname(x), num_parallel_calls=tf.data.experimental.AUTOTUNE)
     dataset = labeled_gallery_ds.batch(BATCH_SIZE)
     return dataset

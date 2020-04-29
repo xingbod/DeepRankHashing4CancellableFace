@@ -2,7 +2,7 @@
 samples_per_class: 4
 classes_per_batch: 50
 batch_size: 200
-eval_batch_size: 128
+eval_batch_size: 200
 input_size: 112
 # embd_shape is for the Resnet, backbone
 embd_shape: 512
@@ -34,5 +34,5 @@ q: 8
 m: 256
 # test
 test_dataset: './data/test_dataset'
-test_dataset_ytf: './data/test_dataset/aligned_images_DB_YTF/aligned_images_DB_YTF'
-test_dataset_fs: './data/test_dataset/facescrub_images_112x112/112x112'
+test_dataset_ytf: './data/test_dataset/aligned_images_DB_YTF/'
+test_dataset_fs: './data/test_dataset/facescrub_images_112x112/'
