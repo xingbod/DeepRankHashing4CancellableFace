@@ -7,7 +7,7 @@ import tensorflow as tf
 import modules
 import csv
 
-from modules.evaluations import get_val_data, perform_val
+from modules.evaluations import get_val_data, perform_val,perform_val_yts
 from modules.models import ArcFaceModel,IoMFaceModelFromArFace
 from modules.utils import set_memory_growth, load_yaml, l2_norm
 
@@ -44,6 +44,7 @@ def main(_argv):
     model = IoMFaceModelFromArFace(size=cfg['input_size'],
                                    arcmodel=arcmodel, training=False,
                                    permKey=permKey, cfg=cfg)
+    model.trainable = False
     model.summary(line_length=80)
     if FLAGS.ckpt_epoch == '':
         ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
@@ -67,6 +68,12 @@ def main(_argv):
         embeds = l2_norm(model(img))
         np.save('./output_embeds.npy', embeds)
     else:
+        print("[*] Perform Retrieval Evaluation on Y.T.F and F.S...")
+        mAp_ytf, rr_ytf = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_ytf'],img_ext='jpg')
+        mAp_fs, rr_fs = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_fs'],img_ext='png')
+        print("    Y.T.F mAP {:.4f}, F.S mAP: {:.2f}".format(mAp_ytf, mAp_fs))
+        print("    Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(rr_ytf[0], rr_fs[0]))
+
         print("[*] Loading LFW, AgeDB30 and CFP-FP...")
         lfw, agedb_30, cfp_fp, lfw_issame, agedb_30_issame, cfp_fp_issame = \
             get_val_data(cfg['test_dataset'])
@@ -88,15 +95,15 @@ def main(_argv):
             cfg['embd_shape'], cfg['eval_batch_size'], model, cfp_fp, cfp_fp_issame,
             is_ccrop=cfg['is_ccrop'], cfg=cfg)
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp, eer_cfp_fp))
-        with open('./embeddings/embeddings_lfw.csv', 'w', newline='') as file:
-            writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
-            writer.writerows(embeddings_lfw)
-        with open('./embeddings/embeddings_agedb30.csv', 'w', newline='') as file:
-            writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
-            writer.writerows(embeddings_agedb30)
-        with open('./embeddings/embeddings_cfp_fp.csv', 'w', newline='') as file:
-            writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
-            writer.writerows(embeddings_cfp_fp)
+        # with open('./embeddings/embeddings_lfw.csv', 'w', newline='') as file:
+        #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
+        #     writer.writerows(embeddings_lfw)
+        # with open('./embeddings/embeddings_agedb30.csv', 'w', newline='') as file:
+        #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
+        #     writer.writerows(embeddings_agedb30)
+        # with open('./embeddings/embeddings_cfp_fp.csv', 'w', newline='') as file:
+        #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
+        #     writer.writerows(embeddings_cfp_fp)
         print(''' q = {:.2f}, m = {:.2f} | LFW | AgeDB30 | CFP - FP
         --- | --- | --- | ---
         Accuracy | {:.4f} | {:.4f} | {:.4f} 

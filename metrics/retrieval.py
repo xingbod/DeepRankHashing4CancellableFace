@@ -45,8 +45,10 @@ def cosine_distance(a, b=None):
         A matrix of shape NxM where element (i, j) contains the cosine distance
         between elements `a[i]` and `b[j]`.
     """
+    # print('***********a*******',a)
+    a = tf.cast(a, tf.float32) # cast to float before norm it
     a_normed = tf.nn.l2_normalize(a, axis=1)
-    b_normed = a_normed if b is None else tf.nn.l2_normalize(b, axis=1)
+    b_normed = a_normed if b is None else tf.nn.l2_normalize(tf.cast(b, tf.float32), axis=1)
     return (
         tf.constant(1.0, tf.float32) -
         tf.matmul(a_normed, tf.transpose(b_normed)))
@@ -156,7 +158,7 @@ def streaming_mean_cmc_at_k(probe_x, probe_y, gallery_x, gallery_y, k,
     return myrecognition_rate
 
 
-def streaming_mean_averge_precision(probe_x, probe_y, gallery_x, gallery_y,
+def streaming_mean_averge_precision(probe_x, probe_y, gallery_x, gallery_y,k=10,
                                     measure=cosine_distance):
     """Compute mean average precision (mAP) over a stream of data.
     Parameters
@@ -184,11 +186,14 @@ def streaming_mean_averge_precision(probe_x, probe_y, gallery_x, gallery_y,
     predictions = tf.math.exp(-measure(probe_x, gallery_x))
 
     # Compute matrix of predicted labels.
-    k = tf.shape(gallery_y)[0]
+    # k = tf.shape(gallery_y)[0]
     _, prediction_indices = tf.nn.top_k(predictions, k=k)
+    print('prediction_indices',prediction_indices)
+    print('gallery_y',gallery_y)
     predicted_label_mat = tf.gather(gallery_y, prediction_indices)
-    label_eq_mat = tf.cast(tf.equal(
-        predicted_label_mat, tf.reshape(probe_y, (-1, 1))), tf.float32)
+    print('predicted_label_mat',predicted_label_mat)
+    print('probe_y',tf.reshape(probe_y, (-1, 1)))
+    label_eq_mat = tf.cast(tf.equal(predicted_label_mat, tf.reshape(probe_y, (-1, 1))), tf.float32)
 
     # Compute statistics.
     num_relevant = tf.reduce_sum(label_eq_mat, axis=1, keepdims=True)
@@ -207,11 +212,11 @@ def streaming_mean_averge_precision(probe_x, probe_y, gallery_x, gallery_y,
 
 
 if __name__ == '__main__':
-    probe_x = [[1.0, 2, 3], [-1.0, 4, 3]]
-    probe_y = [1, 2]
-    gallery_x = [[-3, 4, 5], [1.0, 3, 2], [1, 4, 2], [1.0, 2, 3], [-4.0, 2, 1]]
-    gallery_y = [2, 1, 3, 1, 2]
-    mAp = streaming_mean_averge_precision(probe_x, probe_y, gallery_x, gallery_y)
+    probe_x = tf.constant([[1.0, 2, 3], [-1.0, 4, 3]])
+    probe_y = tf.constant(['abc', 'bd'])
+    gallery_x = tf.constant([[-3, 4, 5], [1.0, 3, 2], [1, 0, 2], [1.0, 2, 3], [-4.0, 2, 1]])
+    gallery_y = tf.constant([ 'bd', 'abc', 'c', 'abc',  'bd'])
+    mAp = streaming_mean_averge_precision(probe_x, probe_y, gallery_x, gallery_y,k=5)
     print('mAp:', mAp)
     rr = streaming_mean_cmc_at_k(probe_x, probe_y, gallery_x, gallery_y, 5)
     print('cmc_at_k:', rr)

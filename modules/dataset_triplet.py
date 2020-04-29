@@ -111,7 +111,7 @@ def load_online_pair_wise_dataset(dbdir,ext = 'jpg',dataset_ext = 'ms',samples_p
     allsubdir = [os.path.join(dbdir, o) for o in os.listdir(dbdir)
                  if os.path.isdir(os.path.join(dbdir, o))]
     path_ds = tf.data.Dataset.from_tensor_slices(allsubdir).repeat()
-    ds = path_ds.shuffle(buffer_size).interleave(lambda x: ListFiles(x, ext), cycle_length=3000,# every time, cycle_length classes are taken out to do the maping MS 85742
+    ds = path_ds.shuffle(buffer_size).interleave(lambda x: ListFiles(x, ext), cycle_length=3000,# every time, cycle_length classes are taken out to do the maping MS 85742, here at most 3k, otherwise machine crash
                                            block_length=samples_per_class,
                                            num_parallel_calls=tf.data.experimental.AUTOTUNE).batch(classes_per_batch * samples_per_class, True).map(
         lambda x: pair_parser(x, classes_per_batch * samples_per_class, dataset=dataset_ext), -1).map(
