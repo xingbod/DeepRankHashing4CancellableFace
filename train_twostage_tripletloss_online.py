@@ -116,7 +116,7 @@ def main(_):
                 if cfg['loss_fun'] == 'batch_hard_triplet':
                     pred_loss = triplet_loss_omoindrot.batch_hard_triplet_loss(labels, logist,margin=cfg['triplet_margin'])
                 elif cfg['loss_fun'] == 'batch_all_triplet_loss':
-                    pred_loss = triplet_loss_omoindrot.batch_all_triplet_loss(labels, logist,margin=cfg['triplet_margin'])
+                    pred_loss = triplet_loss_omoindrot.batch_all_triplet_loss(labels, logist,margin=cfg['triplet_margin'], scala=100)
                 elif cfg['loss_fun'] == 'ms_loss':
                     pred_loss = ms_loss.ms_loss(labels, logist,ms_mining=True)
                 elif cfg['loss_fun'] == 'batch_all_arc_triplet_loss':
