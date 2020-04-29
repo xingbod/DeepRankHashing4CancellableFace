@@ -95,8 +95,7 @@ def recognition_rate_at_k(probe_x, probe_y, gallery_x, gallery_y, k,
     # gallery (same identity). This should always be one for CMC evaluation
     # because we always have exactly one probe and one gallery image for each
     # identity.
-    num_relevant = tf.minimum(tf.cast(k, tf.float32), tf.reduce_sum(
-        label_eq_mat, axis=1))
+    num_relevant = tf.minimum(tf.cast(k, tf.float32), tf.reduce_sum(label_eq_mat, axis=1))
 
     # Rank gallery images by the similarity measure to build a matrix of
     # shape (num_probes, k) where element (i, j) contains the label of the
@@ -199,11 +198,14 @@ def streaming_mean_averge_precision(probe_x, probe_y, gallery_x, gallery_y,k=50,
     num_relevant = tf.reduce_sum(label_eq_mat, axis=1, keepdims=True)
     true_positives_at_k = tf.cumsum(label_eq_mat, axis=1)
     retrieved_at_k = tf.cumsum(tf.ones_like(label_eq_mat), axis=1)
+    print('retrieved_at_k',retrieved_at_k)
+    print('true_positives_at_k',true_positives_at_k)
     precision_at_k = true_positives_at_k / retrieved_at_k
-    # print("precision_at_k:",precision_at_k)
-    # print("predicted_label_mat:",predicted_label_mat)
-    # print("prediction_indices:",prediction_indices)
-    # print("label_eq_mat:",label_eq_mat)
+    print("precision_at_k:",precision_at_k)
+    print("predicted_label_mat:",predicted_label_mat)
+    print("prediction_indices:",prediction_indices)
+    print("label_eq_mat:",label_eq_mat)
+    print('num_relevant',num_relevant)
     relevant_at_k = label_eq_mat
     average_precision = (
         tf.reduce_sum(precision_at_k * relevant_at_k, axis=1) /
@@ -219,4 +221,4 @@ if __name__ == '__main__':
     mAp = streaming_mean_averge_precision(probe_x, probe_y, gallery_x, gallery_y,k=5)
     print('mAp:', mAp)
     rr = streaming_mean_cmc_at_k(probe_x, probe_y, gallery_x, gallery_y, 5)
-    print('cmc_at_k:', rr)
+    print('cmc_at_k:', rr[0])
