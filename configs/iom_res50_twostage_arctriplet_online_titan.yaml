@@ -20,6 +20,7 @@ img_ext: 'jpg'
 dataset_ext: 'ms'
 # for metric learning, we have 1.  batch_hard_triplet 2. batch_all_triplet_loss 3. batch_all_arc_triplet_loss 4. semihard_triplet_loss
 loss_fun: 'batch_all_arc_triplet_loss'
+#triplet_margin here is the m value of the arc loss
 triplet_margin: -1
 binary_img: False
 num_classes: 85742
