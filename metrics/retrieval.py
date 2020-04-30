@@ -182,13 +182,16 @@ def streaming_mean_averge_precision(probe_x, probe_y, gallery_x, gallery_y,k=50,
     # See Wikipedia:
     # https://en.wikipedia.org/wiki/Information_retrieval#Average_precision
     # Compute similarity measure and mask out diagonal (similarity to self).
-    predictions = tf.math.exp(-measure(probe_x, gallery_x))
-
+    cos_dist = measure(probe_x, gallery_x)
+    cos_dist = tf.clip_by_value(cos_dist, 0, 1)
+    predictions = tf.math.exp(-cos_dist)
+    # predictions = 1-cos_dist
     # Compute matrix of predicted labels.
     # k = tf.shape(gallery_y)[0]
     _, prediction_indices = tf.nn.top_k(predictions, k=k)
     # print('prediction_indices',prediction_indices)
     # print('gallery_y',gallery_y)
+    # print('probe_y',probe_y)
     predicted_label_mat = tf.gather(gallery_y, prediction_indices)
     # print('predicted_label_mat',predicted_label_mat)
     # print('probe_y',tf.reshape(probe_y, (-1, 1)))
@@ -198,24 +201,30 @@ def streaming_mean_averge_precision(probe_x, probe_y, gallery_x, gallery_y,k=50,
     num_relevant = tf.reduce_sum(label_eq_mat, axis=1, keepdims=True)
     true_positives_at_k = tf.cumsum(label_eq_mat, axis=1)
     retrieved_at_k = tf.cumsum(tf.ones_like(label_eq_mat), axis=1)
-    print('retrieved_at_k',retrieved_at_k)
-    print('true_positives_at_k',true_positives_at_k)
+    # print('retrieved_at_k',retrieved_at_k)
+    # print('true_positives_at_k',true_positives_at_k)
     precision_at_k = true_positives_at_k / retrieved_at_k
-    print("precision_at_k:",precision_at_k)
-    print("predicted_label_mat:",predicted_label_mat)
-    print("prediction_indices:",prediction_indices)
-    print("label_eq_mat:",label_eq_mat)
-    print('num_relevant',num_relevant)
+    # print("precision_at_k:",precision_at_k)
+    # print("predicted_label_mat:",predicted_label_mat)
+    # print("prediction_indices:",prediction_indices)
+    # print("label_eq_mat:",label_eq_mat)
+    # print('num_relevant',num_relevant)
     relevant_at_k = label_eq_mat
     average_precision = (
         tf.reduce_sum(precision_at_k * relevant_at_k, axis=1) /
         tf.cast(tf.squeeze(num_relevant), tf.float32))
+    # print('tf.squeeze(num_relevant)',tf.squeeze(num_relevant))
+    # print('tf.reduce_sum(precision_at_k * relevant_at_k, axis=1)',tf.reduce_sum(precision_at_k * relevant_at_k, axis=1))
+    # print('average_precision',average_precision)
+    # average_precision = tf.clip_by_value(average_precision, 0, 1)
+    average_precision = tf.where(tf.math.is_nan(average_precision), tf.zeros_like(average_precision), average_precision)
+    print('mAP',tf.reduce_mean(average_precision))
     return tf.reduce_mean(average_precision)
 
 
 if __name__ == '__main__':
-    probe_x = tf.constant([[1.0, 2, 3], [-1.0, 4, 3]])
-    probe_y = tf.constant(['abc', 'bd'])
+    probe_x = tf.constant([[1.0, 2, 3], [-1.0, 4, 3], [-9.0, 9, 3]])
+    probe_y = tf.constant(['abc', 'bd','ee'])
     gallery_x = tf.constant([[-3, 4, 5], [1.0, 3, 2], [1, 0, 2], [1.0, 2, 3], [-4.0, 2, 1]])
     gallery_y = tf.constant([ 'bd', 'abc', 'c', 'abc',  'bd'])
     mAp = streaming_mean_averge_precision(probe_x, probe_y, gallery_x, gallery_y,k=5)

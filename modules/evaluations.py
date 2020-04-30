@@ -242,6 +242,6 @@ def perform_val_yts(batch_size, model,ds_path,is_ccrop=False, is_flip=False,cfg=
     probes = load_data_split(ds_path, batch_size, subset='test', img_ext=img_ext)
     gallery_feats, gallery_names = extractFeat(gallery, model)
     probes_feats, probes_names = extractFeat(probes, model)
-    mAp = streaming_mean_averge_precision(probes_feats, probes_names, gallery_feats, gallery_names,k=50)
+    mAp = streaming_mean_averge_precision(probes_feats, probes_names, gallery_feats, gallery_names,k=10)
     rr = streaming_mean_cmc_at_k(probes_feats, probes_names, gallery_feats, gallery_names, 10)
     return mAp,rr
