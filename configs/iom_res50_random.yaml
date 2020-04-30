@@ -26,4 +26,5 @@ m: 256
 # test
 test_dataset: './data/test_dataset'
 test_dataset_ytf: './data/test_dataset/aligned_images_DB_YTF/'
-test_dataset_fs: './data/test_dataset/facescrub_images_112x112/'
+#test_dataset_fs: './data/test_dataset/facescrub_images_112x112/'
+test_dataset_fs: './data/test_dataset/facescrub_mtcnn_160/'

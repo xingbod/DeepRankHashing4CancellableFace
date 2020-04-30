@@ -95,7 +95,7 @@ def main(_argv):
             cfg['embd_shape'], cfg['eval_batch_size'], model, cfp_fp, cfp_fp_issame,
             is_ccrop=cfg['is_ccrop'], cfg=cfg)
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp, eer_cfp_fp))
-        # with open('./embeddings/embeddings_lfw.csv', 'w', newline='') as file:
+        # with open('./embeddings/embeddings_lfw.csv', 'w', n   ewline='') as file:
         #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
         #     writer.writerows(embeddings_lfw)
         # with open('./embeddings/embeddings_agedb30.csv', 'w', newline='') as file:
