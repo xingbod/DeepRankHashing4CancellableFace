@@ -106,7 +106,7 @@ def zero_non_contributing_examples(log_weights, distances, positive_mask, margin
     # to zero -> -\infty in log
     negative_inf_array = tf.math.log(tf.zeros_like(log_weights))
     log_weights = tf.where(positive_mask, negative_inf_array, log_weights)
-    # margins = tf.cast(margins,tf.double)
+    margins = tf.cast(margins,tf.double)
     log_weights = tf.cast(log_weights,tf.double)
     log_weights = tf.where(
         (distances - margins[:, None]) < 0,
@@ -138,7 +138,7 @@ def get_negative_pairs(log_weights, count, labels):
     # infinite weights
     max_counts = tf.tile(tf.range(0, limit=most_examples_to_sample)[None, :], (num_examples, 1))
     below_count = tf.math.less(max_counts, to_sample[:, None])
-    inf_check = tf.math.logical_not(tf.reduce_all(tf.is_inf(log_weights), axis=1, keepdims=True))
+    inf_check = tf.math.logical_not(tf.reduce_all(tf.math.is_inf(log_weights), axis=1, keepdims=True))
     to_take = tf.math.logical_and(inf_check, below_count)
 
     indices_to_take = tf.where(to_take)
