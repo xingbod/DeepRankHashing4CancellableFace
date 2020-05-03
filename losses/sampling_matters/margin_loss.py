@@ -67,7 +67,7 @@ def distance_to_weight(d, n):
     # b = (1. - 1/4.*d**2)**((n-3)/2)
     # q = (a*b)**(-1)
     n = tf.cast(n, tf.float32)
-    a_inv = (2.0 - n) * tf.log(d)
+    a_inv = (2.0 - n) * tf.math.log(d)
     b_inv = -((n - 3) / 2) * tf.log(1.0 - 0.25 * (d ** 2.0))
     log_q = a_inv + b_inv
     max_per_row = tf.reduce_max(
@@ -104,7 +104,7 @@ def zero_non_contributing_examples(log_weights, distances, positive_mask, margin
     # We only sample negative examples. These will only generate loss
     # if they are within a margin. If not we want to set their probability
     # to zero -> -\infty in log
-    negative_inf_array = tf.log(tf.zeros_like(log_weights))
+    negative_inf_array = tf.math.log(tf.zeros_like(log_weights))
     log_weights = tf.where(positive_mask, negative_inf_array, log_weights)
     log_weights = tf.where(
         (distances - margins[:, None]) < 0,
@@ -135,9 +135,9 @@ def get_negative_pairs(log_weights, count, labels):
     # we also drop indices, which come from rows with all
     # infinite weights
     max_counts = tf.tile(tf.range(0, limit=most_examples_to_sample)[None, :], (num_examples, 1))
-    below_count = tf.less(max_counts, to_sample[:, None])
-    inf_check = tf.logical_not(tf.reduce_all(tf.is_inf(log_weights), axis=1, keepdims=True))
-    to_take = tf.logical_and(inf_check, below_count)
+    below_count = tf.math.less(max_counts, to_sample[:, None])
+    inf_check = tf.math.logical_not(tf.reduce_all(tf.is_inf(log_weights), axis=1, keepdims=True))
+    to_take = tf.math.logical_and(inf_check, below_count)
 
     indices_to_take = tf.where(to_take)
     negative_indices = tf.gather_nd(negative_indices, indices_to_take)
