@@ -216,6 +216,8 @@ def margin_loss(labels, embedding, beta, params):
     an = tf.stack([negative_anchor_indices, negative_indices], axis=1)
     d_an = tf.gather_nd(pairwise_distances, an)
     beta_an = tf.gather(beta, negative_anchor_indices)
+    beta_an = tf.cast(beta_an,tf.double)
+    d_an = tf.cast(d_an,tf.double)
     neg_loss = tf.maximum(alpha + beta_an - d_an, 0)
     neg_contribute_pairs = tf.math.count_nonzero(neg_loss, dtype=tf.double)
     neg_loss = tf.reduce_sum(neg_loss)
