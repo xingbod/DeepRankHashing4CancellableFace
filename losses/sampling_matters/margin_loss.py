@@ -66,7 +66,7 @@ def distance_to_weight(d, n):
     # a = d**(n-2)
     # b = (1. - 1/4.*d**2)**((n-3)/2)
     # q = (a*b)**(-1)
-    n = tf.cast(n, tf.float32)
+    n = tf.cast(n, tf.double)
     a_inv = (2.0 - n) * tf.math.log(d)
     b_inv = -((n - 3) / 2) * tf.log(1.0 - 0.25 * (d ** 2.0))
     log_q = a_inv + b_inv
@@ -205,7 +205,7 @@ def margin_loss(labels, embedding, beta, params):
     d_ap = tf.gather_nd(pairwise_distances, ap)
     beta_ap = tf.gather(beta, positive_anchor_indices)
     poss_loss = tf.maximum(alpha + d_ap - beta_ap, 0)
-    poss_contribute_pairs = tf.count_nonzero(poss_loss, dtype=tf.float32)
+    poss_contribute_pairs = tf.count_nonzero(poss_loss, dtype=tf.double)
     poss_loss = tf.reduce_sum(poss_loss)
 
     # negative
@@ -213,7 +213,7 @@ def margin_loss(labels, embedding, beta, params):
     d_an = tf.gather_nd(pairwise_distances, an)
     beta_an = tf.gather(beta, negative_anchor_indices)
     neg_loss = tf.maximum(alpha + beta_an - d_an, 0)
-    neg_contribute_pairs = tf.count_nonzero(neg_loss, dtype=tf.float32)
+    neg_contribute_pairs = tf.count_nonzero(neg_loss, dtype=tf.double)
     neg_loss = tf.reduce_sum(neg_loss)
 
     beta_loss = tf.maximum((tf.reduce_sum(beta_ap) + tf.reduce_sum(beta_an)) * nu, 0.)
