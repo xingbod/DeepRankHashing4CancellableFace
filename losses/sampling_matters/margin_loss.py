@@ -106,8 +106,10 @@ def zero_non_contributing_examples(log_weights, distances, positive_mask, margin
     # to zero -> -\infty in log
     negative_inf_array = tf.math.log(tf.zeros_like(log_weights))
     log_weights = tf.where(positive_mask, negative_inf_array, log_weights)
+    margins = tf.cast(margins,tf.double)
+    distances = tf.cast(distances,tf.double)
     log_weights = tf.where(
-        (distances - margins[:, None]) < 0,
+        (distances - margins[:, None]) < tf.constant(0.0),
         log_weights,
         negative_inf_array)
     return log_weights
