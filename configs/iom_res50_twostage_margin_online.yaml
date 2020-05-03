@@ -9,7 +9,7 @@ input_size: 112
 embd_shape: 512
 #iom_res50_twostage_triplet -- only two stage with triplet loss
 #iom_res50_twostage_triplet and quantization loss -- triplet loss + quantization loss, this in another config file
-sub_name: 'iom_res50_twostage_BAtriplet_online'
+sub_name: 'iom_res50_twostage_margin_online'
 backbone_type: 'ResNet50' # 'ResNet50', 'MobileNetV2'
 head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
