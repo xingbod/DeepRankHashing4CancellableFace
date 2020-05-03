@@ -90,6 +90,20 @@ def main(_):
         print("[*] training from scratch.")
         epochs, steps = 1, 1
 
+    if cfg['loss_fun'] == 'margin_loss':
+        beta_0 = 1.2  # initial learnable beta value
+        number_identities = 85742  # for mnist
+        params = {
+            'alpha': 0.2,
+            'nu': 0.,
+            'cutoff': 0.5,
+            'add_summary': True,
+        }
+        betas = tf.Variable(
+            #     name =  'beta_margins',
+            # trainable = True,initial_value=
+            beta_0 * tf.ones([number_identities]))
+
     if FLAGS.mode == 'eager_tf':
         # Eager mode is great for debugging
         # Non eager graph mode is recommended for real training
