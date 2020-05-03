@@ -30,9 +30,9 @@ epochs: 50
 base_lr: 0.001
 w_decay: !!float 5e-4
 save_steps: 10000
-q: 8
+q: 2
 # m, the projection length would be m x q
-m: 256
+m: 128
 # test
 test_dataset: './data/test_dataset'
 test_dataset_ytf: './data/test_dataset/aligned_images_DB_YTF/'
