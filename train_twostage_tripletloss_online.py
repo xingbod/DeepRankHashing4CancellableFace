@@ -99,7 +99,7 @@ def main(_):
             'cutoff': 0.5,
             'add_summary': True,
         }
-        betas = tf.Variable(
+        betas = tf.constant(
             #     name =  'beta_margins',
             # trainable = True,initial_value=
             beta_0 * tf.ones([number_identities]))
@@ -135,7 +135,7 @@ def main(_):
                 elif cfg['loss_fun'] == 'ms_loss':
                     pred_loss = ms_loss.ms_loss(labels, logist,ms_mining=True)
                 elif cfg['loss_fun'] == 'margin_loss':
-                    pred_loss = margin_loss.margin_loss(labels, logist,betas,params)
+                    pred_loss = margin_loss.margin_loss(labels, logist,betas,params)* 20
                 elif cfg['loss_fun'] == 'batch_all_arc_triplet_loss':
                     pred_loss, _ ,_= arcface_pair_loss.batch_all_triplet_arcloss(labels, logist, arc_margin=cfg['triplet_margin'], scala=100)
                 elif cfg['loss_fun'] == 'semihard_triplet_loss':
