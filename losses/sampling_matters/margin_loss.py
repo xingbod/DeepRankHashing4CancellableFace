@@ -71,7 +71,7 @@ def distance_to_weight(d, n):
     b_inv = -((n - 3) / 2) * tf.math.log(1.0 - 0.25 * (d ** 2.0))
     log_q = a_inv + b_inv
     max_per_row = tf.reduce_max(
-        tf.where(tf.is_inf(log_q), tf.zeros_like(log_q), log_q),
+        tf.where(tf.math.is_inf(log_q), tf.zeros_like(log_q), log_q),
         axis=1,
         keepdims=True)
 
