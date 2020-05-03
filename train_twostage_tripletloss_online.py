@@ -130,9 +130,10 @@ def main(_):
                             'cutoff': 0.5,
                             'add_summary': True,
                         }
-                        betas = tf.get_variable(
-                            'beta_margins',
-                            initializer=beta_0 * tf.ones([number_identities]))
+                        betas = tf.Variable(
+                            name =  'beta_margins',
+                            trainable = True,
+                            initial_value=beta_0 * tf.ones([number_identities]))
                     pred_loss = margin_loss.margin_loss(labels, logist,betas,params)
                 elif cfg['loss_fun'] == 'batch_all_arc_triplet_loss':
                     pred_loss, _ ,_= arcface_pair_loss.batch_all_triplet_arcloss(labels, logist, arc_margin=cfg['triplet_margin'], scala=100)
