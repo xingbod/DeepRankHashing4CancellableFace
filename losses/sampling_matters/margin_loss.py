@@ -68,7 +68,7 @@ def distance_to_weight(d, n):
     # q = (a*b)**(-1)
     n = tf.cast(n, tf.double)
     a_inv = (2.0 - n) * tf.math.log(d)
-    b_inv = -((n - 3) / 2) * tf.log(1.0 - 0.25 * (d ** 2.0))
+    b_inv = -((n - 3) / 2) * tf.math.log(1.0 - 0.25 * (d ** 2.0))
     log_q = a_inv + b_inv
     max_per_row = tf.reduce_max(
         tf.where(tf.is_inf(log_q), tf.zeros_like(log_q), log_q),
@@ -222,7 +222,7 @@ def margin_loss(labels, embedding, beta, params):
 
     if add_summary:
         pos_inds = tf.where(positive_mask)
-        neg_inds = tf.where(tf.logical_not(positive_mask))
+        neg_inds = tf.where(tf.math.logical_not(positive_mask))
         pos_ds = tf.gather_nd(pairwise_distances, pos_inds)
         neg_ds = tf.gather_nd(pairwise_distances, neg_inds)
         tf.summary.scalar('margin/' + NEGATIVE_LOSS, neg_loss/pairs)
