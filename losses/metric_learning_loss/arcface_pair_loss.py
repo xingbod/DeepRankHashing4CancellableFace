@@ -126,9 +126,9 @@ def batch_all_triplet_arcloss(labels, embeddings, arc_margin=1.0,scala=20):
     # triplet_arcloss = tf.math.exp(tf.math.cos(anchor_positive_angle+arc_margin)) / (tf.math.exp(tf.math.cos(anchor_positive_angle+arc_margin))+tf.math.exp(tf.math.sin(anchor_positive_angle))) +  \
     # tf.math.exp(tf.math.sin(anchor_negative_angle+arc_margin)) / \
     # (tf.math.exp(tf.math.sin(anchor_negative_angle+arc_margin))+tf.math.exp(tf.math.cos(anchor_negative_angle)))
-    tmp = anchor_positive_angle
-    anchor_positive_angle = anchor_negative_angle
-    anchor_negative_angle = tmp
+    # tmp = anchor_positive_angle
+    # anchor_positive_angle = anchor_negative_angle
+    # anchor_negative_angle = tmp
 
     triplet_arcloss_positive = tf.math.exp(tf.math.cos(anchor_negative_angle + arc_margin)) / (
             tf.math.exp(tf.math.cos(anchor_negative_angle + arc_margin)) + tf.math.exp(
