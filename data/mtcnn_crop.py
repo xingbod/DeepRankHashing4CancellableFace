@@ -30,6 +30,7 @@ import os, sys
 import pathlib
 import tqdm
 
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 def splitall(path):
     allparts = []
@@ -45,10 +46,12 @@ def splitall(path):
             path = parts[0]
             allparts.insert(0, parts[1])
     return allparts
-#获取指定目录下的所有图片
+#获取指定目录下的所有图片 /test_dataset/aligned_images_DB_YTF/aligned_images_DB/Aaron_Eckhart
+
 detector = MTCNN()
-imglist = glob.glob(r"./aligned_images_DB_YTF/aligned_images_DB/*/*/*.jpg")
-save_dir = './aligned_images_DB_YTF/aligned_images_DB_112x112/'
+imglist = glob.glob(r"./test_dataset/aligned_images_DB_YTF/aligned_images_DB/*/*/*.jpg")
+save_dir = './test_dataset/aligned_images_DB_YTF/aligned_images_DB_112x112/'
+# print("*******************",imglist)
 for path in tqdm.tqdm(imglist):
     image = cv2.cvtColor(cv2.imread(path),
                          cv2.COLOR_BGR2RGB)
