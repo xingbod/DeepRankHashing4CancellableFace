@@ -120,7 +120,7 @@ def ArcFaceModel(size=None, channels=3, num_classes=None, name='arcface_model',
             return Model(inputs, logist, name=name)
         else:
             return Model(inputs, embds, name=name)
-
+'''
 def ArcFaceModel2(size=None, channels=3, num_classes=None, name='arcface_model',
                  margin=0.5, logist_scale=64, embd_shape=512,
                  head_type='ArcHead', backbone_type='ResNet50',
@@ -146,6 +146,7 @@ def ArcFaceModel2(size=None, channels=3, num_classes=None, name='arcface_model',
         return Model((inputs, labels), logist, name=name)
     else:
         return Model(inputs, embds, name=name)
+        '''
 '''
 def IoMFaceModel(size=None, channels=3, num_classes=None, name='IoMface_model',
                  margin=0.5, logist_scale=64, embd_shape=512,

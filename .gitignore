@@ -5,3 +5,4 @@ logs/*
 **/*.tfrecord
 .idea
 .embeddings
+.trash
