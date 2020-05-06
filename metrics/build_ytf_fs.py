@@ -53,8 +53,11 @@ def splitDS(ds_path, save_dir, SPLIT_WEIGHTS=[40,5], ds='ytf'):
             pic_list = list(data_dir.glob('*.png'))
         random.shuffle(pic_list)
         test_file_list = pic_list[0:SPLIT_WEIGHTS[1]]  # random.sample(pic_list, k=SPLIT_WEIGHTS[1])
+        if (len(pic_list)<=SPLIT_WEIGHTS[1] ):
+            print(data_dir, " has not enough samples, skiped!",len(pic_list))
+            continue
         if (len(pic_list) -SPLIT_WEIGHTS[1] < SPLIT_WEIGHTS[0]):
-            print(data_dir, " has not enough samples!")
+            print(data_dir, " has not enough samples!",len(pic_list))
         train_file_list = random.sample(pic_list[SPLIT_WEIGHTS[1]:], k=min(SPLIT_WEIGHTS[0],len(pic_list)-SPLIT_WEIGHTS[1]))
         for images in train_file_list:
             dst_dir = os.path.join(save_dir + '/train_gallery', dir_name)
@@ -66,12 +69,12 @@ def splitDS(ds_path, save_dir, SPLIT_WEIGHTS=[40,5], ds='ytf'):
             copy(images, dst_dir)
 
 if __name__ == '__main__':
-    ds_path = './data/test_dataset/facescrub_images_112x112/112x112'
+    #ds_path = './data/test_dataset/facescrub_images_112x112/112x112'
     # ds_path = './data/test_dataset/facescrub_mtcnn_160/160x160'
-    save_path = './data/test_dataset/facescrub_images_112x112/'
-    splitDS(ds_path, save_path, SPLIT_WEIGHTS=[120, 5], ds='fs')
+    #save_path = './data/test_dataset/facescrub_images_112x112/'
+    #splitDS(ds_path, save_path, SPLIT_WEIGHTS=[120, 5], ds='fs')
 
-    ds_path = './data/test_dataset/aligned_images_DB_YTF/aligned_images_DB/'
+    ds_path = './data/test_dataset/aligned_images_DB_YTF/160x160/'
     save_path = './data/test_dataset/aligned_images_DB_YTF/'
     splitDS(ds_path, save_path, SPLIT_WEIGHTS=[40, 5], ds='ytf')
 
