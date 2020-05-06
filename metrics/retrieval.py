@@ -222,6 +222,7 @@ def streaming_mean_averge_precision(probe_x, probe_y, gallery_x, gallery_y,k=50,
     return tf.reduce_mean(average_precision)
 
 
+
 if __name__ == '__main__':
     probe_x = tf.constant([[1.0, 2, 3], [-1.0, 4, 3], [-9.0, 9, 3]])
     probe_y = tf.constant(['abc', 'bd','ee'])
