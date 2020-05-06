@@ -209,6 +209,38 @@ def perform_val(embedding_size, batch_size, model,
 
     return accuracy.mean(), best_thresholds.mean(),auc,eer,embeddings
 
+
+'''
+below if for archead with IoM layer
+'''
+def perform_val2(embedding_size, batch_size, model,
+                carray, issame, nrof_folds=10, is_ccrop=False, is_flip=False,cfg=None):
+    """perform val"""
+    embedding_size = int(embedding_size / cfg['q'])
+    embeddings = np.zeros([len(carray), embedding_size])
+
+    for idx in tqdm.tqdm(range(0, len(carray), batch_size),ascii = True):
+        batch = carray[idx:idx + batch_size]
+        batch = np.transpose(batch, [0, 2, 3, 1]) * 0.5 + 0.5
+        if is_ccrop:
+            batch = ccrop_batch(batch)
+
+        if is_flip:
+            fliped = hflip_batch(batch)
+            emb_batch = model(batch) + model(fliped)
+            # embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
+        else:
+            batch = ccrop_batch(batch)
+            emb_batch = model(batch)
+        # print(emb_batch)
+        embeddings[idx:idx + batch_size] = emb_batch # not working? why
+        # embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
+        # print(embeddings)
+    tpr, fpr, accuracy, best_thresholds,auc,eer = evaluate(
+        embeddings, issame, nrof_folds,cfg)
+
+    return accuracy.mean(), best_thresholds.mean(),auc,eer,embeddings
+
 '''
 new add, in case val during train
 '''
