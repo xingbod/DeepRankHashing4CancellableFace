@@ -199,3 +199,43 @@ def margin_loss(labels, embedding, beta, params):
         tf.summary.scalar('margin/' + 'beta', tf.reduce_mean(beta))
 
     return loss
+
+import keras
+from keras.layers import Input, Dense, Embedding, Flatten
+import tensorflow as tf
+import keras.backend as K
+class MarginLossLayer(keras.layers.Layer):
+    def __init__(self, num_classes= 85742, params=None,**kwargs):
+
+        self.num_classes = num_classes
+        self.params = params
+        if self.params is None:
+            self.params = {
+                'alpha': 50,
+                'nu': 0.,
+                'cutoff': 0.5,
+                'add_summary': True,
+                'beta_0': 1.2
+            }
+
+        super(MarginLossLayer, self).__init__(**kwargs)
+
+    # keras Layer interface
+    def build(self, input_shape):
+        self.betas = tf.constant(self.params['beta_0'] * tf.ones([self.num_classes]))
+        # keras
+        super(MarginLossLayer, self).build(input_shape)
+
+    # keras Layer interface
+    def call(self, x):
+        embedding, labels = x
+        # tensorflow
+        loss = margin_loss(labels, embedding, self.betas, self.params)
+        # keras
+        self.add_loss(loss)
+
+        return embedding
+
+    # keras Layer interface
+    def compute_output_shape(self, input_shape):
+        return 1

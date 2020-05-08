@@ -17,7 +17,7 @@ from .layers import (
     MaxIndexLinearTraining,
     PermLayer
 )
-
+from losses.sampling_matters.margin_loss import MarginLossLayer
 
 def _regularizer(weights_decay=5e-4):
     return tf.keras.regularizers.l2(weights_decay)
@@ -108,8 +108,6 @@ def ArcFaceModel(size=None, channels=3, num_classes=None, name='arcface_model',
         if head_type == 'ArcHead':
             logist = ArcHead(num_classes=num_classes, margin=margin,
                              logist_scale=logist_scale)(embds, labels)
-        elif head_type == 'IoMHead':
-            logist = IoMHead(m=embd_shape,q=cfg['q'],permKey=None, isTraining=training)(embds, labels) # loss need to change
         else:
             logist = NormHead(num_classes=num_classes, w_decay=w_decay)(embds)
         return Model((inputs, labels), logist, name=name)
@@ -185,8 +183,7 @@ def IoMFaceModelFromArFace(size=None, channels=3, arcmodel=None, name='IoMface_m
     x = arcmodel(x)
     if not (permKey is None):
         x = PermLayer(permKey)(x)  # permutation before project to IoM hash code
-    x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),name="IoMProjection")(
-        x)  # extra connection layer
+    x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),name="IoMProjection")(x)  # extra connection layer
     # if training:
     #     labels = Input([], name='label')
     #     logist = IoMHead(m=cfg['m'],q=cfg['q'], isTraining=training)(x, labels) # loss need to change
@@ -199,3 +196,18 @@ def IoMFaceModelFromArFace(size=None, channels=3, arcmodel=None, name='IoMface_m
     logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x)  # loss need to change
     return Model(inputs, logist, name=name)
 
+def IoMFaceModelFromArFaceMLossHead(size=None, channels=3, arcmodel=None, name='IoM_Mloss_Head_model',
+                 margin=0.5, logist_scale=64, embd_shape=512,
+                 head_type='ArcHead', backbone_type='ResNet50',
+                 w_decay=5e-4, use_pretrain=True, training=False,permKey=None,cfg=None):
+    """IoMFaceModelFromArFace Model"""
+    x = inputs = Input([size, size, channels], name='input_image')
+    x = arcmodel(x)
+    if not (permKey is None):
+        x = PermLayer(permKey)(x)  # permutation before project to IoM hash code
+    x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),name="IoMProjection")(
+        x)  # extra connection layer
+    logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x)  # loss need to change
+    labels = Input([], name='label')
+    logist = MarginLossLayer()(logist, labels)
+    return Model((inputs, labels), logist, name=name)
