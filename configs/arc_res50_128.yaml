@@ -8,8 +8,8 @@ head_type: ArcHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
 
 # train
-train_dataset: './data/ms1m_bin.tfrecord'
-binary_img: True
+train_dataset: './data/ms1m.tfrecord'
+binary_img: False
 num_classes: 85742
 num_samples: 5822653
 epochs: 50
