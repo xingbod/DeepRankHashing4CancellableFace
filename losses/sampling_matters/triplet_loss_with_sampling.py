@@ -283,7 +283,7 @@ def batch_all_triplet_loss(labels, embeddings, margin=1.0, scala=100, squared=Fa
     return triplet_loss
 
 
-def batch_triplet_sampling_loss(labels, embeddings, margin,beta, params,cfg,steps,squared=False):
+def batch_triplet_sampling_loss(labels, embeddings,beta, params,cfg,steps,margin=1.0,squared=False):
     """Build the triplet loss over a batch of embeddings.
 
     For each anchor, we get the hardest positive and hardest negative to form a triplet.
