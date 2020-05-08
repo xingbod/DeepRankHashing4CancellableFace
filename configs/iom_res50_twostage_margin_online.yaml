@@ -14,8 +14,7 @@ head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
 
 # train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split /media/xingbo/Storage/facedata/ms1m_align_112/imgs
-#train_dataset: '/media/Storage/facedata/ms1m_align_112/imgs'
-train_dataset: 'E:/my research/etri2020/facedataset/aligned_images_DB_YTF/aligned_images_DB_YTF/train_gallery'
+train_dataset: '/home/xingbo/facedata/ms1m_align_112/imgs'
 #train_dataset: '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160'
 img_ext: 'jpg'
 dataset_ext: 'ms'
