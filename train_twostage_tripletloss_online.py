@@ -8,9 +8,9 @@ from modules.models import ArcFaceModel,IoMFaceModelFromArFace
 from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf
 from losses.euclidan_distance_loss import triplet_loss, triplet_loss_omoindrot
 from losses.metric_learning_loss import arcface_pair_loss,ms_loss
-from losses.sampling_matters import margin_loss
+from losses.sampling_matters import margin_loss,triplet_loss_with_sampling
 import modules.dataset_triplet as dataset_triplet
-
+from modules.evaluations import val_LFW
 flags.DEFINE_string('cfg_path', './configs/iom_res50_twostage_triplet_online.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_enum('mode', 'eager_tf', ['fit', 'eager_tf'],
@@ -140,6 +140,19 @@ def main(_):
                     pred_loss, _ ,_= arcface_pair_loss.batch_all_triplet_arcloss(labels, logist, arc_margin=cfg['triplet_margin'], scala=32)
                 elif cfg['loss_fun'] == 'semihard_triplet_loss':
                     pred_loss = triplet_loss.semihard_triplet_loss(labels, logist, margin=cfg['triplet_margin'])
+                elif cfg['loss_fun'] == 'triplet_sampling':
+                    beta_0 = 1.2  # initial learnable beta value
+                    number_identities = 85742  # for mnist
+                    params = {
+                        'alpha': 50,
+                        'nu': 0.,
+                        'cutoff': 0.5,
+                        'add_summary': True,
+                        'beta_0': beta_0
+                    }
+                    betas = tf.constant(beta_0 * tf.ones([number_identities]))
+                    pred_loss = triplet_loss_with_sampling.batch_triplet_sampling_loss(labels, logist, betas,params,cfg,steps,margin=cfg['triplet_margin'])
+
                 quanti_loss = loss_fn_quanti(logist)
                 total_loss = pred_loss + reg_loss * 0.5 + quanti_loss * 0.5
 
