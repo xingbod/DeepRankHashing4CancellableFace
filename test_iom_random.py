@@ -18,17 +18,20 @@ flags.DEFINE_string('img_path', '', 'path to input image')
 
 # modules.utils.set_memory_growth()
 
+mycfg = {'m':0, 'q': 0}
 
-def main(_argv):
+
+
+def callMe():
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-    os.environ['CUDA_VISIBLE_DEVICES'] = FLAGS.gpu
+    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
     logger = tf.get_logger()
     logger.disabled = True
     logger.setLevel(logging.FATAL)
     set_memory_growth()
 
-    cfg = load_yaml(FLAGS.cfg_path)
+    cfg = load_yaml('./configs/iom_res50_random.yaml')#    cfg = load_yaml(FLAGS.cfg_path)
     permKey = None
     if cfg['head_type'] == 'IoMHead':#
         #permKey = generatePermKey(cfg['embd_shape'])
@@ -48,18 +51,18 @@ def main(_argv):
     else:
         print("[*] Cannot find ckpt from {}.".format(ckpt_path))
         exit()
-    m = cfg['m']
-    q = cfg['q']
+    m = cfg['m'] = mycfg['m']
+    q = cfg['q'] = mycfg['q']
     model = IoMFaceModelFromArFace(size=cfg['input_size'],
                                    arcmodel=arcmodel, training=False,
                                    permKey=permKey, cfg=cfg)
     model.summary(line_length=80)
     model.layers[0].trainable = False
-    for layer in model.layers:
-        print(layer.name)
-        layer.trainable = False
+    # for layer in model.layers:
+    #     print(layer.name)
+    #     layer.trainable = False
     cfg['embd_shape'] = m * q
-    if FLAGS.img_path:
+    if False:
         print("[*] Encode {} to ./output_embeds.npy".format(FLAGS.img_path))
         # img = cv2.imread(FLAGS.img_path)
         # img = cv2.resize(img, (cfg['input_size'], cfg['input_size']))
@@ -72,9 +75,12 @@ def main(_argv):
         print("[*] Perform Retrieval Evaluation on Y.T.F and F.S...")
         mAp_ytf, rr_ytf = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_ytf'], img_ext='jpg')
         mAp_fs, rr_fs = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_fs'], img_ext='png')
-        print("    Y.T.F mAP {:.4f}, F.S mAP: {:.2f}".format(mAp_ytf, mAp_fs))
-        print("    Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(rr_ytf[0], rr_fs[0]))
-
+        print("  q = {:.2f}, m = {:.2f}   Y.T.F mAP {:.4f}, F.S mAP: {:.2f}".format(q,m,mAp_ytf, mAp_fs))
+        print("  q = {:.2f}, m = {:.2f}  Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(q,m,rr_ytf[0], rr_fs[0]))
+        with open("logs/OutputmAP.txt", "a") as text_file:
+            text_file.write("  q = {:.2f}, m = {:.2f}   Y.T.F mAP {:.4f}, F.S mAP: {:.2f}\n".format(q,m,mAp_ytf, mAp_fs))
+        with open("logs/OutputCMC1.txt", "a") as text_file:
+            text_file.write("  q = {:.2f}, m = {:.2f}  Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}\n".format(q,m,rr_ytf[0], rr_fs[0]))
 
         print("[*] Loading LFW, AgeDB30 and CFP-FP...")
         lfw, agedb_30, cfp_fp, lfw_issame, agedb_30_issame, cfp_fp_issame = \
@@ -99,29 +105,45 @@ def main(_argv):
             is_ccrop=cfg['is_ccrop'], cfg=cfg)
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp,
                                                                           eer_cfp_fp))
-        with open('./embeddings/embeddings_lfw.csv', 'w', newline='') as file:
-            writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
-            writer.writerows(embeddings_lfw)
-        with open('./embeddings/embeddings_agedb30.csv', 'w', newline='') as file:
-            writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
-            writer.writerows(embeddings_agedb30)
-        with open('./embeddings/embeddings_cfp_fp.csv', 'w', newline='') as file:
-            writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
-            writer.writerows(embeddings_cfp_fp)
-
-        print(''' q = {:.2f}, m = {:.2f} | LFW | AgeDB30 | CFP - FP
+        # with open('./embeddings/embeddings_lfw.csv', 'w', newline='') as file:
+        #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
+        #     writer.writerows(embeddings_lfw)
+        # with open('./embeddings/embeddings_agedb30.csv', 'w', newline='') as file:
+        #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
+        #     writer.writerows(embeddings_agedb30)
+        # with open('./embeddings/embeddings_cfp_fp.csv', 'w', newline='') as file:
+        #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
+        #     writer.writerows(embeddings_cfp_fp)
+        log_str = ''' q = {:.2f}, m = {:.2f} | LFW | AgeDB30 | CFP - FP
         --- | --- | --- | ---
         Accuracy | {:.4f} | {:.4f} | {:.4f} 
         EER  | {:.4f} | {:.4f} | {:.4f} 
         AUC  | {:.4f} | {:.4f} | {:.4f} 
-        Threshold  | {:.4f} | {:.4f} | {:.4f} '''.format(q, m,
+        Threshold  | {:.4f} | {:.4f} | {:.4f} \n'''.format(q, m,
                                                          acc_lfw, acc_agedb30, acc_cfp_fp ,
                                                          eer_lfw, eer_agedb30, eer_cfp_fp ,
                                                          auc_lfw, auc_agedb30, auc_cfp_fp ,
-                                                         best_th_lfw, best_th_agedb30,best_th_cfp_fp))
+                                                         best_th_lfw, best_th_agedb30,best_th_cfp_fp)
+        with open("logs/Output.txt", "a") as text_file:
+            text_file.write(log_str)
+        print(log_str)
 
-if __name__ == '__main__':
-    try:
-        app.run(main)
-    except SystemExit:
-        pass
+# def main(_argv):
+#     for m in [32, 64, 128, 256, 512]:
+#         for q in [2, 4, 8, 16]:
+#             print(m,q,'****')
+#             mycfg['m'] = m
+#             mycfg['q'] = q
+#             app.run(callMe2())
+
+# if __name__ == '__main__':
+#     try:
+#         app.run(main)
+#     except SystemExit:
+#         pass
+for m in [256, 512]:
+    for q in [2, 4, 8, 16]:
+        print(m,q,'****')
+        mycfg['m'] = m
+        mycfg['q'] = q
+        callMe()

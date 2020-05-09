@@ -3,8 +3,9 @@ from absl.flags import FLAGS
 import os
 import tensorflow as tf
 import time
+from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 
-from modules.models import ArcFaceModel,IoMFaceModelFromArFace
+from modules.models import ArcFaceModel,IoMFaceModelFromArFace,IoMFaceModelFromArFaceMLossHead
 from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf
 from losses.euclidan_distance_loss import triplet_loss, triplet_loss_omoindrot
 from losses.metric_learning_loss import arcface_pair_loss,ms_loss
@@ -66,12 +67,16 @@ def main(_):
         arcmodel.load_weights(arc_ckpt_path)
         # epochs, steps = get_ckpt_inf(ckpt_path, steps_per_epoch)
 
-    # here I add the extra IoM layer and head
-    model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                   arcmodel=arcmodel, training=True,
-                                   permKey=permKey, cfg=cfg)
+    if cfg['loss_fun'] == 'margin_loss':
+        model = IoMFaceModelFromArFaceMLossHead(size=cfg['input_size'],
+                                                arcmodel=arcmodel, training=True,
+                                                permKey=permKey, cfg=cfg)
+    else:
+        # here I add the extra IoM layer and head
+        model = IoMFaceModelFromArFace(size=cfg['input_size'],
+                                       arcmodel=arcmodel, training=True,
+                                       permKey=permKey, cfg=cfg)
     for layer in model.layers:
-        print(layer.name)
         if layer.name == 'arcface_model':
             layer.trainable = False
     # 可训练层
@@ -90,18 +95,6 @@ def main(_):
         print("[*] training from scratch.")
         epochs, steps = 1, 1
 
-    if cfg['loss_fun'] == 'margin_loss':
-        beta_0 = 1.2  # initial learnable beta value
-        number_identities = 85742  # for mnist
-        params = {
-            'alpha': 0.2,
-            'nu': 0.,
-            'cutoff': 0.5,
-            'add_summary': True,
-        }
-        betas = tf.Variable(
-                 name =  'beta_margins',
-             trainable = True,initial_value=beta_0 * tf.ones([number_identities]))
 
     if FLAGS.mode == 'eager_tf':
         # Eager mode is great for debugging
@@ -134,25 +127,13 @@ def main(_):
                 elif cfg['loss_fun'] == 'ms_loss':
                     pred_loss = ms_loss.ms_loss(labels, logist,ms_mining=True)
                 elif cfg['loss_fun'] == 'margin_loss':
-                    betas = tf.compat.v1.get_variable('beta_margins', initializer=params['beta_0'] * tf.ones([10]))
-                    pred_loss = margin_loss.margin_loss(labels, logist,betas,params)* 20
+                    pred_loss = 0.0
                 elif cfg['loss_fun'] == 'batch_all_arc_triplet_loss':
                     pred_loss, _ ,_= arcface_pair_loss.batch_all_triplet_arcloss(labels, logist, arc_margin=cfg['triplet_margin'], scala=32)
                 elif cfg['loss_fun'] == 'semihard_triplet_loss':
                     pred_loss = triplet_loss.semihard_triplet_loss(labels, logist, margin=cfg['triplet_margin'])
                 elif cfg['loss_fun'] == 'triplet_sampling':
-                    beta_0 = 1.2  # initial learnable beta value
-                    number_identities = 85742  # for mnist
-                    params = {
-                        'alpha': 50,
-                        'nu': 0.,
-                        'cutoff': 0.5,
-                        'add_summary': True,
-                        'beta_0': beta_0
-                    }
-                    betas = tf.constant(beta_0 * tf.ones([number_identities]))
-                    pred_loss = triplet_loss_with_sampling.batch_triplet_sampling_loss(labels, logist, betas,params,cfg,steps,margin=cfg['triplet_margin'])
-
+                    beta_0 = 1.2
                 quanti_loss = loss_fn_quanti(logist)
                 total_loss = pred_loss + reg_loss * 0.5 + quanti_loss * 0.5
 
@@ -200,7 +181,29 @@ def main(_):
             epochs = steps // steps_per_epoch + 1
     else:
         print("[*] only support eager_tf!")
-        # model.compile(optimizer=optimizer, loss=loss_fn)
+        model.compile(optimizer=optimizer, loss=None)
+        mc_callback = ModelCheckpoint(
+            'checkpoints/' + cfg['sub_name'] + '/e_{epoch}_b_{batch}.ckpt',
+            save_freq=cfg['save_steps'] * cfg['batch_size'], verbose=1,
+            save_weights_only=True)
+        tb_callback = TensorBoard(log_dir='logs/',
+                                  update_freq=cfg['batch_size'] * 5,
+                                  profile_batch=0)
+        tb_callback._total_batches_seen = steps
+        tb_callback._samples_seen = steps * cfg['batch_size']
+        callbacks = [mc_callback, tb_callback]
+
+        def batch_generator(train_dataset):
+            train_dataset = iter(train_dataset)
+            while True:
+                inputs, labels = next(train_dataset) #print(inputs[0][1][:])  labels[2][:]
+                yield [inputs, labels]
+
+        model.fit_generator(batch_generator(train_dataset),
+                  epochs=cfg['epochs'],
+                  steps_per_epoch=steps_per_epoch,
+                  callbacks=callbacks,
+                  initial_epoch=epochs - 1)
 
 
     print("[*] training done!")

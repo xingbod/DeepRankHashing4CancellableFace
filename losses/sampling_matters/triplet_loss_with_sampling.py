@@ -340,20 +340,7 @@ def batch_triplet_sampling_loss(labels, embeddings,beta, params,cfg,steps,margin
 
     triplet_loss = tf.maximum(d_ap - d_an + margin, 0.0)
 
-
-    summary_writer = tf.summary.create_file_writer('./logs/' + cfg['sub_name'])
-
-    if add_summary:
-        with summary_writer.as_default():
-            pos_inds = tf.where(positive_mask)
-            neg_inds = tf.where(tf.math.logical_not(positive_mask))
-            pos_ds = tf.gather_nd(pairwise_distances, pos_inds)
-            neg_ds = tf.gather_nd(pairwise_distances, neg_inds)
-
-            tf.summary.histogram('margin/' + POSITIVE_DISTANCES, pos_ds, step=steps)
-            tf.summary.histogram('margin/' + NEGATIVE_DISTANCES, neg_ds, step=steps)
-
     # Get final mean triplet loss
     triplet_loss = tf.reduce_mean(triplet_loss)
 
-    return triplet_loss
+    return triplet_loss, positive_mask,pairwise_distances

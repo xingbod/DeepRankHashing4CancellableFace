@@ -8,7 +8,7 @@ import modules
 import csv
 
 from modules.evaluations import get_val_data, perform_val,perform_val_yts
-from modules.models import ArcFaceModel,IoMFaceModelFromArFace
+from modules.models import ArcFaceModel,IoMFaceModelFromArFace,IoMFaceModelFromArFaceMLossHead
 from modules.utils import set_memory_growth, load_yaml, l2_norm
 
 # modules.utils.set_memory_growth()
@@ -41,10 +41,14 @@ def main(_argv):
                             training=False,
                             # here equal false, just get the model without acrHead, to load the model trained by arcface
                             cfg=cfg)
-    model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                   arcmodel=arcmodel, training=False,
-                                   permKey=permKey, cfg=cfg)
-    model.trainable = False
+    if cfg['loss_fun'] == 'margin_loss':
+        model = IoMFaceModelFromArFaceMLossHead(size=cfg['input_size'],
+                                                arcmodel=arcmodel, training=False,
+                                                permKey=permKey, cfg=cfg)
+    else:
+        model = IoMFaceModelFromArFace(size=cfg['input_size'],
+                                       arcmodel=arcmodel, training=False,
+                                       permKey=permKey, cfg=cfg)
     model.summary(line_length=80)
     if FLAGS.ckpt_epoch == '':
         ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
@@ -68,11 +72,11 @@ def main(_argv):
         embeds = l2_norm(model(img))
         np.save('./output_embeds.npy', embeds)
     else:
-        print("[*] Perform Retrieval Evaluation on Y.T.F and F.S...")
-        mAp_ytf, rr_ytf = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_ytf'],img_ext='jpg')
-        mAp_fs, rr_fs = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_fs'],img_ext='png')
-        print("    Y.T.F mAP {:.4f}, F.S mAP: {:.2f}".format(mAp_ytf, mAp_fs))
-        print("    Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(rr_ytf[0], rr_fs[0]))
+        # print("[*] Perform Retrieval Evaluation on Y.T.F and F.S...")
+        # mAp_ytf, rr_ytf = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_ytf'],img_ext='jpg')
+        # mAp_fs, rr_fs = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_fs'],img_ext='png')
+        # print("    Y.T.F mAP {:.4f}, F.S mAP: {:.2f}".format(mAp_ytf, mAp_fs))
+        # print("    Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(rr_ytf[0], rr_fs[0]))
 
         print("[*] Loading LFW, AgeDB30 and CFP-FP...")
         lfw, agedb_30, cfp_fp, lfw_issame, agedb_30_issame, cfp_fp_issame = \

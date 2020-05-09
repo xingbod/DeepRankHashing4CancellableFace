@@ -64,17 +64,19 @@ def ArcHead(num_classes, margin=0.5, logist_scale=64, name='ArcHead'):
         return Model((inputs1, y), x, name=name)((x_in, y_in))
     return arc_head
 
+def MarginLossHead(num_classes=85742, margin=0.5, logist_scale=64, cfg=None,name='MlossHead'):
+    """MarginLoss Head"""
+    def mloss_head(x_in, y_in):
+        x = inputs1 = Input(x_in.shape[1:])
+        y = Input(y_in.shape[1:])
+        x = MarginLossLayer(num_classes=num_classes,cfg=cfg)(x, y)
+        return Model((inputs1, y), x, name=name)((x_in, y_in))
+    return mloss_head
+
 def IoMHead(m,q, isTraining=True, name='IoMHead'):
     """Arc Head"""
     def iom_head(x_in):
         x = inputs1 = Input(x_in.shape[1:])
-        # y = Input(y_in.shape[1:])
-        # if isTraining:
-        #     x = MaxIndexLinearTraining(units=m*q,q=q)(x) # permutation
-        #     return Model((inputs1, y), x, name=name)((x_in, y_in))
-        # else:
-        #     x = MaxIndexLinearForeward(units=m*q,q=q)(x) # permutation
-        #     return Model(inputs1, x, name=name)(x_in)
         if isTraining:
             x = MaxIndexLinearTraining(units=m*q,q=q)(x) # permutation
         else:
@@ -207,7 +209,12 @@ def IoMFaceModelFromArFaceMLossHead(size=None, channels=3, arcmodel=None, name='
         x = PermLayer(permKey)(x)  # permutation before project to IoM hash code
     x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),name="IoMProjection")(
         x)  # extra connection layer
-    logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x)  # loss need to change
-    labels = Input([], name='label')
-    logist = MarginLossLayer()(logist, labels)
-    return Model((inputs, labels), logist, name=name)
+
+    hashcodes = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x)  # loss need to change
+
+    if training:
+        labels = Input([], name='label')
+        logist = MarginLossHead(cfg=cfg)(hashcodes, labels)
+        return Model((inputs, labels), logist, name=name)
+    else:
+        return Model(inputs, hashcodes, name=name)

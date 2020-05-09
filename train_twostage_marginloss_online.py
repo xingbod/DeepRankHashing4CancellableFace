@@ -4,6 +4,7 @@ import os
 import tensorflow as tf
 import time
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
+from tensorflow.python.framework.ops import disable_eager_execution
 
 from modules.models import ArcFaceModel,IoMFaceModelFromArFace,IoMFaceModelFromArFaceMLossHead
 from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf
@@ -51,9 +52,9 @@ def main(_):
         steps_per_epoch = 1
 
     learning_rate = tf.constant(cfg['base_lr'])
-    optimizer = tf.keras.optimizers.SGD(
-        learning_rate=learning_rate, momentum=0.9, nesterov=True)
-    # optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
+    # optimizer = tf.keras.optimizers.SGD(
+    #     learning_rate=learning_rate, momentum=0.9, nesterov=True)
+    optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 
     # loss_fn = SoftmaxLoss() #############################################
     loss_fn_quanti = triplet_loss.compute_quanti_loss
@@ -96,7 +97,73 @@ def main(_):
         # Non eager graph mode is recommended for real training
         summary_writer = tf.summary.create_file_writer(
             './logs/' + cfg['sub_name'])
+
+        train_dataset = iter(train_dataset)
+
+        while epochs <= cfg['epochs']:
+            if steps % 5 == 0:
+                start = time.time()
+            if steps % steps_per_epoch == 0:  # reshuffle and generate every epoch
+                train_dataset = dataset_triplet.load_online_pair_wise_dataset(cfg['train_dataset'], ext=cfg['img_ext'],
+                                                                              dataset_ext=cfg['dataset_ext'],
+                                                                              samples_per_class=cfg[
+                                                                                  'samples_per_class'],
+                                                                              classes_per_batch=cfg[
+                                                                                  'classes_per_batch'], is_ccrop=False)
+                train_dataset = iter(train_dataset)
+            inputs, labels = next(train_dataset)  # print(inputs[0][1][:])  labels[2][:]
+            with tf.GradientTape() as tape:
+                logist = model((inputs, labels), training=True)
+                reg_loss = tf.reduce_sum(model.losses)
+                pred_loss = 0.0
+                quanti_loss = loss_fn_quanti(logist)
+                total_loss = reg_loss
+
+            grads = tape.gradient(total_loss, model.trainable_variables)
+            optimizer.apply_gradients(zip(grads, model.trainable_variables))
+
+            if steps % 5 == 0:
+                end = time.time()
+                verb_str = "Epoch {}/{}: {}/{}, loss={:.2f}, lr={:.4f}, time per step={:.2f}s, remaining time 4 this epoch={:.2f}min"
+                print(verb_str.format(epochs, cfg['epochs'],
+                                      steps % steps_per_epoch,
+                                      steps_per_epoch,
+                                      total_loss.numpy(),
+                                      learning_rate.numpy(), end - start,
+                                      (steps_per_epoch - (steps % steps_per_epoch)) * (end - start) / 60.0))
+
+                with summary_writer.as_default():
+                    tf.summary.scalar(
+                        'loss/total loss', total_loss, step=steps)
+                    tf.summary.scalar(
+                        'loss/pred loss', pred_loss, step=steps)
+                    # tf.summary.scalar(
+                    #     'loss/triplet_arcloss_positive', triplet_arcloss_positive, step=steps)
+                    # tf.summary.scalar(
+                    #     'loss/triplet_arcloss_negetive', triplet_arcloss_negetive, step=steps)
+                    tf.summary.scalar(
+                        'loss/reg loss', reg_loss, step=steps)
+                    tf.summary.scalar(
+                        'loss/quanti loss', quanti_loss, step=steps)
+                    tf.summary.scalar(
+                        'learning rate', optimizer.lr, step=steps)
+
+            if steps % cfg['save_steps'] == 0:
+                print('[*] save ckpt file!')
+                model.save_weights('checkpoints/{}/e_{}_b_{}.ckpt'.format(
+                    cfg['sub_name'], epochs, steps % steps_per_epoch))
+            if steps % steps_per_epoch == 0:
+                # acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = val_LFW(model,cfg)
+                # print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
+                # with summary_writer.as_default():
+                #     tf.summary.scalar( 'metric/epoch_acc', acc_lfw, step=epochs)
+                #     tf.summary.scalar('metric/epoch_eer', acc_lfw, step=epochs)
+                model.save_weights('checkpoints/{}/e_{}_b_{}.ckpt'.format(
+                    cfg['sub_name'], epochs, steps % steps_per_epoch))
+            steps += 1
+            epochs = steps // steps_per_epoch + 1
     else:
+        # disable_eager_execution()
         print("[*] only support eager_tf!")
         model.compile(optimizer=optimizer, loss=None)
         mc_callback = ModelCheckpoint(
@@ -110,7 +177,13 @@ def main(_):
         tb_callback._samples_seen = steps * cfg['batch_size']
         callbacks = [mc_callback, tb_callback]
 
-        model.fit(train_dataset,
+        def batch_generator(train_dataset):
+            train_dataset = iter(train_dataset)
+            while True:
+                inputs, labels = next(train_dataset) #print(inputs[0][1][:])  labels[2][:]
+                yield [inputs, labels]
+
+        model.fit_generator(batch_generator(train_dataset),
                   epochs=cfg['epochs'],
                   steps_per_epoch=steps_per_epoch,
                   callbacks=callbacks,

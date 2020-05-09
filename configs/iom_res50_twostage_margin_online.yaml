@@ -13,6 +13,10 @@ backbone_type: 'ResNet50' # 'ResNet50', 'MobileNetV2'
 head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
 
+#margin loss
+alpha: 1
+beta_0: 0.6
+
 # train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split /media/xingbo/Storage/facedata/ms1m_align_112/imgs
 train_dataset: '/home/xingbo/facedata/ms1m_align_112/imgs'
 #train_dataset: '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160'
@@ -28,7 +32,7 @@ num_samples: 3000000
 epochs: 50
 base_lr: 0.01
 w_decay: !!float 5e-4
-save_steps: 10000
+save_steps: 1000
 q: 2
 # m, the projection length would be m x q
 m: 128

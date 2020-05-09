@@ -10,7 +10,7 @@ def pairwise_distance(tensor_0):
     g = tf.reduce_sum(tf.square(tensor_0), axis=1, keepdims=True)
     G = tf.matmul(tensor_0, tf.transpose(tensor_0))
     d = g - 2. * G + tf.transpose(g)
-    d = tf.sqrt(tf.maximum(d, 0.05))
+    d = tf.cast(tf.sqrt(tf.maximum(d, 0.05)),tf.float64)
     return d
 
 
@@ -28,8 +28,8 @@ def distance_to_weight(d, n):
     # b = (1. - 1/4.*d**2)**((n-3)/2)
     # q = (a*b)**(-1)
     n = tf.cast(n, tf.double)
-    a_inv = (2.0 - n) * tf.math.log(d)
-    b_inv = -((n - 3) / 2) * tf.math.log(1.0 - 0.25 * (d ** 2.0))
+    a_inv = (2.0 - n) * tf.cast(tf.math.log(d), tf.float64)
+    b_inv = -((n - 3) / 2) * tf.cast(tf.math.log(1.0 - 0.25 * (d ** 2.0)), tf.float64)
     log_q = a_inv + b_inv
     max_per_row = tf.reduce_max(
         tf.where(tf.math.is_inf(log_q), tf.zeros_like(log_q), log_q),
@@ -43,8 +43,8 @@ def split_distances_into_positive_and_negative(distances, positive_mask):
     # for summaries
     pos_inds = tf.where(positive_mask)
     neg_inds = tf.where(tf.logical_not(positive_mask))
-    pos_ds = tf.gather_nd(distances, pos_inds)
-    neg_ds = tf.gather_nd(distances, neg_inds)
+    pos_ds = tf.gather_nd(distances, pos_inds)*tf.constant(1)
+    neg_ds = tf.gather_nd(distances, neg_inds)*tf.constant(1)
     tf.identity(distances, name=PAIRWISE_DISTANCES)
     tf.identity(pos_ds, name=POSITIVE_DISTANCES)
     tf.identity(neg_ds, name=NEGATIVE_DISTANCES)
@@ -103,15 +103,17 @@ def get_negative_pairs(log_weights, count, labels):
     to_take = tf.math.logical_and(inf_check, below_count)
 
     indices_to_take = tf.where(to_take)
-    negative_indices = tf.gather_nd(negative_indices, indices_to_take)
+    negative_indices = tf.gather_nd(negative_indices, indices_to_take)*tf.constant(1,tf.int64)-1# here minus 1 to correct the indices
     anchor_indices = indices_to_take[:, 0]
     anchor_labels = tf.gather(labels, anchor_indices)
 
     return anchor_indices, negative_indices, anchor_labels
 
 
-def margin_loss(labels, embedding, beta, params):
-    beta = tf.gather_nd(beta, labels[:, None])
+def margin_loss(embedding, labels, beta, params,cfg,steps):
+    labels = tf.cast(labels, tf.int32)
+    # print("labels,",labels)
+    beta = tf.gather_nd(beta, labels[:, None])*tf.constant(1.0)
     alpha = params['alpha']
     nu = params['nu']
     cutoff = params['cutoff']
@@ -165,7 +167,7 @@ def margin_loss(labels, embedding, beta, params):
 
     # positive loss
     ap = tf.stack([positive_anchor_indices, positive_indices], axis=1)
-    d_ap = tf.gather_nd(pairwise_distances, ap)
+    d_ap = tf.gather_nd(pairwise_distances, ap)*tf.constant(1.0,tf.float64)
     beta_ap = tf.gather(beta, positive_anchor_indices)
     beta_ap = tf.cast(beta_ap,tf.double)
     d_ap = tf.cast(d_ap,tf.double)
@@ -175,7 +177,11 @@ def margin_loss(labels, embedding, beta, params):
 
     # negative
     an = tf.stack([negative_anchor_indices, negative_indices], axis=1)
-    d_an = tf.gather_nd(pairwise_distances, an)
+    # print('*******negative_anchor_indices',negative_anchor_indices)
+    # print('*******negative_indices',negative_indices)
+    # print('*******an',an)
+    # print('*******pairwise_distances',pairwise_distances)
+    d_an = tf.gather_nd(pairwise_distances, an)*tf.constant(1.0,tf.float64)
     beta_an = tf.gather(beta, negative_anchor_indices)
     beta_an = tf.cast(beta_an,tf.double)
     d_an = tf.cast(d_an,tf.double)
@@ -186,56 +192,52 @@ def margin_loss(labels, embedding, beta, params):
     beta_loss = tf.maximum((tf.reduce_sum(beta_ap) + tf.reduce_sum(beta_an)) * nu, 0.)
     pairs = tf.maximum(poss_contribute_pairs + neg_contribute_pairs, 1.)
     loss = (poss_loss + neg_loss + beta_loss)/pairs
+    loss = tf.cast(loss,tf.float32)
+    summary_writer = tf.summary.create_file_writer(
+        './logs/' + cfg['sub_name']+"/margin/")
+    with summary_writer.as_default():
+        if add_summary:
+            pos_inds = tf.where(positive_mask)
+            neg_inds = tf.where(tf.math.logical_not(positive_mask))
+            pos_ds = tf.gather_nd(pairwise_distances, pos_inds) * tf.constant(1, tf.float64)
+            neg_ds = tf.gather_nd(pairwise_distances, neg_inds) * tf.constant(1, tf.float64)
+            tf.summary.scalar('margin/' + NEGATIVE_LOSS, neg_loss / pairs,step=steps)
+            tf.summary.scalar('margin/' + POSITIVE_LOSS, poss_loss / pairs, step=steps)
+            tf.summary.histogram('margin/' + POSITIVE_DISTANCES, pos_ds, step=steps)
+            tf.summary.histogram('margin/' + NEGATIVE_DISTANCES, neg_ds, step=steps)
+            tf.summary.scalar('margin/' + 'beta', tf.reduce_mean(beta), step=steps)
 
-    if add_summary:
-        pos_inds = tf.where(positive_mask)
-        neg_inds = tf.where(tf.math.logical_not(positive_mask))
-        pos_ds = tf.gather_nd(pairwise_distances, pos_inds)
-        neg_ds = tf.gather_nd(pairwise_distances, neg_inds)
-        tf.summary.scalar('margin/' + NEGATIVE_LOSS, neg_loss/pairs)
-        tf.summary.scalar('margin/' + POSITIVE_LOSS, poss_loss/pairs)
-        tf.summary.histogram('margin/' + POSITIVE_DISTANCES, pos_ds)
-        tf.summary.histogram('margin/' + NEGATIVE_DISTANCES, neg_ds)
-        tf.summary.scalar('margin/' + 'beta', tf.reduce_mean(beta))
 
     return loss
 
-import keras
-from keras.layers import Input, Dense, Embedding, Flatten
-import tensorflow as tf
-import keras.backend as K
-class MarginLossLayer(keras.layers.Layer):
-    def __init__(self, num_classes= 85742, params=None,**kwargs):
-
+class MarginLossLayer(tf.keras.layers.Layer):
+    """ArcMarginPenaltyLogists"""
+    def __init__(self,num_classes= 85742, params=None,cfg=None, **kwargs):
+        super(MarginLossLayer, self).__init__(**kwargs)
         self.num_classes = num_classes
         self.params = params
+        self.cfg = cfg
+        self.steps=1
         if self.params is None:
             self.params = {
-                'alpha': 50,
+                'alpha': cfg['alpha'],#50 margin of seperate
                 'nu': 0.,
                 'cutoff': 0.5,
                 'add_summary': True,
-                'beta_0': 1.2
+                'beta_0': cfg['beta_0']# weight
             }
 
         super(MarginLossLayer, self).__init__(**kwargs)
 
-    # keras Layer interface
     def build(self, input_shape):
-        self.betas = tf.constant(self.params['beta_0'] * tf.ones([self.num_classes]))
-        # keras
-        super(MarginLossLayer, self).build(input_shape)
+        self.betas = self.add_weight(name='beta_margins',
+                                 shape=(self.num_classes),
+                                 initializer=tf.keras.initializers.Constant(self.params['beta_0'] ),
+                                 trainable=True)
 
-    # keras Layer interface
-    def call(self, x):
-        embedding, labels = x
-        # tensorflow
-        loss = margin_loss(labels, embedding, self.betas, self.params)
-        # keras
+    def call(self, embedding, labels):
+        loss = margin_loss(embedding,labels, self.betas, self.params,self.cfg,self.steps)
+        # print('loss',loss)
+        self.steps = self.steps+1
         self.add_loss(loss)
-
         return embedding
-
-    # keras Layer interface
-    def compute_output_shape(self, input_shape):
-        return 1
