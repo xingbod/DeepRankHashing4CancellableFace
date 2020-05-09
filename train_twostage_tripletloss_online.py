@@ -51,8 +51,6 @@ def main(_):
         steps_per_epoch = 1
 
     learning_rate = tf.constant(cfg['base_lr'])
-    optimizer = tf.keras.optimizers.SGD(
-        learning_rate=learning_rate, momentum=0.9, nesterov=True)
     # optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 
     # loss_fn = SoftmaxLoss() #############################################
@@ -71,11 +69,16 @@ def main(_):
         model = IoMFaceModelFromArFaceMLossHead(size=cfg['input_size'],
                                                 arcmodel=arcmodel, training=True,
                                                 permKey=permKey, cfg=cfg)
+        optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)# seems can only use adam???
     else:
         # here I add the extra IoM layer and head
         model = IoMFaceModelFromArFace(size=cfg['input_size'],
                                        arcmodel=arcmodel, training=True,
                                        permKey=permKey, cfg=cfg)
+
+        optimizer = tf.keras.optimizers.SGD(
+            learning_rate=learning_rate, momentum=0.9, nesterov=True)# can use adam sgd
+
     for layer in model.layers:
         if layer.name == 'arcface_model':
             layer.trainable = False
@@ -127,14 +130,14 @@ def main(_):
                 elif cfg['loss_fun'] == 'ms_loss':
                     pred_loss = ms_loss.ms_loss(labels, logist,ms_mining=True)
                 elif cfg['loss_fun'] == 'margin_loss':
-                    pred_loss = 0.0
+                    pred_loss = tf.constant(0.0,tf.float64)
                 elif cfg['loss_fun'] == 'batch_all_arc_triplet_loss':
                     pred_loss, _ ,_= arcface_pair_loss.batch_all_triplet_arcloss(labels, logist, arc_margin=cfg['triplet_margin'], scala=32)
                 elif cfg['loss_fun'] == 'semihard_triplet_loss':
                     pred_loss = triplet_loss.semihard_triplet_loss(labels, logist, margin=cfg['triplet_margin'])
                 elif cfg['loss_fun'] == 'triplet_sampling':
                     beta_0 = 1.2
-                quanti_loss = loss_fn_quanti(logist)
+                quanti_loss = tf.cast(loss_fn_quanti(logist),tf.float64)
                 total_loss = pred_loss + reg_loss * 0.5 + quanti_loss * 0.5
 
             grads = tape.gradient(total_loss, model.trainable_variables)
@@ -186,7 +189,7 @@ def main(_):
             'checkpoints/' + cfg['sub_name'] + '/e_{epoch}_b_{batch}.ckpt',
             save_freq=cfg['save_steps'] * cfg['batch_size'], verbose=1,
             save_weights_only=True)
-        tb_callback = TensorBoard(log_dir='logs/',
+        tb_callback = TensorBoard(log_dir='logs/'+ cfg['sub_name'],
                                   update_freq=cfg['batch_size'] * 5,
                                   profile_batch=0)
         tb_callback._total_batches_seen = steps

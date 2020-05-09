@@ -226,7 +226,7 @@ class MarginLossLayer(tf.keras.layers.Layer):
                 'add_summary': True,
                 'beta_0': cfg['beta_0']# weight
             }
-
+        print("params:",self.params)
         super(MarginLossLayer, self).__init__(**kwargs)
 
     def build(self, input_shape):
