@@ -26,7 +26,7 @@ dataset_ext: 'ms'
 loss_fun: 'margin_loss'
 triplet_margin: 1
 binary_img: False
-num_classes: 15
+num_classes: 85742
 # I generate 1 milion triplets
 num_samples: 3000000
 epochs: 50
