@@ -1,5 +1,5 @@
 import tensorflow as tf
-
+import sys
 PAIRWISE_DISTANCES = 'pairwise_distances'
 POSITIVE_DISTANCES = 'positive_distances'
 NEGATIVE_DISTANCES = 'negative_distances'
@@ -103,7 +103,7 @@ def get_negative_pairs(log_weights, count, labels):
     to_take = tf.math.logical_and(inf_check, below_count)
 
     indices_to_take = tf.where(to_take)
-    negative_indices = tf.gather_nd(negative_indices, indices_to_take)*tf.constant(1,tf.int64)-1# here minus 1 to correct the indices
+    negative_indices = tf.gather_nd(negative_indices, indices_to_take)*tf.constant(1,tf.int64)# here minus 1 to correct the indices
     anchor_indices = indices_to_take[:, 0]
     anchor_labels = tf.gather(labels, anchor_indices)
 
@@ -144,26 +144,26 @@ def margin_loss(embedding, labels, beta, params,cfg,steps):
         count,
         labels)
 
-    # positive_anchor_indices = tf.Print(
+    # tf.print(
     #     positive_anchor_indices,
     #     [labels],
-    #     summarize=1000,
-    #     message='labels')
-    # positive_anchor_indices = tf.Print(
+    #     "summarize=1000",
+    #     "message='labels'", output_stream=sys.stdout, sep=',')
+    # tf.print(
     #     positive_anchor_indices,
-    #     [negative_anchor_indices],
-    #     summarize=1000,
-    #     message='neg_a')
-    # positive_anchor_indices = tf.Print(
+    #     negative_anchor_indices,
+    #     "summarize=1000",
+    #     "message='neg_a'", output_stream=sys.stdout, sep=',')
+    # tf.print(
     #     positive_anchor_indices,
-    #     [negative_indices],
-    #     summarize=1000,
-    #     message='neg_i')
-    # positive_anchor_indices = tf.Print(
+    #     negative_indices,
+    #     "summarize=1000",
+    #     "message='neg_i'", output_stream=sys.stdout, sep=',')
+    # tf.print(
     #     positive_anchor_indices,
     #     [log_weights[0]],
-    #     summarize=1000,
-    #     message='weights')
+    #     "summarize=1000",
+    #     "message='weights'", output_stream=sys.stdout, sep=',')
 
     # positive loss
     ap = tf.stack([positive_anchor_indices, positive_indices], axis=1)
