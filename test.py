@@ -5,7 +5,7 @@ import os
 import numpy as np
 import tensorflow as tf
 
-from modules.evaluations import get_val_data, perform_val
+from modules.evaluations import get_val_data, perform_val,perform_val_yts
 from modules.models import ArcFaceModel
 from modules.utils import set_memory_growth, load_yaml, l2_norm
 
