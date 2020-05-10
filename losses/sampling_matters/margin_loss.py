@@ -110,7 +110,7 @@ def get_negative_pairs(log_weights, count, labels):
     return anchor_indices, negative_indices, anchor_labels
 
 
-def margin_loss(embedding, labels, beta, params,cfg,steps):
+def margin_loss(embedding, labels, beta, params,cfg,steps,summary_writer):
     labels = tf.cast(labels, tf.int32)
     # print("labels,",labels)
     beta = tf.gather_nd(beta, labels[:, None])*tf.constant(1.0)
@@ -193,8 +193,7 @@ def margin_loss(embedding, labels, beta, params,cfg,steps):
     pairs = tf.maximum(poss_contribute_pairs + neg_contribute_pairs, 1.)
     loss = (poss_loss + neg_loss + beta_loss)/pairs
     loss = tf.cast(loss,tf.float32)
-    summary_writer = tf.summary.create_file_writer(
-        './logs/' + cfg['sub_name']+"/margin/")
+
     with summary_writer.as_default():
         if add_summary:
             pos_inds = tf.where(positive_mask)
@@ -228,6 +227,8 @@ class MarginLossLayer(tf.keras.layers.Layer):
             }
         print("params:",self.params)
         super(MarginLossLayer, self).__init__(**kwargs)
+        self.summary_writer = tf.summary.create_file_writer(
+        './logs/' + cfg['sub_name']+"/margin/")
 
     def build(self, input_shape):
         self.betas = self.add_weight(name='beta_margins',
@@ -235,8 +236,9 @@ class MarginLossLayer(tf.keras.layers.Layer):
                                  initializer=tf.keras.initializers.Constant(self.params['beta_0'] ),
                                  trainable=True)
 
+
     def call(self, embedding, labels):
-        loss = margin_loss(embedding,labels, self.betas, self.params,self.cfg,self.steps)
+        loss = margin_loss(embedding,labels, self.betas, self.params,self.cfg,self.steps,self.summary_writer)
         # print('loss',loss)
         self.steps = self.steps+1
         self.add_loss(loss)
