@@ -70,6 +70,7 @@ def main(_):
                                                 arcmodel=arcmodel, training=True,
                                                 permKey=permKey, cfg=cfg)
         optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)# seems can only use adam???
+        # optimizer = tf.train.MomentumOptimizer(  learning_rate,   momentum=0.9, )
     else:
         # here I add the extra IoM layer and head
         model = IoMFaceModelFromArFace(size=cfg['input_size'],
