@@ -176,6 +176,14 @@ def evaluate(embeddings, actual_issame, nrof_folds=10,cfg=None):
 
     return tpr, fpr, accuracy, best_thresholds,auc,eer
 
+import random
+def genLUT(q=8,bin_dim=8):
+  LUT = []
+  for digit in range(q):
+    rint = random.randint(0, pow(2,bin_dim)-1)
+    # rint = digit
+    LUT.append([int(d) for d in bin(rint)[2:].zfill(bin_dim)])
+  return LUT
 
 def perform_val(embedding_size, batch_size, model,
                 carray, issame, nrof_folds=10, is_ccrop=False, is_flip=False,cfg=None):
@@ -204,6 +212,19 @@ def perform_val(embedding_size, batch_size, model,
             embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         # embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         # print(embeddings)
+
+    LUT1 = genLUT()
+    embeddings = tf.gather(LUT1, embeddings)
+    print(embeddings)
+    # # here convert the embedding to binary
+    # embeddings1 = embeddings[0::2]# 隔行采样
+    # embeddings2 = embeddings[1::2]# 隔行采样
+    # actual_issame = np.asarray(issame)
+    # LUT_dict = {}
+    # classes = [1, 3]
+    # for cls in classes:
+    #     LUT_dict[cls] = genLUT(q, bin_dim)
+
     tpr, fpr, accuracy, best_thresholds,auc,eer = evaluate(
         embeddings, issame, nrof_folds,cfg)
 
