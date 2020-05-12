@@ -16,7 +16,7 @@ from scipy import interpolate
 from modules.dataset import load_data_split
 from metrics.retrieval import streaming_mean_averge_precision,streaming_mean_cmc_at_k
 from sklearn import preprocessing
-
+from modules.LUT import genLUT
 
 
 def get_val_pair(path, name):
@@ -176,14 +176,6 @@ def evaluate(embeddings, actual_issame, nrof_folds=10,cfg=None):
 
     return tpr, fpr, accuracy, best_thresholds,auc,eer
 
-import random
-def genLUT(q=8,bin_dim=8):
-  LUT = []
-  for digit in range(q):
-    rint = random.randint(0, pow(2,bin_dim)-1)
-    # rint = digit
-    LUT.append([int(d) for d in bin(rint)[2:].zfill(bin_dim)])
-  return LUT
 
 def perform_val(embedding_size, batch_size, model,
                 carray, issame, nrof_folds=10, is_ccrop=False, is_flip=False,cfg=None):

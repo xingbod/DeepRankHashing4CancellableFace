@@ -72,15 +72,15 @@ def callMe():
         # embeds = l2_norm(model(img))
         # np.save('./output_embeds.npy', embeds)
     else:
-        print("[*] Perform Retrieval Evaluation on Y.T.F and F.S...")
-        mAp_ytf, rr_ytf = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_ytf'], img_ext='jpg')
-        mAp_fs, rr_fs = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_fs'], img_ext='png')
-        print("  q = {:.2f}, m = {:.2f}   Y.T.F mAP {:.4f}, F.S mAP: {:.2f}".format(q,m,mAp_ytf, mAp_fs))
-        print("  q = {:.2f}, m = {:.2f}  Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(q,m,rr_ytf[0], rr_fs[0]))
-        with open("logs/OutputmAP.txt", "a") as text_file:
-            text_file.write("  q = {:.2f}, m = {:.2f}   Y.T.F mAP {:.4f}, F.S mAP: {:.2f}\n".format(q,m,mAp_ytf, mAp_fs))
-        with open("logs/OutputCMC1.txt", "a") as text_file:
-            text_file.write("  q = {:.2f}, m = {:.2f}  Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}\n".format(q,m,rr_ytf[0], rr_fs[0]))
+        # print("[*] Perform Retrieval Evaluation on Y.T.F and F.S...")
+        # mAp_ytf, rr_ytf = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_ytf'], img_ext='jpg')
+        # mAp_fs, rr_fs = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_fs'], img_ext='png')
+        # print("  q = {:.2f}, m = {:.2f}   Y.T.F mAP {:.4f}, F.S mAP: {:.2f}".format(q,m,mAp_ytf, mAp_fs))
+        # print("  q = {:.2f}, m = {:.2f}  Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(q,m,rr_ytf[0], rr_fs[0]))
+        # with open("logs/OutputmAP.txt", "a") as text_file:
+        #     text_file.write("  q = {:.2f}, m = {:.2f}   Y.T.F mAP {:.4f}, F.S mAP: {:.2f}\n".format(q,m,mAp_ytf, mAp_fs))
+        # with open("logs/OutputCMC1.txt", "a") as text_file:
+        #     text_file.write("  q = {:.2f}, m = {:.2f}  Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}\n".format(q,m,rr_ytf[0], rr_fs[0]))
 
         print("[*] Loading LFW, AgeDB30 and CFP-FP...")
         lfw, agedb_30, cfp_fp, lfw_issame, agedb_30_issame, cfp_fp_issame = \

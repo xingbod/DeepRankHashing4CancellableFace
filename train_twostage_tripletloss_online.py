@@ -8,7 +8,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 from modules.models import ArcFaceModel,IoMFaceModelFromArFace,IoMFaceModelFromArFaceMLossHead
 from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf
 from losses.euclidan_distance_loss import triplet_loss, triplet_loss_omoindrot
-from losses.metric_learning_loss import arcface_pair_loss,ms_loss
+from losses.metric_learning_loss import arcface_pair_loss,ms_loss,bin_LUT_loss
 from losses.sampling_matters import margin_loss,triplet_loss_with_sampling
 import modules.dataset_triplet as dataset_triplet
 from modules.evaluations import val_LFW
@@ -141,7 +141,8 @@ def main(_):
                 elif cfg['loss_fun'] == 'triplet_sampling':
                     beta_0 = 1.2
                 quanti_loss = tf.cast(loss_fn_quanti(logist),tf.float64)
-                total_loss = pred_loss + reg_loss * 0.5 + quanti_loss * 0.5
+                bin_loss = bin_LUT_loss.binary_loss_LUT(labels, logist)
+                total_loss = pred_loss + reg_loss * 0.5 + quanti_loss * 0.5 + bin_loss *0.5
 
             grads = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(grads, model.trainable_variables))
@@ -160,14 +161,12 @@ def main(_):
                         'loss/total loss', total_loss, step=steps)
                     tf.summary.scalar(
                         'loss/pred loss', pred_loss, step=steps)
-                    # tf.summary.scalar(
-                    #     'loss/triplet_arcloss_positive', triplet_arcloss_positive, step=steps)
-                    # tf.summary.scalar(
-                    #     'loss/triplet_arcloss_negetive', triplet_arcloss_negetive, step=steps)
                     tf.summary.scalar(
                         'loss/reg loss', reg_loss, step=steps)
                     tf.summary.scalar(
                         'loss/quanti loss', quanti_loss, step=steps)
+                    tf.summary.scalar(
+                        'loss/quanti bin_loss', bin_loss, step=steps)
                     tf.summary.scalar(
                         'learning rate', optimizer.lr, step=steps)
 
