@@ -185,16 +185,9 @@ def IoMFaceModelFromArFace(size=None, channels=3, arcmodel=None, name='IoMface_m
     x = arcmodel(x)
     if not (permKey is None):
         x = PermLayer(permKey)(x)  # permutation before project to IoM hash code
+    # here I add one extra hidden layer
+    # x = Dense(1024, kernel_regularizer=_regularizer(w_decay))(x)
     x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),name="IoMProjection")(x)  # extra connection layer
-    # if training:
-    #     labels = Input([], name='label')
-    #     logist = IoMHead(m=cfg['m'],q=cfg['q'], isTraining=training)(x, labels) # loss need to change
-    #     return Model((inputs, labels), logist, name=name)
-    # else:
-    #     labels = Input([], name='label')
-    #     logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x,labels)  # loss need to change
-    #     return Model(inputs, logist, name=name)
-    # labels = Input([], name='label')
     logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x)  # loss need to change
     return Model(inputs, logist, name=name)
 
