@@ -213,17 +213,11 @@ def perform_val(embedding_size, batch_size, model,
         # embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         # print(embeddings)
 
-    LUT1 = genLUT()
-    embeddings = tf.gather(LUT1, embeddings)
-    print(embeddings)
     # # here convert the embedding to binary
-    # embeddings1 = embeddings[0::2]# 隔行采样
-    # embeddings2 = embeddings[1::2]# 隔行采样
-    # actual_issame = np.asarray(issame)
-    # LUT_dict = {}
-    # classes = [1, 3]
-    # for cls in classes:
-    #     LUT_dict[cls] = genLUT(q, bin_dim)
+    LUT1 = genLUT()
+    embeddings = tf.cast(embeddings,tf.int32)
+    LUV = tf.gather(LUT1, embeddings)
+    embeddings = tf.reshape(LUV, (embeddings.shape[0],8*embeddings.shape[1]))
 
     tpr, fpr, accuracy, best_thresholds,auc,eer = evaluate(
         embeddings, issame, nrof_folds,cfg)
