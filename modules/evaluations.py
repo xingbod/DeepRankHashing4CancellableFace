@@ -281,6 +281,19 @@ def perform_val_yts(batch_size, model,ds_path,is_ccrop=False, is_flip=False,cfg=
     probes = load_data_split(ds_path, batch_size, subset='test', img_ext=img_ext)
     gallery_feats, gallery_names = extractFeat(gallery, model)
     probes_feats, probes_names = extractFeat(probes, model)
+
+    # here do the binary convert
+    LUT1 = genLUT()
+    gallery_feats = tf.cast(gallery_feats, tf.int32)
+    LUV = tf.gather(LUT1, gallery_feats)
+    gallery_feats = tf.reshape(LUV, (gallery_feats.shape[0], 8 * gallery_feats.shape[1]))
+
+    probes_feats = tf.cast(probes_feats, tf.int32)
+    LUV = tf.gather(LUT1, probes_feats)
+    probes_feats = tf.reshape(LUV, (probes_feats.shape[0], 8 * probes_feats.shape[1]))
+
+    ##### end ########
+
     mAp = streaming_mean_averge_precision(probes_feats, probes_names, gallery_feats, gallery_names,k=50)
     rr = streaming_mean_cmc_at_k(probes_feats, probes_names, gallery_feats, gallery_names, 10)
     return mAp,rr
