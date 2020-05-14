@@ -141,8 +141,8 @@ def main(_):
                 elif cfg['loss_fun'] == 'triplet_sampling':
                     beta_0 = 1.2
                 quanti_loss = tf.cast(loss_fn_quanti(logist),tf.float64)
-                bin_loss = bin_LUT_loss.binary_loss_LUT(labels, logist)
-                total_loss = pred_loss + reg_loss * 0.5 + quanti_loss * 0.5 + bin_loss *0.5
+                bin_loss = bin_LUT_loss.binary_loss_LUT(labels, logist) * 0.001
+                total_loss = pred_loss + reg_loss * 0.5 + quanti_loss * 0.5 + bin_loss
 
             grads = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(grads, model.trainable_variables))
