@@ -77,9 +77,9 @@ def callMe():
         mAp_fs, rr_fs = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_fs'], img_ext='png',isLUT=cfg['isLUT'])
         print("  q = {:.2f}, m = {:.2f}   Y.T.F mAP {:.4f}, F.S mAP: {:.2f}".format(q,m,mAp_ytf, mAp_fs))
         print("  q = {:.2f}, m = {:.2f}  Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(q,m,rr_ytf[0], rr_fs[0]))
-        with open("logs/OutputmAPLUT.txt", "a") as text_file:
+        with open("logs/OutputmAP512.txt", "a") as text_file:
             text_file.write("  q = {:.2f}, m = {:.2f}   Y.T.F mAP {:.4f}, F.S mAP: {:.2f}\n".format(q,m,mAp_ytf, mAp_fs))
-        with open("logs/OutputCMC1LUT.txt", "a") as text_file:
+        with open("logs/OutputCMC1512.txt", "a") as text_file:
             text_file.write("  q = {:.2f}, m = {:.2f}  Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}\n".format(q,m,rr_ytf[0], rr_fs[0]))
 
         print("[*] Loading LFW, AgeDB30 and CFP-FP...")
@@ -124,7 +124,7 @@ def callMe():
                                                          eer_lfw, eer_agedb30, eer_cfp_fp ,
                                                          auc_lfw, auc_agedb30, auc_cfp_fp ,
                                                          best_th_lfw, best_th_agedb30,best_th_cfp_fp)
-        with open("logs/OutputLUT.txt", "a") as text_file:
+        with open("logs/Output512.txt", "a") as text_file:
             text_file.write(log_str)
         print(log_str)
 
