@@ -73,8 +73,8 @@ def callMe():
         # np.save('./output_embeds.npy', embeds)
     else:
         print("[*] Perform Retrieval Evaluation on Y.T.F and F.S...")
-        mAp_ytf, rr_ytf = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_ytf'], img_ext='jpg')
-        mAp_fs, rr_fs = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_fs'], img_ext='png')
+        mAp_ytf, rr_ytf = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_ytf'], img_ext='jpg',isLUT=cfg['isLUT'])
+        mAp_fs, rr_fs = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_fs'], img_ext='png',isLUT=cfg['isLUT'])
         print("  q = {:.2f}, m = {:.2f}   Y.T.F mAP {:.4f}, F.S mAP: {:.2f}".format(q,m,mAp_ytf, mAp_fs))
         print("  q = {:.2f}, m = {:.2f}  Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(q,m,rr_ytf[0], rr_fs[0]))
         with open("logs/OutputmAP.txt", "a") as text_file:
@@ -89,20 +89,20 @@ def callMe():
         print("[*] Perform Evaluation on LFW...")
         acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, lfw, lfw_issame,
-            is_ccrop=cfg['is_ccrop'], cfg=cfg)
+            is_ccrop=cfg['is_ccrop'], cfg=cfg,isLUT=cfg['isLUT'])
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
 
         print("[*] Perform Evaluation on AgeDB30...")
         acc_agedb30, best_th_agedb30, auc_agedb30, eer_agedb30, embeddings_agedb30 = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, agedb_30,
-            agedb_30_issame, is_ccrop=cfg['is_ccrop'], cfg=cfg)
+            agedb_30_issame, is_ccrop=cfg['is_ccrop'], cfg=cfg,isLUT=cfg['isLUT'])
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_agedb30, best_th_agedb30, auc_agedb30,
                                                                           eer_agedb30))
 
         print("[*] Perform Evaluation on CFP-FP...")
         acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp, eer_cfp_fp, embeddings_cfp_fp = perform_val(
             cfg['embd_shape'], cfg['batch_size'], model, cfp_fp, cfp_fp_issame,
-            is_ccrop=cfg['is_ccrop'], cfg=cfg)
+            is_ccrop=cfg['is_ccrop'], cfg=cfg,isLUT=cfg['isLUT'])
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp,
                                                                           eer_cfp_fp))
         # with open('./embeddings/embeddings_lfw.csv', 'w', newline='') as file:
@@ -141,7 +141,7 @@ def callMe():
 #         app.run(main)
 #     except SystemExit:
 #         pass
-for m in [256, 512]:
+for m in [32,64,128,256, 512]:
     for q in [2, 4, 8, 16]:
         print(m,q,'****')
         mycfg['m'] = m

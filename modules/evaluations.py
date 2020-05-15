@@ -178,7 +178,7 @@ def evaluate(embeddings, actual_issame, nrof_folds=10,cfg=None):
 
 
 def perform_val(embedding_size, batch_size, model,
-                carray, issame, nrof_folds=10, is_ccrop=False, is_flip=False,cfg=None):
+                carray, issame, nrof_folds=10, is_ccrop=False, is_flip=False,cfg=None,isLUT=False):
     """perform val"""
     if cfg['head_type']=='IoMHead':
          embedding_size = int(embedding_size / cfg['q'])
@@ -204,13 +204,15 @@ def perform_val(embedding_size, batch_size, model,
             embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         # embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         # print(embeddings)
+    if isLUT:
+        # here do the binary convert
+        # # here convert the embedding to binary
+        LUT1 = genLUT()
+        embeddings = tf.cast(embeddings, tf.int32)
+        LUV = tf.gather(LUT1, embeddings)
+        embeddings = tf.reshape(LUV, (embeddings.shape[0], 8 * embeddings.shape[1]))
 
-    # # here convert the embedding to binary
-    LUT1 = genLUT()
-    embeddings = tf.cast(embeddings,tf.int32)
-    LUV = tf.gather(LUT1, embeddings)
-    embeddings = tf.reshape(LUV, (embeddings.shape[0],8*embeddings.shape[1]))
-
+        ##### end ########
     tpr, fpr, accuracy, best_thresholds,auc,eer = evaluate(
         embeddings, issame, nrof_folds,cfg)
 
@@ -262,7 +264,7 @@ def val_LFW(model,cfg):
 ds_path = 'E:/my research/etri2020/facedataset/facescrub_images_112x112'
 
 '''
-def perform_val_yts(batch_size, model,ds_path,is_ccrop=False, is_flip=False,cfg=None,img_ext='png'):
+def perform_val_yts(batch_size, model,ds_path,is_ccrop=False, is_flip=False,cfg=None,img_ext='png',isLUT=False):
     """perform val for youtube face and facescrb"""
     def extractFeat(dataset,model):
         feats = []
@@ -281,18 +283,19 @@ def perform_val_yts(batch_size, model,ds_path,is_ccrop=False, is_flip=False,cfg=
     probes = load_data_split(ds_path, batch_size, subset='test', img_ext=img_ext)
     gallery_feats, gallery_names = extractFeat(gallery, model)
     probes_feats, probes_names = extractFeat(probes, model)
+    if isLUT:
+        # here do the binary convert
+        LUT1 = genLUT()
+        gallery_feats = tf.cast(gallery_feats, tf.int32)
+        LUV = tf.gather(LUT1, gallery_feats)
+        gallery_feats = tf.reshape(LUV, (gallery_feats.shape[0], 8 * gallery_feats.shape[1]))
 
-    # here do the binary convert
-    LUT1 = genLUT()
-    gallery_feats = tf.cast(gallery_feats, tf.int32)
-    LUV = tf.gather(LUT1, gallery_feats)
-    gallery_feats = tf.reshape(LUV, (gallery_feats.shape[0], 8 * gallery_feats.shape[1]))
+        probes_feats = tf.cast(probes_feats, tf.int32)
+        LUV = tf.gather(LUT1, probes_feats)
+        probes_feats = tf.reshape(LUV, (probes_feats.shape[0], 8 * probes_feats.shape[1]))
 
-    probes_feats = tf.cast(probes_feats, tf.int32)
-    LUV = tf.gather(LUT1, probes_feats)
-    probes_feats = tf.reshape(LUV, (probes_feats.shape[0], 8 * probes_feats.shape[1]))
+        ##### end ########
 
-    ##### end ########
 
     mAp = streaming_mean_averge_precision(probes_feats, probes_names, gallery_feats, gallery_names,k=50)
     rr = streaming_mean_cmc_at_k(probes_feats, probes_names, gallery_feats, gallery_names, 10)
