@@ -131,9 +131,7 @@ def main(_):
                 elif cfg['loss_fun'] == 'ms_loss':
                     pred_loss = ms_loss.ms_loss(labels, logist,ms_mining=True)
                 elif cfg['loss_fun'] == 'margin_loss':
-                    logist = tf.cast(logist,tf.double)
-                    pred_loss = triplet_loss_omoindrot.batch_all_triplet_loss(labels, logist,margin=cfg['triplet_margin'], scala=100)
-                    # pred_loss = tf.constant(0.0,tf.float64)
+                    pred_loss = tf.constant(0.0,tf.float64)
                 elif cfg['loss_fun'] == 'batch_all_arc_triplet_loss':
                     pred_loss, _ ,_= arcface_pair_loss.batch_all_triplet_arcloss(labels, logist, arc_margin=cfg['triplet_margin'], scala=32)
                 elif cfg['loss_fun'] == 'semihard_triplet_loss':
