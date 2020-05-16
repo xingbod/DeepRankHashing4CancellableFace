@@ -122,7 +122,7 @@ def main(_):
             inputs, labels = next(train_dataset) #print(inputs[0][1][:])  labels[2][:]
             with tf.GradientTape() as tape:
                 logist = model((inputs, labels), training=True)
-                reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.float64)
+                reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.double)
                 # for metric learning, we have 1. batch_hard_triplet 2. batch_all_triplet_loss 3. batch_all_arc_triplet_loss
                 if cfg['loss_fun'] == 'batch_hard_triplet':
                     pred_loss = triplet_loss_omoindrot.batch_hard_triplet_loss(labels, logist,margin=cfg['triplet_margin'])
