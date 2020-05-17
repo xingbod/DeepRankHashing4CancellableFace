@@ -8,10 +8,11 @@ input_size: 112
 embd_shape: 512
 #iom_res50_twostage_triplet -- only two stage with triplet loss
 #iom_res50_twostage_triplet and quantization loss -- triplet loss + quantization loss, this in another config file
-sub_name: 'iom_res50_twostage_arctriplet_online_32_swap'
+sub_name: 'iom_res50_twostage_arctriplet_online_swap_1024'
 backbone_type: 'ResNet50' # 'ResNet50', 'MobileNetV2'
 head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
+#isLUT: True
 
 # train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split VGG png MS jpg
 #train_dataset: '/media/xingbo/Storage/facedata/ms1m_align_112/imgs'
@@ -33,9 +34,9 @@ epochs: 30
 base_lr: 0.01
 w_decay: !!float 5e-4
 save_steps: 5000
-q: 8
+q: 2
 # m, the projection length would be m x q
-m: 256
+m: 512
 # test
 test_dataset: './data/test_dataset'
 test_dataset_ytf: './data/test_dataset/aligned_images_DB_YTF/'
