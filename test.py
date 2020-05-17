@@ -80,17 +80,25 @@ def main(_argv):
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp,
                                                                           eer_cfp_fp))
 
-        print(''' q = {:.2f}, m = {:.2f} | LFW | AgeDB30 | CFP - FP
-        --- | --- | --- | ---
-        Accuracy | {:.4f} | {:.4f} | {:.4f} 
-        EER  | {:.4f} | {:.4f} | {:.4f} 
-        AUC  | {:.4f} | {:.4f} | {:.4f} 
-        Threshold  | {:.4f} | {:.4f} | {:.4f} '''.format(0, 0,
-                                                         acc_lfw, acc_agedb30, acc_cfp_fp ,
-                                                         eer_lfw, eer_agedb30, eer_cfp_fp ,
-                                                         auc_lfw, auc_agedb30, auc_cfp_fp ,
-                                                         best_th_lfw, best_th_agedb30,best_th_cfp_fp))
-
+        log_str = '''| q = {:.2f}, m = {:.2f} | LFW    | AgeDB30 | CFP - FP |
+        |------------------------|--------|---------|----------|
+        | Accuracy               | {:.4f} | {:.4f}  | {:.4f}   |
+        | EER                    | {:.4f} | {:.4f}  | {:.4f}   |
+        | AUC                    | {:.4f} | {:.4f}  | {:.4f}   |
+        | Threshold              | {:.4f} | {:.4f}  | {:.4f}   |
+        |                        | mAP    | CMC-1   |          |
+        | Y.T.F                  | {:.4f} | {:.4f}  |          |
+        | F.S                    | {:.4f} | {:.4f}  |          | '''.format(0, 0,
+                                                                            acc_lfw, acc_agedb30, acc_cfp_fp,
+                                                                            eer_lfw, eer_agedb30, eer_cfp_fp,
+                                                                            auc_lfw, auc_agedb30, auc_cfp_fp,
+                                                                            best_th_lfw, best_th_agedb30,
+                                                                            best_th_cfp_fp,
+                                                                            mAp_ytf, rr_ytf[0],
+                                                                            mAp_fs, rr_fs[0])
+        with open('./logs/' + cfg['sub_name'] + "Output.txt", "a") as text_file:
+            text_file.write(log_str)
+        print(log_str)
 
 if __name__ == '__main__':
     try:
