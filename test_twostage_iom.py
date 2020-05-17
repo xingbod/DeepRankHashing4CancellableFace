@@ -125,7 +125,7 @@ def main(_argv):
                                                                     best_th_lfw, best_th_agedb30, best_th_cfp_fp,
                                                                     mAp_ytf, rr_ytf[0],
                                                                     mAp_fs, rr_fs[0])
-        with open('./logs/' + cfg['sub_name'] + "Output.txt", "a") as text_file:
+        with open('./logs/' + cfg['sub_name'] + "_Output.md", "a") as text_file:
             text_file.write(log_str)
         print(log_str)
 
