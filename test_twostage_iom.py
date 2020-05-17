@@ -121,7 +121,7 @@ def main(_argv):
             | Threshold              | {:.4f} | {:.4f}  | {:.4f}   |
             |                        | mAP    | CMC-1   |          |
             | Y.T.F                  | {:.4f} | {:.4f}  |          |
-            | F.S                    | {:.4f} | {:.4f}  |          | '''.format(q, m, isLUT,
+            | F.S                    | {:.4f} | {:.4f}  |          | \n\n '''.format(q, m, isLUT,
                                                                                 acc_lfw, acc_agedb30, acc_cfp_fp,
                                                                                 eer_lfw, eer_agedb30, eer_cfp_fp,
                                                                                 auc_lfw, auc_agedb30, auc_cfp_fp,
