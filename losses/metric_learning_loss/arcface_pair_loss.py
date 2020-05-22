@@ -265,8 +265,8 @@ def batch_hard_triplet_arcloss(labels, embeddings,steps,summary_writer,arc_margi
 
         tf.summary.scalar('margin/hardest_positive_dist' + NEGATIVE_LOSS, tf.reduce_mean(hardest_positive_dist), step=steps)
         tf.summary.scalar('margin/hardest_negative_dist' + NEGATIVE_LOSS, tf.reduce_mean(hardest_negative_dist), step=steps)
-        tf.summary.scalar('margin/' + POSITIVE_LOSS, triplet_arcloss_positive, step=steps)
-        tf.summary.scalar('margin/' + NEGATIVE_LOSS, triplet_arcloss_negetive, step=steps)
+        tf.summary.scalar('margin/' + POSITIVE_LOSS, tf.reduce_sum(triplet_arcloss_positive), step=steps)
+        tf.summary.scalar('margin/' + NEGATIVE_LOSS, tf.reduce_sum(triplet_arcloss_negetive), step=steps)
         tf.summary.histogram('margin/' + POSITIVE_DISTANCES, anchor_positive_dist, step=steps)
         tf.summary.histogram('margin/' + NEGATIVE_DISTANCES, mask_anchor_negative, step=steps)
 
