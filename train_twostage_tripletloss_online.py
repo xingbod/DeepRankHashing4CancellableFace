@@ -138,6 +138,8 @@ def main(_):
                     pred_loss = triplet_loss_omoindrot.batch_hard_triplet_loss(labels, logist,margin=cfg['triplet_margin'], scala=100)
                 elif cfg['loss_fun'] == 'batch_all_arc_triplet_loss':
                     pred_loss, _ ,_= arcface_pair_loss.batch_all_triplet_arcloss(labels, logist, arc_margin=cfg['triplet_margin'], scala=32)
+                elif cfg['loss_fun'] == 'batch_hard_arc_triplet_loss':
+                    pred_loss = arcface_pair_loss.batch_hard_triplet_arcloss(labels, logist, steps,summary_writer,arc_margin=cfg['triplet_margin'], scala=32)
                 elif cfg['loss_fun'] == 'semihard_triplet_loss':
                     pred_loss = triplet_loss.semihard_triplet_loss(labels, logist, margin=cfg['triplet_margin'])
                 elif cfg['loss_fun'] == 'triplet_sampling':

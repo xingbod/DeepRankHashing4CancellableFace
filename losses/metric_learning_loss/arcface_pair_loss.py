@@ -16,6 +16,11 @@ cos(theta_{j, i}) = W_j.T * x_i
 
 import tensorflow as tf
 import tensorflow.keras.backend as K
+PAIRWISE_DISTANCES = 'pairwise_distances'
+POSITIVE_DISTANCES = 'positive_distances'
+NEGATIVE_DISTANCES = 'negative_distances'
+POSITIVE_LOSS = 'positive_loss'
+NEGATIVE_LOSS = 'negative_loss'
 
 
 def cosine_distance(a, b=None):
@@ -92,7 +97,7 @@ def _get_triplet_mask(labels):
     return mask
 
 
-def batch_all_triplet_arcloss(labels, embeddings, arc_margin=1.0,scala=20):
+def batch_all_triplet_arcloss(labels, embeddings, arc_margin=0,scala=20):
     """Build the triplet loss over a batch of embeddings.
 
     We generate all the valid triplets and average the loss over the positive ones.
@@ -161,6 +166,111 @@ def batch_all_triplet_arcloss(labels, embeddings, arc_margin=1.0,scala=20):
     # return triplet_loss, fraction_positive_triplets
     # print(fraction_positive_triplets)
     return triplet_arcloss,tf.reduce_mean(triplet_arcloss_positive) ,tf.reduce_mean(triplet_arcloss_negetive)
+
+
+def _get_anchor_positive_triplet_mask(labels):
+    """Return a 2D mask where mask[a, p] is True iff a and p are distinct and have same label.
+
+    Args:
+        labels: tf.int32 `Tensor` with shape [batch_size]
+
+    Returns:
+        mask: tf.bool `Tensor` with shape [batch_size, batch_size]
+    """
+    # Check that i and j are distinct
+    indices_equal = tf.cast(tf.eye(tf.shape(labels)[0]), tf.bool)
+    indices_not_equal = tf.logical_not(indices_equal)
+
+    # Check if labels[i] == labels[j]
+    # Uses broadcasting where the 1st argument has shape (1, batch_size) and the 2nd (batch_size, 1)
+    labels_equal = tf.equal(tf.expand_dims(labels, 0), tf.expand_dims(labels, 1))
+
+    # Combine the two masks
+    mask = tf.logical_and(indices_not_equal, labels_equal)
+
+    return mask
+
+def _get_anchor_negative_triplet_mask(labels):
+    """Return a 2D mask where mask[a, n] is True iff a and n have distinct labels.
+
+    Args:
+        labels: tf.int32 `Tensor` with shape [batch_size]
+
+    Returns:
+        mask: tf.bool `Tensor` with shape [batch_size, batch_size]
+    """
+    # Check if labels[i] != labels[k]
+    # Uses broadcasting where the 1st argument has shape (1, batch_size) and the 2nd (batch_size, 1)
+    labels_equal = tf.equal(tf.expand_dims(labels, 0), tf.expand_dims(labels, 1))
+
+    mask = tf.logical_not(labels_equal)
+
+    return mask
+def batch_hard_triplet_arcloss(labels, embeddings,steps,summary_writer,arc_margin=0,scala=20):
+    """Build the triplet loss over a batch of embeddings.
+
+    For each anchor, we get the hardest positive and hardest negative to form a triplet.
+
+    Args:
+        labels: labels of the batch, of size (batch_size,)
+        embeddings: tensor of shape (batch_size, embed_dim)
+        margin: margin for triplet loss
+        squared: Boolean. If true, output is the pairwise squared euclidean distance matrix.
+                 If false, output is the pairwise euclidean distance matrix.
+
+    Returns:
+        triplet_loss: scalar tensor containing the triplet loss
+    """
+    # Get the pairwise distance matrix
+    pairwise_angle = _pairwise_angle(embeddings)
+
+    # For each anchor, get the hardest positive
+    # First, we need to get a mask for every valid positive (they should have same label)
+    mask_anchor_positive = _get_anchor_positive_triplet_mask(labels)
+    # mask_anchor_positive = tf.to_float(mask_anchor_positive)
+    mask_anchor_positive = tf.cast(mask_anchor_positive,tf.float64)
+
+    # We put to 0 any element where (a, p) is not valid (valid if a != p and label(a) == label(p))
+    anchor_positive_dist = tf.multiply(mask_anchor_positive, pairwise_angle)
+
+    # shape (batch_size, 1)
+    hardest_positive_dist = tf.reduce_max(anchor_positive_dist, axis=1, keepdims=True)
+
+    # For each anchor, get the hardest negative
+    # First, we need to get a mask for every valid negative (they should have different labels)
+    mask_anchor_negative = _get_anchor_negative_triplet_mask(labels)
+    mask_anchor_negative = tf.cast(mask_anchor_negative,tf.float64)
+
+    # We add the maximum value in each row to the invalid negatives (label(a) == label(n))
+    max_anchor_negative_dist = tf.reduce_max(pairwise_angle, axis=1, keepdims=True)
+    anchor_negative_dist = pairwise_angle + max_anchor_negative_dist * (1.0 - mask_anchor_negative)
+
+    # shape (batch_size,)
+    hardest_negative_dist = tf.reduce_min(anchor_negative_dist, axis=1, keepdims=True)
+
+
+    triplet_arcloss_positive = tf.math.exp(tf.math.cos(hardest_negative_dist + arc_margin)) / (
+            tf.math.exp(tf.math.cos(hardest_negative_dist + arc_margin)) + tf.math.exp(
+        tf.math.sin(hardest_negative_dist)))
+
+    triplet_arcloss_negetive = tf.math.exp(tf.math.sin(hardest_positive_dist + arc_margin)) / \
+                      (tf.math.exp(tf.math.sin(hardest_positive_dist + arc_margin)) + tf.math.exp(
+                          tf.math.cos(hardest_positive_dist)))
+    triplet_arcloss = triplet_arcloss_positive + triplet_arcloss_negetive
+
+    triplet_arcloss = tf.reduce_sum(triplet_arcloss) * scala
+
+    # Get final mean triplet loss
+    with summary_writer.as_default():
+
+        tf.summary.scalar('margin/hardest_positive_dist' + NEGATIVE_LOSS, tf.reduce_mean(hardest_positive_dist), step=steps)
+        tf.summary.scalar('margin/hardest_negative_dist' + NEGATIVE_LOSS, tf.reduce_mean(hardest_negative_dist), step=steps)
+        tf.summary.scalar('margin/' + POSITIVE_LOSS, triplet_arcloss_positive, step=steps)
+        tf.summary.scalar('margin/' + NEGATIVE_LOSS, triplet_arcloss_negetive, step=steps)
+        tf.summary.histogram('margin/' + POSITIVE_DISTANCES, anchor_positive_dist, step=steps)
+        tf.summary.histogram('margin/' + NEGATIVE_DISTANCES, mask_anchor_negative, step=steps)
+
+    return triplet_arcloss
 
 if __name__ == '__main__':
     embeddings = [[6.0, 4, 7, 5, 4, 6, 4, 5, 0, 2],
