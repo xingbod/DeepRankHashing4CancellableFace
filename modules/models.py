@@ -220,7 +220,7 @@ def IoMFaceModelFromArFace3(size=None, channels=3, arcmodel=None, name='IoMface_
     if not (permKey is None):
         x = PermLayer(permKey)(x)  # permutation before project to IoM hash code
     # here I add one extra hidden layer
-    x = Dense(1024, kernel_regularizer=_regularizer(w_decay), activation='relu')(x)
+    x = Dense(512, kernel_regularizer=_regularizer(w_decay), activation='relu')(x)
     # x = BatchNormalization()(x)
     x = Dropout(rate=0.5)(x)
     x = Dense(512, kernel_regularizer=_regularizer(w_decay), activation='relu')(x)
