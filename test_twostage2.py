@@ -132,6 +132,9 @@ def main(_argv):
             with open('./logs/' + cfg['sub_name'] + "_Output.md", "a") as text_file:
                 text_file.write(log_str)
             print(log_str)
+            log_str2 = '''| q = {:.2f}, m = {:.2f},LUT={}| {:.4f} | {:.4f} | {:.4f} | {:.4f} || {:.4f} | {:.4f} | {:.4f} || {:.4f} | {:.4f} | {:.4f}|| {:.4f} | {:.4f} | {:.4f}\n\n '''.format(q, m, isLUT,mAp_ytf,mAp_fs,rr_ytf[0],rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp,auc_lfw, auc_agedb30, auc_cfp_fp,auc_lfw, auc_agedb30, auc_cfp_fp)
+            print(log_str2)
+
 
         evl(True)
         evl(False)
