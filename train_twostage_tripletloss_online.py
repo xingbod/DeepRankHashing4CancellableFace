@@ -123,6 +123,7 @@ def main(_):
             with tf.GradientTape() as tape:
                 logist = model((inputs, labels), training=True)
                 reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.double)
+                quanti_loss = tf.cast(loss_fn_quanti(logist),tf.float64)
                 # for metric learning, we have 1. batch_hard_triplet 2. batch_all_triplet_loss 3. batch_all_arc_triplet_loss
                 if cfg['loss_fun'] == 'batch_hard_triplet':
                     pred_loss = triplet_loss_omoindrot.batch_hard_triplet_loss(labels, logist,margin=cfg['triplet_margin'])
@@ -144,7 +145,10 @@ def main(_):
                     pred_loss = triplet_loss.semihard_triplet_loss(labels, logist, margin=cfg['triplet_margin'])
                 elif cfg['loss_fun'] == 'triplet_sampling':
                     beta_0 = 1.2
-                quanti_loss = tf.cast(loss_fn_quanti(logist),tf.float64)
+                elif cfg['loss_fun'] == 'only_bin_loss':
+                    pred_loss = tf.constant(0.0, tf.float64)
+                    reg_loss = tf.constant(0.0, tf.float64)
+                    quanti_loss = tf.constant(0.0, tf.float64)
                 if cfg['bin_lut_loss']:
                     bin_loss = bin_LUT_loss.binary_loss_LUT(labels, logist) * 0.001
                 else:
