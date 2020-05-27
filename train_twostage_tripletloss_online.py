@@ -154,7 +154,7 @@ def main(_):
                     print("**",bin_loss)
                 else:
                     bin_loss = tf.constant(0.0,tf.float64)
-                total_loss = pred_loss + reg_loss * 0.5 + quanti_loss * 0.5 + bin_loss
+                total_loss =bin_loss
 
             grads = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(grads, model.trainable_variables))
