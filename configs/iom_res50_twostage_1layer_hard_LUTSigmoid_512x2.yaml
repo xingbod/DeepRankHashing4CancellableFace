@@ -8,11 +8,11 @@ input_size: 112
 embd_shape: 512
 #iom_res50_twostage_triplet -- only two stage with triplet loss
 #iom_res50_twostage_triplet and quantization loss -- triplet loss + quantization loss, this in another config file
-sub_name: 'iom_res50_twostage_1layer_LUTonly_512x2'
+sub_name: 'iom_res50_twostage_1layer_hard_LUTSigmoid_512x2'
 backbone_type: 'ResNet50' # 'ResNet50', 'MobileNetV2'
 head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
-bin_lut_loss: True
+bin_lut_loss: 'sigmoid'
 
 # train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split /media/xingbo/Storage/facedata/ms1m_align_112/imgs
 train_dataset: '/home/xingbo/facedata/ms1m_align_112/imgs'
@@ -20,7 +20,7 @@ train_dataset: '/home/xingbo/facedata/ms1m_align_112/imgs'
 img_ext: 'jpg'
 dataset_ext: 'ms'
 # for metric learning, we have 1. triplet_semi batch_hard_triplet 2. batch_all_triplet_loss 3. batch_all_arc_triplet_loss
-loss_fun: 'only_bin_loss'
+loss_fun: 'batch_hard_triplet'
 triplet_margin: -1
 binary_img: False
 num_classes: 85742
