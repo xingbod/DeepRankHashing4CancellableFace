@@ -150,6 +150,10 @@ def binary_loss_LUT(labels, embeddings,scala=100):
     return final_loss
 
 
+
+bin_dim = 8
+LUT1 = genLUT(bin_dim = bin_dim)
+
 def binary_loss_LUT_sigmoid(labels, embeddings,scala=100):
     """Build the triplet loss over a batch of embeddings.
 
@@ -165,12 +169,10 @@ def binary_loss_LUT_sigmoid(labels, embeddings,scala=100):
     Returns:
         triplet_loss: scalar tensor containing the triplet loss
     """
-    #
-    # bin_dim = 8
-    # LUT1 = genLUT(bin_dim = bin_dim)
-    # embeddings = tf.cast(embeddings, tf.int32)
-    # LUV = tf.gather(LUT1, embeddings)
-    # embeddings = tf.reshape(LUV, (embeddings.shape[0], bin_dim * embeddings.shape[1]))
+
+    embeddings = tf.cast(embeddings, tf.int32)
+    LUV = tf.gather(LUT1, embeddings)
+    embeddings = tf.reshape(LUV, (embeddings.shape[0], bin_dim * embeddings.shape[1]))
 
     # Get the pairwise distance matrix
     pairwise_dist = _pairwise_inner_product(embeddings)
