@@ -150,7 +150,7 @@ def main(_):
                     reg_loss = tf.constant(0.0, tf.float64)
                     quanti_loss = tf.constant(0.0, tf.float64)
                 if cfg['bin_lut_loss']:
-                    bin_loss = bin_LUT_loss.binary_loss_LUT(labels, logist) * 0.001
+                    bin_loss = bin_LUT_loss.binary_loss_LUT_sigmoid(labels, logist) * 0.001
                     print("**",bin_loss)
                 else:
                     bin_loss = tf.constant(0.0,tf.float64)
