@@ -128,7 +128,7 @@ def binary_loss_LUT(labels, embeddings,scala=100):
     # Get the pairwise distance matrix
     pairwise_dist = _pairwise_inner_product(embeddings)
 
-    product_dist = tf.tanh(tf.cast(pairwise_dist, tf.float32)) * 0.5
+    product_dist = tf.tanh(tf.cast(pairwise_dist, tf.float64)) * 0.5
 
     # For each anchor, get the hardest positive
     # First, we need to get a mask for every valid positive (they should have same label)
@@ -175,7 +175,7 @@ def binary_loss_LUT_sigmoid(labels, embeddings,scala=100):
     # Get the pairwise distance matrix
     pairwise_dist = _pairwise_inner_product(embeddings)
 
-    product_dist = tf.math.sigmoid(tf.cast(pairwise_dist, tf.float32))
+    product_dist = tf.math.sigmoid(tf.cast(pairwise_dist, tf.float64))
 
     # For each anchor, get the hardest positive
     # First, we need to get a mask for every valid positive (they should have same label)
