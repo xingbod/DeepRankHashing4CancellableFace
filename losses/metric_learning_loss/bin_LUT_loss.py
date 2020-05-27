@@ -137,15 +137,63 @@ def binary_loss_LUT(labels, embeddings,scala=100):
     mask_anchor_positive = tf.cast(mask_anchor_positive,tf.float64)
 
     # We put to 0 any element where (a, p) is not valid (valid if a != p and label(a) == label(p))
-    anchor_positive_dist = tf.multiply(mask_anchor_positive, pairwise_dist)
+    anchor_positive_dist = tf.multiply(mask_anchor_positive, product_dist)
 
     # For each anchor, get the hardest negative
     # First, we need to get a mask for every valid negative (they should have different labels)
     mask_anchor_negative = _get_anchor_negative_triplet_mask(labels)
     mask_anchor_negative = tf.cast(mask_anchor_negative,tf.float64)
 
-    anchor_negative_dist = tf.multiply(mask_anchor_negative, pairwise_dist)
+    anchor_negative_dist = tf.multiply(mask_anchor_negative, product_dist)
 
     final_loss = tf.reduce_sum(anchor_positive_dist)  +tf.reduce_sum(1-anchor_negative_dist)
     return final_loss
+
+
+def binary_loss_LUT_sigmoid(labels, embeddings,scala=100):
+    """Build the triplet loss over a batch of embeddings.
+
+    We generate all the valid triplets and average the loss over the positive ones.
+
+    Args:
+        labels: labels of the batch, of size (batch_size,)
+        embeddings: tensor of shape (batch_size, embed_dim)
+        margin: margin for triplet loss
+        squared: Boolean. If true, output is the pairwise squared euclidean distance matrix.
+                 If false, output is the pairwise euclidean distance matrix.
+
+    Returns:
+        triplet_loss: scalar tensor containing the triplet loss
+    """
+
+    bin_dim = 8
+    LUT1 = genLUT(bin_dim = bin_dim)
+    embeddings = tf.cast(embeddings, tf.int32)
+    LUV = tf.gather(LUT1, embeddings)
+    embeddings = tf.reshape(LUV, (embeddings.shape[0], bin_dim * embeddings.shape[1]))
+
+    # Get the pairwise distance matrix
+    pairwise_dist = _pairwise_inner_product(embeddings)
+
+    product_dist = tf.math.sigmoid(tf.cast(pairwise_dist, tf.float32))
+
+    # For each anchor, get the hardest positive
+    # First, we need to get a mask for every valid positive (they should have same label)
+    mask_anchor_positive = _get_anchor_positive_triplet_mask(labels)
+    # mask_anchor_positive = tf.to_float(mask_anchor_positive)
+    mask_anchor_positive = tf.cast(mask_anchor_positive,tf.float64)
+
+    # We put to 0 any element where (a, p) is not valid (valid if a != p and label(a) == label(p))
+    anchor_positive_dist = tf.multiply(mask_anchor_positive, product_dist)
+
+    # For each anchor, get the hardest negative
+    # First, we need to get a mask for every valid negative (they should have different labels)
+    mask_anchor_negative = _get_anchor_negative_triplet_mask(labels)
+    mask_anchor_negative = tf.cast(mask_anchor_negative,tf.float64)
+
+    anchor_negative_dist = tf.multiply(mask_anchor_negative, product_dist)
+
+    final_loss = tf.reduce_sum(anchor_positive_dist)  +tf.reduce_sum(1-anchor_negative_dist)
+    return final_loss
+
 
