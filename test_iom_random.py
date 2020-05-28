@@ -154,7 +154,15 @@ def callMe():
 #         app.run(main)
 #     except SystemExit:
 #         pass
-for m in [32,64,128,256, 512]:
+# 32,64,128,
+for m in [128]:
+    for q in [4, 8, 16]:
+        print(m,q,'****')
+        mycfg['m'] = m
+        mycfg['q'] = q
+        callMe()
+
+for m in [256, 512]:
     for q in [2, 4, 8, 16]:
         print(m,q,'****')
         mycfg['m'] = m
