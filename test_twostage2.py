@@ -104,15 +104,7 @@ def main(_argv):
                 is_ccrop=cfg['is_ccrop'], cfg=cfg, isLUT=isLUT)
             print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp,
                                                                               eer_cfp_fp))
-            # with open('./embeddings/embeddings_lfw.csv', 'w', newline='') as file:
-            #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
-            #     writer.writerows(embeddings_lfw)
-            # with open('./embeddings/embeddings_agedb30.csv', 'w', newline='') as file:
-            #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
-            #     writer.writerows(embeddings_agedb30)
-            # with open('./embeddings/embeddings_cfp_fp.csv', 'w', newline='') as file:
-            #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
-            #     writer.writerows(embeddings_cfp_fp)
+
             log_str = '''| q = {:.2f}, m = {:.2f},LUT={} | LFW    | AgeDB30 | CFP - FP |
             |------------------------|--------|---------|----------|
             | Accuracy               | {:.4f} | {:.4f}  | {:.4f}   |

@@ -4,7 +4,7 @@ input_size: 112
 eval_batch_size: 200
 # embd_shape is for the Resnet, backbone
 embd_shape: 512
-sub_name: 'iom_res50_triplet'
+sub_name: 'iom_res50_random'
 backbone_type: 'ResNet50' # 'ResNet50', 'MobileNetV2'
 head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
@@ -27,4 +27,3 @@ m: 256
 test_dataset: './data/test_dataset'
 test_dataset_ytf: './data/test_dataset/aligned_images_DB_YTF/'
 test_dataset_fs: './data/test_dataset/facescrub_images_112x112/'
-#test_dataset_fs: './data/test_dataset/facescrub_mtcnn_160/'

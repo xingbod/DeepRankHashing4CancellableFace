@@ -104,15 +104,7 @@ def main(_argv):
                 is_ccrop=cfg['is_ccrop'], cfg=cfg, isLUT=isLUT)
             print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp,
                                                                               eer_cfp_fp))
-            # with open('./embeddings/embeddings_lfw.csv', 'w', newline='') as file:
-            #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
-            #     writer.writerows(embeddings_lfw)
-            # with open('./embeddings/embeddings_agedb30.csv', 'w', newline='') as file:
-            #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
-            #     writer.writerows(embeddings_agedb30)
-            # with open('./embeddings/embeddings_cfp_fp.csv', 'w', newline='') as file:
-            #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
-            #     writer.writerows(embeddings_cfp_fp)
+
             log_str = '''| q = {:.2f}, m = {:.2f},LUT={} | LFW    | AgeDB30 | CFP - FP |
             |------------------------|--------|---------|----------|
             | Accuracy               | {:.4f} | {:.4f}  | {:.4f}   |
@@ -122,22 +114,27 @@ def main(_argv):
             |                        | mAP    | CMC-1   |          |
             | Y.T.F                  | {:.4f} | {:.4f}  |          |
             | F.S                    | {:.4f} | {:.4f}  |          | \n\n '''.format(q, m, isLUT,
-                                                                                acc_lfw, acc_agedb30, acc_cfp_fp,
-                                                                                eer_lfw, eer_agedb30, eer_cfp_fp,
-                                                                                auc_lfw, auc_agedb30, auc_cfp_fp,
-                                                                                best_th_lfw, best_th_agedb30,
-                                                                                best_th_cfp_fp,
-                                                                                mAp_ytf, rr_ytf[0],
-                                                                                mAp_fs, rr_fs[0])
+                                                                                     acc_lfw, acc_agedb30, acc_cfp_fp,
+                                                                                     eer_lfw, eer_agedb30, eer_cfp_fp,
+                                                                                     auc_lfw, auc_agedb30, auc_cfp_fp,
+                                                                                     best_th_lfw, best_th_agedb30,
+                                                                                     best_th_cfp_fp,
+                                                                                     mAp_ytf, rr_ytf[0],
+                                                                                     mAp_fs, rr_fs[0])
             with open('./logs/' + cfg['sub_name'] + "_Output.md", "a") as text_file:
                 text_file.write(log_str)
             print(log_str)
-            log_str2 = '''| q = {:.2f}, m = {:.2f},LUT={}| {:.4f} | {:.4f} | {:.4f} | {:.4f} || {:.4f} | {:.4f} | {:.4f} || {:.4f} | {:.4f} | {:.4f}|| {:.4f} | {:.4f} | {:.4f}\n\n '''.format(q, m, isLUT,mAp_ytf,mAp_fs,rr_ytf[0],rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp,auc_lfw, auc_agedb30, auc_cfp_fp,auc_lfw, auc_agedb30, auc_cfp_fp)
-            print(log_str2)
+            log_str2 = '''| q = {:.2f}, m = {:.2f},LUT={}\t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f}\n\n '''.format(
+                q, m, isLUT, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, auc_lfw,
+                auc_agedb30, auc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
+            with open('./logs/' + cfg['sub_name'] + "_Output.md", "a") as text_file:
+                text_file.write(log_str2)
 
+            print(log_str2)
 
         evl(True)
         evl(False)
+
 
 if __name__ == '__main__':
     try:
