@@ -75,9 +75,9 @@ def main(_argv):
         def evl(isLUT):
             print("[*] Perform Retrieval Evaluation on Y.T.F and F.S...")
             mAp_ytf, rr_ytf = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_ytf'], img_ext='jpg',
-                                              isLUT=isLUT)
+                                              isLUT=isLUT, cfg=cfg)
             mAp_fs, rr_fs = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_fs'], img_ext='png',
-                                            isLUT=isLUT)
+                                            isLUT=isLUT, cfg=cfg)
             print("    Y.T.F mAP {:.4f}, F.S mAP: {:.2f}".format(mAp_ytf, mAp_fs))
             print("    Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(rr_ytf[0], rr_fs[0]))
 
