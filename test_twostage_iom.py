@@ -132,8 +132,8 @@ def main(_argv):
 
             print(log_str2)
 
-        evl(True)
-        evl(False)
+        evl(8)
+        evl(0)
 
 
 if __name__ == '__main__':
