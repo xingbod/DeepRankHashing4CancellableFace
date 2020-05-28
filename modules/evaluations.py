@@ -178,7 +178,7 @@ def evaluate(embeddings, actual_issame, nrof_folds=10,cfg=None):
 
 
 def perform_val(embedding_size, batch_size, model,
-                carray, issame, nrof_folds=10, is_ccrop=False, is_flip=False,cfg=None,isLUT=False):
+                carray, issame, nrof_folds=10, is_ccrop=False, is_flip=False,cfg=None,isLUT=0):
     """perform val"""
     if cfg['head_type']=='IoMHead':
          embedding_size = int(embedding_size / cfg['q'])
@@ -204,13 +204,13 @@ def perform_val(embedding_size, batch_size, model,
             embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         # embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         # print(embeddings)
-    if isLUT:
+    if isLUT:# length of bin
         # here do the binary convert
         # # here convert the embedding to binary
-        LUT1 = genLUT()
+        LUT1 = genLUT(q=cfg['q'],bin_dim=isLUT)
         embeddings = tf.cast(embeddings, tf.int32)
         LUV = tf.gather(LUT1, embeddings)
-        embeddings = tf.reshape(LUV, (embeddings.shape[0], 8 * embeddings.shape[1]))
+        embeddings = tf.reshape(LUV, (embeddings.shape[0], isLUT * embeddings.shape[1]))
 
         ##### end ########
     tpr, fpr, accuracy, best_thresholds,auc,eer = evaluate(
@@ -285,14 +285,14 @@ def perform_val_yts(batch_size, model,ds_path,is_ccrop=False, is_flip=False,cfg=
     probes_feats, probes_names = extractFeat(probes, model)
     if isLUT:
         # here do the binary convert
-        LUT1 = genLUT()
+        LUT1 = genLUT(q=cfg['q'],bin_dim=isLUT)
         gallery_feats = tf.cast(gallery_feats, tf.int32)
         LUV = tf.gather(LUT1, gallery_feats)
-        gallery_feats = tf.reshape(LUV, (gallery_feats.shape[0], 8 * gallery_feats.shape[1]))
+        gallery_feats = tf.reshape(LUV, (gallery_feats.shape[0], isLUT * gallery_feats.shape[1]))
 
         probes_feats = tf.cast(probes_feats, tf.int32)
         LUV = tf.gather(LUT1, probes_feats)
-        probes_feats = tf.reshape(LUV, (probes_feats.shape[0], 8 * probes_feats.shape[1]))
+        probes_feats = tf.reshape(LUV, (probes_feats.shape[0], isLUT * probes_feats.shape[1]))
 
         ##### end ########
 

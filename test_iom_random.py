@@ -135,8 +135,10 @@ def callMe():
             with open('./logs/' + cfg['sub_name'] + "_Output.md", "a") as text_file:
                 text_file.write(log_str2)
 
-        evl(True)
-        evl(False)
+        evl(0)# no LUT
+        evl(4)
+        evl(8)
+        evl(16)
 
 
 # def main(_argv):
