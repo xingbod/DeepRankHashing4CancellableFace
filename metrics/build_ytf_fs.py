@@ -39,11 +39,11 @@ def splitDS(ds_path, save_dir, SPLIT_WEIGHTS=[40,5], ds='ytf'):
             print(data_dir, " has not enough samples!",len(pic_list))
         train_file_list = random.sample(pic_list[SPLIT_WEIGHTS[1]:], k=min(SPLIT_WEIGHTS[0],len(pic_list)-SPLIT_WEIGHTS[1]))
         for images in train_file_list:
-            dst_dir = os.path.join(save_dir + '/train_gallery', cnt)
+            dst_dir = os.path.join(save_dir + '/train_gallery', "%05d" % cnt)
             check_folder(dst_dir)
             copy(images, dst_dir)
         for images in test_file_list:
-            dst_dir = os.path.join(save_dir + '/test', cnt)
+            dst_dir = os.path.join(save_dir + '/test', "%05d" % cnt)
             check_folder(dst_dir)
             copy(images, dst_dir)
         cnt = cnt+1
