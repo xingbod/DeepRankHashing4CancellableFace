@@ -132,7 +132,7 @@ def callMe():
                 q, m, isLUT, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, auc_lfw,
                 auc_agedb30, auc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
 
-            with open('./logs/' + cfg['sub_name'] + "_Output.md", "a") as text_file:
+            with open('./logs/' + cfg['sub_name'] + "_Output_line.md", "a") as text_file:
                 text_file.write(log_str2)
 
         evl(0)# no LUT
