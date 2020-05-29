@@ -143,10 +143,12 @@ def main(_):
                 elif cfg['loss_fun'] == 'triplet_sampling':
                     beta_0 = 1.2
                 quanti_loss = tf.cast(loss_fn_quanti(logist),tf.float64)
-                if cfg['bin_lut_loss']:
+                if cfg['bin_lut_loss'] == 'tanh':
                     bin_loss = bin_LUT_loss.binary_loss_LUT(labels, logist) * 0.001
+                elif cfg['bin_lut_loss'] == 'sigmoid':
+                    bin_loss = bin_LUT_loss.binary_loss_LUT_sigmoid(labels, logist) * 0.001
                 else:
-                    bin_loss = tf.constant(0.0,tf.float64)
+                    bin_loss = tf.constant(0.0, tf.float64)
                 total_loss = pred_loss + reg_loss * 0.5 + quanti_loss * 0.5 + bin_loss
 
             grads = tape.gradient(total_loss, model.trainable_variables)
