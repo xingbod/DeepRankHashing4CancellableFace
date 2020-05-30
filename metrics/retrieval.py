@@ -55,7 +55,7 @@ def cosine_distance(a, b=None):
 
 
 def recognition_rate_at_k(probe_x, probe_y, gallery_x, gallery_y, k,
-                          measure=pdist):
+                          measure=cosine_distance):
     """Compute the recognition rate at a given level `k`.
     For a given probe and ranked gallery that is sorted according to a distance
     measure `measure` in descending order, the recognition rate at `k` is::
@@ -122,7 +122,7 @@ def recognition_rate_at_k(probe_x, probe_y, gallery_x, gallery_y, k,
 
 
 def streaming_mean_cmc_at_k(probe_x, probe_y, gallery_x, gallery_y, k,
-                            measure=pdist):
+                            measure=cosine_distance):
     """Compute cumulated matching characteristics (CMC) at level `k` over
     a stream of data (i.e., multiple batches).
     The function is compatible with TensorFlow-Slim's streaming metrics
@@ -158,7 +158,7 @@ def streaming_mean_cmc_at_k(probe_x, probe_y, gallery_x, gallery_y, k,
 
 
 def streaming_mean_averge_precision(probe_x, probe_y, gallery_x, gallery_y,k=50,
-                                    measure=pdist):
+                                    measure=cosine_distance):
     """Compute mean average precision (mAP) over a stream of data.
     Parameters
     ----------
