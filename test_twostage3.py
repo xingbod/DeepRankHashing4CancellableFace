@@ -133,7 +133,12 @@ def main(_argv):
                 text_file.write(log_str)
             print(log_str)
 
-            log_str2 = '''| q = {:.2f}, m = {:.2f},LUT={}| {:.4f} | {:.4f} | {:.4f} | {:.4f} || {:.4f} | {:.4f} | {:.4f} || {:.4f} | {:.4f} | {:.4f}|| {:.4f} | {:.4f} | {:.4f}\n\n '''.format(q, m, isLUT,mAp_ytf,mAp_fs,rr_ytf[0],rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp,auc_lfw, auc_agedb30, auc_cfp_fp,auc_lfw, auc_agedb30, auc_cfp_fp)
+            log_str2 = '''| q = {:.2f}, m = {:.2f},LUT={}\t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f}\n\n '''.format(
+                q, m, isLUT, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, acc_lfw,
+                acc_agedb30, acc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
+            with open('./logs/' + cfg['sub_name'] + "_Output.md", "a") as text_file:
+                text_file.write(log_str2)
+
             print(log_str2)
 
         evl(True)

@@ -8,7 +8,7 @@ import numpy as np
 import tqdm
 from sklearn.model_selection import KFold
 import tensorflow as tf
-from .utils import l2_norm
+from modules.utils import l2_norm
 # sklearn scipy used for EER cal.
 from sklearn import metrics
 from scipy.optimize import brentq
@@ -17,6 +17,53 @@ from modules.dataset import load_data_split
 from metrics.retrieval import streaming_mean_averge_precision,streaming_mean_cmc_at_k
 from sklearn import preprocessing
 from modules.LUT import genLUT
+
+
+def pdist(a, b=None):
+    """Compute element-wise squared distance between `a` and `b`.
+    Parameters
+    ----------
+    a : tf.Tensor
+        A matrix of shape NxL with N row-vectors of dimensionality L.
+    b : tf.Tensor
+        A matrix of shape MxL with M row-vectors of dimensionality L.
+    Returns
+    -------
+    tf.Tensor
+        A matrix of shape NxM where element (i, j) contains the squared
+        distance between elements `a[i]` and `b[j]`.
+    """
+    sq_sum_a = tf.reduce_sum(tf.square(a), axis=1)
+    if b is None:
+        return -2 * tf.matmul(a, tf.transpose(a)) + \
+            tf.reshape(sq_sum_a, (-1, 1)) + tf.reshape(sq_sum_a, (1, -1))
+    sq_sum_b = tf.reduce_sum(tf.square(b), axis=1)
+    return -2 * tf.matmul(a, tf.transpose(b)) + \
+        tf.reshape(sq_sum_a, (-1, 1)) + tf.reshape(sq_sum_b, (1, -1))
+
+
+def cosine_distance(a, b=None):
+    """Compute element-wise cosine distance between `a` and `b`.
+    Parameters
+    ----------
+    a : tf.Tensor
+        A matrix of shape NxL with N row-vectors of dimensionality L.
+    b : tf.Tensor
+        A matrix of shape NxL with N row-vectors of dimensionality L.
+    Returns
+    -------
+    tf.Tensor
+        A matrix of shape NxM where element (i, j) contains the cosine distance
+        between elements `a[i]` and `b[j]`.
+    """
+    # print('***********a*******',a)
+    a = tf.cast(a, tf.float32) # cast to float before norm it
+    a_normed = tf.nn.l2_normalize(a, axis=1)
+    b_normed = a_normed if b is None else tf.nn.l2_normalize(tf.cast(b, tf.float32), axis=1)
+    return (
+        tf.constant(1.0, tf.float32) -
+        tf.matmul(a_normed, tf.transpose(b_normed)))
+
 
 
 def get_val_pair(path, name):
@@ -64,7 +111,7 @@ def calculate_accuracy(threshold, dist, actual_issame):
 
 
 def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
-                  nrof_folds=10,cfg=None):
+                  nrof_folds=10,cfg=None,measure = pdist):
     assert (embeddings1.shape[0] == embeddings2.shape[0])
     assert (embeddings1.shape[1] == embeddings2.shape[1])
     nrof_pairs = min(len(actual_issame), embeddings1.shape[0])
@@ -300,3 +347,16 @@ def perform_val_yts(batch_size, model,ds_path,is_ccrop=False, is_flip=False,cfg=
     mAp = streaming_mean_averge_precision(probes_feats, probes_names, gallery_feats, gallery_names,k=50)
     rr = streaming_mean_cmc_at_k(probes_feats, probes_names, gallery_feats, gallery_names, 10)
     return mAp,rr
+
+
+
+if __name__ == '__main__':
+    embeddings1 = tf.constant([[1.0, 2, 3], [-1.0, 4, 3], [-9.0, 9, 3]])
+    embeddings2 = tf.constant([[-3, 4, 5], [1.0, 3, 2], [1, 0, 2]])
+
+    diff = np.subtract(embeddings1, embeddings2)
+    dist = np.sum(np.square(diff), 1)
+    print('diff',diff)
+    print('dist',dist)
+    pd = pdist(embeddings1,embeddings2)
+    print(pd)
