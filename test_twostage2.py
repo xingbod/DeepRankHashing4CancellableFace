@@ -131,7 +131,7 @@ def main(_argv):
                 text_file.write(log_str2)
 
 
-        evl(8)
+        # evl(8)
         evl(0)
 
 if __name__ == '__main__':
