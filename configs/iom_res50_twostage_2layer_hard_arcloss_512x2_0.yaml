@@ -1,4 +1,4 @@
-# general xp
+# general
 samples_per_class: 4
 classes_per_batch: 60
 batch_size: 240
@@ -8,21 +8,20 @@ input_size: 112
 embd_shape: 512
 #iom_res50_twostage_triplet -- only two stage with triplet loss
 #iom_res50_twostage_triplet and quantization loss -- triplet loss + quantization loss, this in another config file
-sub_name: 'iom_res50_twostage_1layer_hard_woLUT_512x4'
+sub_name: 'iom_res50_twostage_2layer_hardarc_LUT_512x2_0'
 backbone_type: 'ResNet50' # 'ResNet50', 'MobileNetV2'
 head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
-#tanh sigmoid
-bin_lut_loss: 'none'
+bin_lut_loss: True
 
 # train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split /media/xingbo/Storage/facedata/ms1m_align_112/imgs
-train_dataset: '/home/xingbo/facedata/ms1m_align_112/imgs'
+train_dataset: '/media/Storage/facedata/ms1m_align_112/imgs'
 #train_dataset: '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160'
 img_ext: 'jpg'
 dataset_ext: 'ms'
 # for metric learning, we have 1. triplet_semi batch_hard_triplet 2. batch_all_triplet_loss 3. batch_all_arc_triplet_loss
-loss_fun: 'batch_hard_triplet'
-triplet_margin: 10
+loss_fun: 'batch_hard_arc_triplet_loss'
+triplet_margin: 0
 binary_img: False
 num_classes: 85742
 # I generate 1 milion triplets
@@ -31,7 +30,7 @@ epochs: 50
 base_lr: 0.001
 w_decay: !!float 5e-4
 save_steps: 10000
-q: 4
+q: 2
 # m, the projection length would be m x q
 m: 512
 # test
