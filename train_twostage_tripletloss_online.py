@@ -5,7 +5,7 @@ import tensorflow as tf
 import time
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 
-from modules.models import ArcFaceModel,IoMFaceModelFromArFace,IoMFaceModelFromArFaceMLossHead
+from modules.models import ArcFaceModel,IoMFaceModelFromArFace,IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3
 from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf
 from losses.euclidan_distance_loss import triplet_loss, triplet_loss_omoindrot
 from losses.metric_learning_loss import arcface_pair_loss,ms_loss,bin_LUT_loss
@@ -73,10 +73,22 @@ def main(_):
         # optimizer = tf.train.MomentumOptimizer(  learning_rate,   momentum=0.9, )
     else:
         # here I add the extra IoM layer and head
-        model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                       arcmodel=arcmodel, training=True,
-                                       permKey=permKey, cfg=cfg)
-
+        if cfg['hidden_layer_remark'] == '1':
+            model = IoMFaceModelFromArFace(size=cfg['input_size'],
+                                           arcmodel=arcmodel, training=True,
+                                           permKey=permKey, cfg=cfg)
+        elif cfg['hidden_layer_remark'] == '2':
+            model = IoMFaceModelFromArFace2(size=cfg['input_size'],
+                                            arcmodel=arcmodel, training=True,
+                                            permKey=permKey, cfg=cfg)
+        elif cfg['hidden_layer_remark'] == '3':
+            model = IoMFaceModelFromArFace3(size=cfg['input_size'],
+                                            arcmodel=arcmodel, training=True,
+                                            permKey=permKey, cfg=cfg)
+        else:
+            model = IoMFaceModelFromArFace(size=cfg['input_size'],
+                                           arcmodel=arcmodel, training=True,
+                                           permKey=permKey, cfg=cfg)
         optimizer = tf.keras.optimizers.SGD(
             learning_rate=learning_rate, momentum=0.9, nesterov=True)# can use adam sgd
 
