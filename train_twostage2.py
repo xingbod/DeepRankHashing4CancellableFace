@@ -125,24 +125,36 @@ def main(_):
                 reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.double)
                 # for metric learning, we have 1. batch_hard_triplet 2. batch_all_triplet_loss 3. batch_all_arc_triplet_loss
                 if cfg['loss_fun'] == 'batch_hard_triplet':
-                    pred_loss = triplet_loss_omoindrot.batch_hard_triplet_loss(labels, logist,margin=cfg['triplet_margin'])
+                    pred_loss = triplet_loss_omoindrot.batch_hard_triplet_loss(labels, logist,
+                                                                               margin=cfg['triplet_margin'])
                 elif cfg['loss_fun'] == 'batch_all_triplet_loss':
-                    pred_loss = triplet_loss_omoindrot.batch_all_triplet_loss(labels, logist,margin=cfg['triplet_margin'], scala=100)
+                    pred_loss = triplet_loss_omoindrot.batch_all_triplet_loss(labels, logist,
+                                                                              margin=cfg['triplet_margin'], scala=100)
                 elif cfg['loss_fun'] == 'ms_loss':
-                    pred_loss = ms_loss.ms_loss(labels, logist,ms_mining=True)
+                    pred_loss = ms_loss.ms_loss(labels, logist, ms_mining=True)
                 elif cfg['loss_fun'] == 'margin_loss':
-                    pred_loss = tf.constant(0.0,tf.float64)
+                    pred_loss = tf.constant(0.0, tf.float64)
                 elif cfg['loss_fun'] == 'margin_loss_batch_all_triplet':
-                    pred_loss = triplet_loss_omoindrot.batch_all_triplet_loss(labels, logist,margin=cfg['triplet_margin'], scala=100)
+                    pred_loss = triplet_loss_omoindrot.batch_all_triplet_loss(labels, logist,
+                                                                              margin=cfg['triplet_margin'], scala=100)
                 elif cfg['loss_fun'] == 'margin_loss_batch_hard_triplet':
-                    pred_loss = triplet_loss_omoindrot.batch_hard_triplet_loss(labels, logist,margin=cfg['triplet_margin'], scala=100)
+                    pred_loss = triplet_loss_omoindrot.batch_hard_triplet_loss(labels, logist,
+                                                                               margin=cfg['triplet_margin'], scala=100)
                 elif cfg['loss_fun'] == 'batch_all_arc_triplet_loss':
-                    pred_loss, _ ,_= arcface_pair_loss.batch_all_triplet_arcloss(labels, logist, arc_margin=cfg['triplet_margin'], scala=32)
+                    pred_loss, _, _ = arcface_pair_loss.batch_all_triplet_arcloss(labels, logist,
+                                                                                  arc_margin=cfg['triplet_margin'],
+                                                                                  scala=32)
+                elif cfg['loss_fun'] == 'batch_hard_arc_triplet_loss':
+                    pred_loss = arcface_pair_loss.batch_hard_triplet_arcloss(labels, logist, steps, summary_writer,
+                                                                             arc_margin=cfg['triplet_margin'], scala=32)
                 elif cfg['loss_fun'] == 'semihard_triplet_loss':
                     pred_loss = triplet_loss.semihard_triplet_loss(labels, logist, margin=cfg['triplet_margin'])
                 elif cfg['loss_fun'] == 'triplet_sampling':
                     beta_0 = 1.2
-                quanti_loss = tf.cast(loss_fn_quanti(logist),tf.float64)
+                elif cfg['loss_fun'] == 'only_bin_loss':
+                    pred_loss = tf.constant(0.0, tf.float64)
+                    reg_loss = tf.constant(0.0, tf.float64)
+                    quanti_loss = tf.constant(0.0, tf.float64)
                 if cfg['bin_lut_loss'] == 'tanh':
                     bin_loss = bin_LUT_loss.binary_loss_LUT(labels, logist) * 0.001
                 elif cfg['bin_lut_loss'] == 'sigmoid':
