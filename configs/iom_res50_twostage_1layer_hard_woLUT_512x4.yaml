@@ -14,6 +14,7 @@ head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
 #tanh sigmoid
 bin_lut_loss: 'none'
+hidden_layer_remark: '1'
 
 # train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split /media/xingbo/Storage/facedata/ms1m_align_112/imgs
 train_dataset: '/home/xingbo/facedata/ms1m_align_112/imgs'
