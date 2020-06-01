@@ -8,7 +8,7 @@ import modules
 import csv
 
 from modules.evaluations import get_val_data, perform_val, perform_val_yts
-from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFromArFaceMLossHead
+from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3
 from modules.utils import set_memory_growth, load_yaml, l2_norm
 
 # modules.utils.set_memory_growth()
@@ -46,9 +46,23 @@ def main(_argv):
                                                 arcmodel=arcmodel, training=False,
                                                 permKey=permKey, cfg=cfg)
     else:
-        model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                       arcmodel=arcmodel, training=False,
-                                       permKey=permKey, cfg=cfg)
+        # here I add the extra IoM layer and head
+        if cfg['hidden_layer_remark'] == '1':
+            model = IoMFaceModelFromArFace(size=cfg['input_size'],
+                                           arcmodel=arcmodel, training=True,
+                                           permKey=permKey, cfg=cfg)
+        elif cfg['hidden_layer_remark'] == '2':
+            model = IoMFaceModelFromArFace2(size=cfg['input_size'],
+                                            arcmodel=arcmodel, training=True,
+                                            permKey=permKey, cfg=cfg)
+        elif cfg['hidden_layer_remark'] == '3':
+            model = IoMFaceModelFromArFace3(size=cfg['input_size'],
+                                            arcmodel=arcmodel, training=True,
+                                            permKey=permKey, cfg=cfg)
+        else:
+            model = IoMFaceModelFromArFace(size=cfg['input_size'],
+                                           arcmodel=arcmodel, training=True,
+                                           permKey=permKey, cfg=cfg)
     model.summary(line_length=80)
     if FLAGS.ckpt_epoch == '':
         ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
@@ -132,7 +146,7 @@ def main(_argv):
 
             print(log_str2)
 
-        evl(8)
+        # evl(8)
         evl(0)
 
 
