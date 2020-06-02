@@ -22,7 +22,7 @@ SPLIT_WEIGHTS_INTRA_ID = (
         
 '''
 def splitDS(ds_path, save_dir, SPLIT_WEIGHTS=[40,5], ds='ytf'):
-    if not os.path.exists(save_dir + '/train_gallery'):
+    if os.path.exists(save_dir + '/train_gallery'):
         rmtree(save_dir + '/train_gallery')
         rmtree(save_dir + '/test')
 
