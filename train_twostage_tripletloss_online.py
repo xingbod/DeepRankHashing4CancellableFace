@@ -8,7 +8,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 from modules.models import ArcFaceModel,IoMFaceModelFromArFace,IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3
 from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf
 from losses.euclidan_distance_loss import triplet_loss, triplet_loss_omoindrot
-from losses.metric_learning_loss import arcface_pair_loss,ms_loss,bin_LUT_loss
+from losses.metric_learning_loss import arcface_pair_loss,ms_loss,bin_LUT_loss,code_balance_loss
 from losses.sampling_matters import margin_loss,triplet_loss_with_sampling
 import modules.dataset_triplet as dataset_triplet
 from modules.evaluations import val_LFW
@@ -136,6 +136,7 @@ def main(_):
                 logist = model((inputs, labels), training=True)
                 reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.double)
                 quanti_loss = tf.cast(loss_fn_quanti(logist),tf.float64)
+                code_balance_loss = code_balance_loss.binary_balance_loss(logist,q=cfg['q'])
                 # for metric learning, we have 1. batch_hard_triplet 2. batch_all_triplet_loss 3. batch_all_arc_triplet_loss
                 if cfg['loss_fun'] == 'batch_hard_triplet':
                     pred_loss = triplet_loss_omoindrot.batch_hard_triplet_loss(labels, logist,margin=cfg['triplet_margin'])
@@ -167,7 +168,7 @@ def main(_):
                     bin_loss = bin_LUT_loss.binary_loss_LUT_sigmoid(labels, logist) * 0.001
                 else:
                     bin_loss = tf.constant(0.0,tf.float64)
-                total_loss = pred_loss + reg_loss * 0.5 + quanti_loss * 0.5 + bin_loss
+                total_loss = pred_loss + reg_loss * 0.5 + quanti_loss + bin_loss + code_balance_loss
 
             grads = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(grads, model.trainable_variables))
