@@ -136,7 +136,7 @@ def main(_):
                 logist = model((inputs, labels), training=True)
                 reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.double)
                 quanti_loss = tf.cast(loss_fn_quanti(logist),tf.float64)
-                code_balance_loss = code_balance_loss.binary_balance_loss(logist,q=cfg['q'])
+                code_balance_loss = 0.0
                 # for metric learning, we have 1. batch_hard_triplet 2. batch_all_triplet_loss 3. batch_all_arc_triplet_loss
                 if cfg['loss_fun'] == 'batch_hard_triplet':
                     pred_loss = triplet_loss_omoindrot.batch_hard_triplet_loss(labels, logist,margin=cfg['triplet_margin'])
@@ -168,6 +168,9 @@ def main(_):
                     bin_loss = bin_LUT_loss.binary_loss_LUT_sigmoid(labels, logist) * 0.001
                 else:
                     bin_loss = tf.constant(0.0,tf.float64)
+                if 'code_balance_loss' in cfg & cfg['code_balance_loss'] :
+                    code_balance_loss = code_balance_loss.binary_balance_loss(logist, q=cfg['q'])
+
                 total_loss = pred_loss + reg_loss * 0.5 + quanti_loss + bin_loss + code_balance_loss
 
             grads = tape.gradient(total_loss, model.trainable_variables)
@@ -193,6 +196,8 @@ def main(_):
                         'loss/quanti loss', quanti_loss, step=steps)
                     tf.summary.scalar(
                         'loss/quanti bin_loss', bin_loss, step=steps)
+                    tf.summary.scalar(
+                        'loss/code balance loss', code_balance_loss, step=steps)
                     tf.summary.scalar(
                         'learning rate', optimizer.lr, step=steps)
 
