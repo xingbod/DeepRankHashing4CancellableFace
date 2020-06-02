@@ -198,7 +198,7 @@ def main(_):
                     tf.summary.scalar(
                         'loss/quanti bin_loss', bin_loss, step=steps)
                     tf.summary.scalar(
-                        'loss/code balance loss', code_balance_loss, step=steps)
+                        'loss/code balance loss', code_balance_loss_cal, step=steps)
                     tf.summary.scalar(
                         'learning rate', optimizer.lr, step=steps)
 
