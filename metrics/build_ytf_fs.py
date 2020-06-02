@@ -22,8 +22,10 @@ SPLIT_WEIGHTS_INTRA_ID = (
         
 '''
 def splitDS(ds_path, save_dir, SPLIT_WEIGHTS=[40,5], ds='ytf'):
-    rmtree(save_dir + '/train_gallery')
-    rmtree(save_dir + '/test')
+    if not os.path.exists(save_dir + '/train_gallery'):
+        rmtree(save_dir + '/train_gallery')
+        rmtree(save_dir + '/test')
+
     dir_list = [dI for dI in os.listdir(ds_path) if os.path.isdir(os.path.join(ds_path, dI))]
     cnt = 0;
     for dir_name in tqdm.tqdm(dir_list):
