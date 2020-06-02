@@ -53,11 +53,11 @@ def splitDS(ds_path, save_dir, SPLIT_WEIGHTS=[40,5], ds='ytf'):
 if __name__ == '__main__':
     ds_path = './data/test_dataset/facescrub_images_112x112/112x112'
     # ds_path = './data/test_dataset/facescrub_mtcnn_160/160x160'
-    save_path = './data/test_dataset/facescrub_images_112x112/'
+    save_path = './data/test_dataset/facescrub_images_112x112'
     splitDS(ds_path, save_path, SPLIT_WEIGHTS=[120, 5], ds='fs')
 
     ds_path = './data/test_dataset/aligned_images_DB_YTF/160x160/'
-    save_path = './data/test_dataset/aligned_images_DB_YTF/'
+    save_path = './data/test_dataset/aligned_images_DB_YTF'
     splitDS(ds_path, save_path, SPLIT_WEIGHTS=[40, 5], ds='ytf')
 
     # splitDS(ds_path, save_path, SPLIT_WEIGHTS=[120, 5], ds='fs')
