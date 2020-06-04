@@ -72,18 +72,21 @@ class MaxIndexLinearForeward(tf.keras.layers.Layer):
 
 class MaxIndexLinearTraining(tf.keras.layers.Layer):
 
-  def __init__(self, units=32,q=4):
+  def __init__(self, units=32,q=4,T=1):
     super(MaxIndexLinearTraining, self).__init__()
     self.units = units
     self.q = q
     self.iteratenum = tf.dtypes.cast(units/self.q, tf.int32)
     self.helpvector =  tf.cast( tf.range(0, self.q , 1) + 1,tf.double)
+    self.T = T# default is 1, while can try T<< 1, to spike the distribution
 
 
   def call(self, inputs):
     myvar=[]
     for i in range(0,self.iteratenum.numpy()): # q=4
         my_variable1 = inputs[:,i*self.q+0:i*self.q+self.q]
+        if self.T!=1:
+            my_variable1 = my_variable1 / self.T
         my_variable1 = tf.nn.softmax(my_variable1, axis=1)
         my_variable1 = tf.cast(my_variable1, tf.double)
         # init_index = K.argmax(res[:,0*self.q+0:0*self.q+self.q-1])
