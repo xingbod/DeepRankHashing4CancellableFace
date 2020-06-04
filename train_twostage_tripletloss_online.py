@@ -5,7 +5,7 @@ import tensorflow as tf
 import time
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 
-from modules.models import ArcFaceModel,IoMFaceModelFromArFace,IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T
+from modules.models import ArcFaceModel,IoMFaceModelFromArFace,IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
 from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf
 from losses.euclidan_distance_loss import triplet_loss, triplet_loss_omoindrot
 from losses.metric_learning_loss import arcface_pair_loss,ms_loss,bin_LUT_loss,code_balance_loss
@@ -85,8 +85,12 @@ def main(_):
             model = IoMFaceModelFromArFace3(size=cfg['input_size'],
                                             arcmodel=arcmodel, training=True,
                                             permKey=permKey, cfg=cfg)
-        elif cfg['hidden_layer_remark'] == 'T':
+        elif cfg['hidden_layer_remark'] == 'T':# 2 layers
             model = IoMFaceModelFromArFace_T(size=cfg['input_size'],
+                                            arcmodel=arcmodel, training=True,
+                                            permKey=permKey, cfg=cfg)
+        elif cfg['hidden_layer_remark'] == 'T1':
+            model = IoMFaceModelFromArFace_T1(size=cfg['input_size'],
                                             arcmodel=arcmodel, training=True,
                                             permKey=permKey, cfg=cfg)
         else:
