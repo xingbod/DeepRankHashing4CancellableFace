@@ -155,8 +155,8 @@ def main(_argv):
 
             print(log_str2)
 
-        # evl(8)
-        evl(FLAGS.bin_len)
+        evl(8)
+        evl(0)
 
 
 if __name__ == '__main__':
