@@ -16,7 +16,6 @@ flags.DEFINE_string('cfg_path', './configs/iom_res50.yaml', 'config file path')
 flags.DEFINE_string('ckpt_epoch', '', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_string('img_path', '', 'path to input image')
-flags.DEFINE_string('bin_len', 0, 'LUT bin length, default is 0')
 
 
 def main(_argv):
