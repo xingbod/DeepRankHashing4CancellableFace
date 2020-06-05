@@ -8,7 +8,7 @@ import modules
 import csv
 
 from modules.evaluations import get_val_data, perform_val, perform_val_yts
-from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3
+from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
 from modules.utils import set_memory_growth, load_yaml, l2_norm
 
 # modules.utils.set_memory_growth()
@@ -57,6 +57,14 @@ def main(_argv):
                                             permKey=permKey, cfg=cfg)
         elif cfg['hidden_layer_remark'] == '3':
             model = IoMFaceModelFromArFace3(size=cfg['input_size'],
+                                            arcmodel=arcmodel, training=True,
+                                            permKey=permKey, cfg=cfg)
+        elif cfg['hidden_layer_remark'] == 'T':# 2 layers
+            model = IoMFaceModelFromArFace_T(size=cfg['input_size'],
+                                            arcmodel=arcmodel, training=True,
+                                            permKey=permKey, cfg=cfg)
+        elif cfg['hidden_layer_remark'] == 'T1':
+            model = IoMFaceModelFromArFace_T1(size=cfg['input_size'],
                                             arcmodel=arcmodel, training=True,
                                             permKey=permKey, cfg=cfg)
         else:
