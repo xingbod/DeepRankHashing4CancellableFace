@@ -62,14 +62,13 @@ def OutputLayer(embd_shape, w_decay=5e-4, name='OutputLayer'):
 def IoMProjectionLayer(cfg, name='IoMProjectionLayer'):
     """Output Later"""
     def output_layer(x_in):
-        x = inputs = Input(x_in.shape[1:])
+        x_input = inputs = Input(x_in.shape[1:])
         new_emb = []
         for i in range(cfg['m']):
-            x = Dense(cfg['q'],kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None))(x)  # extra connection layer
+            x = Dense(cfg['q'],kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None))(x_input)  # extra connection layer
             new_emb.append(x)
 
         hashcode = concatenate(new_emb)
-
         return Model(inputs, hashcode, name=name)(x_in)
 
     return output_layer
@@ -156,64 +155,6 @@ def ArcFaceModel(size=None, channels=3, num_classes=None, name='arcface_model',
             return Model(inputs, embds, name=name)
 
 
-'''
-def ArcFaceModel2(size=None, channels=3, num_classes=None, name='arcface_model',
-                 margin=0.5, logist_scale=64, embd_shape=512,
-                 head_type='ArcHead', backbone_type='ResNet50',
-                 w_decay=5e-4, use_pretrain=True, training=False,cfg=None):
-    """Arc Face Model"""
-    x = inputs = Input([size, size, channels], name='input_image')
-
-    x = Backbone(backbone_type=backbone_type, use_pretrain=use_pretrain)(x)
-
-    x = OutputLayer(embd_shape, w_decay=w_decay)(x)
-
-    x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-              name="IoMProjection")(x)  # extra connection layer
-    embds = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x)  # loss need to change
-    if training:
-        assert num_classes is not None
-        labels = Input([], name='label')
-        if head_type == 'ArcHead':
-            logist = ArcHead(num_classes=num_classes, margin=margin,
-                             logist_scale=logist_scale)(embds, labels)
-        else:
-            logist = NormHead(num_classes=num_classes, w_decay=w_decay)(embds)
-        return Model((inputs, labels), logist, name=name)
-    else:
-        return Model(inputs, embds, name=name)
-        '''
-'''
-def IoMFaceModel(size=None, channels=3, num_classes=None, name='IoMface_model',
-                 margin=0.5, logist_scale=64, embd_shape=512,
-                 head_type='ArcHead', backbone_type='ResNet50',
-                 w_decay=5e-4, use_pretrain=True, training=False,permKey=None,cfg=None):
-    """Arc Face Model"""
-    x = inputs = Input([size, size, channels], name='input_image')
-
-    x = Backbone(backbone_type=backbone_type, use_pretrain=use_pretrain)(x)
-    x = OutputLayer(embd_shape, w_decay=w_decay)(x)
-    if permKey is not None:
-        x = PermLayer(permKey)(x)  # permutation before project to IoM hash code
-    x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),name="IoMProjection")(
-        x)  # extra connection layer
-    # if training:
-    #     labels = Input([], name='label')
-    #     logist = IoMHead(m=cfg['m'],q=cfg['q'] ,isTraining=training)(x, labels) # loss need to change
-    #     return Model((inputs, labels), logist, name=name)
-    # else:
-    #     labels = Input([], name='label')
-    #     logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x,labels)  # loss need to change
-    #     return Model(inputs, logist, name=name)
-
-    if training:
-        logist = IoMHead(m=cfg['m'],q=cfg['q'],isTraining=training)(x) # loss need to change
-    else:
-        logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x)  # loss need to change
-    return Model(inputs, logist, name=name)
-'''
-
-
 def IoMFaceModelFromArFace(size=None, channels=3, arcmodel=None, name='IoMface_model',
                            margin=0.5, logist_scale=64, embd_shape=512,
                            head_type='ArcHead', backbone_type='ResNet50',
@@ -224,7 +165,7 @@ def IoMFaceModelFromArFace(size=None, channels=3, arcmodel=None, name='IoMface_m
     if not (permKey is None):
         x = PermLayer(permKey)(x)  # permutation before project to IoM hash code
     # here I add one extra hidden layer
-    x = Dense(1024, kernel_regularizer=_regularizer(w_decay))(x)
+    # x = Dense(1024, kernel_regularizer=_regularizer(w_decay))(x)
     x = IoMProjectionLayer(cfg)(x)
     # x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
     #           name="IoMProjection")(x)  # extra connection layer
@@ -331,3 +272,66 @@ def IoMFaceModelFromArFaceMLossHead(size=None, channels=3, arcmodel=None, name='
         return Model((inputs, labels), logist, name=name)
     else:
         return Model(inputs, hashcodes, name=name)
+
+
+
+
+
+
+'''
+def ArcFaceModel2(size=None, channels=3, num_classes=None, name='arcface_model',
+                 margin=0.5, logist_scale=64, embd_shape=512,
+                 head_type='ArcHead', backbone_type='ResNet50',
+                 w_decay=5e-4, use_pretrain=True, training=False,cfg=None):
+    """Arc Face Model"""
+    x = inputs = Input([size, size, channels], name='input_image')
+
+    x = Backbone(backbone_type=backbone_type, use_pretrain=use_pretrain)(x)
+
+    x = OutputLayer(embd_shape, w_decay=w_decay)(x)
+
+    x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
+              name="IoMProjection")(x)  # extra connection layer
+    embds = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x)  # loss need to change
+    if training:
+        assert num_classes is not None
+        labels = Input([], name='label')
+        if head_type == 'ArcHead':
+            logist = ArcHead(num_classes=num_classes, margin=margin,
+                             logist_scale=logist_scale)(embds, labels)
+        else:
+            logist = NormHead(num_classes=num_classes, w_decay=w_decay)(embds)
+        return Model((inputs, labels), logist, name=name)
+    else:
+        return Model(inputs, embds, name=name)
+        '''
+'''
+def IoMFaceModel(size=None, channels=3, num_classes=None, name='IoMface_model',
+                 margin=0.5, logist_scale=64, embd_shape=512,
+                 head_type='ArcHead', backbone_type='ResNet50',
+                 w_decay=5e-4, use_pretrain=True, training=False,permKey=None,cfg=None):
+    """Arc Face Model"""
+    x = inputs = Input([size, size, channels], name='input_image')
+
+    x = Backbone(backbone_type=backbone_type, use_pretrain=use_pretrain)(x)
+    x = OutputLayer(embd_shape, w_decay=w_decay)(x)
+    if permKey is not None:
+        x = PermLayer(permKey)(x)  # permutation before project to IoM hash code
+    x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),name="IoMProjection")(
+        x)  # extra connection layer
+    # if training:
+    #     labels = Input([], name='label')
+    #     logist = IoMHead(m=cfg['m'],q=cfg['q'] ,isTraining=training)(x, labels) # loss need to change
+    #     return Model((inputs, labels), logist, name=name)
+    # else:
+    #     labels = Input([], name='label')
+    #     logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x,labels)  # loss need to change
+    #     return Model(inputs, logist, name=name)
+
+    if training:
+        logist = IoMHead(m=cfg['m'],q=cfg['q'],isTraining=training)(x) # loss need to change
+    else:
+        logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x)  # loss need to change
+    return Model(inputs, logist, name=name)
+'''
+
