@@ -109,4 +109,3 @@ class PermLayer(tf.keras.layers.Layer):
 
     def call(self, inputs):
         return tf.matmul(inputs,self.permKey)
-

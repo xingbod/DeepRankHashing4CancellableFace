@@ -5,6 +5,7 @@ from tensorflow.keras.layers import (
     Dropout,
     Flatten,
     Input,
+    concatenate,
 )
 from tensorflow.keras.applications import (
     MobileNetV2,
@@ -54,6 +55,25 @@ def OutputLayer(embd_shape, w_decay=5e-4, name='OutputLayer'):
         x = Dense(embd_shape, kernel_regularizer=_regularizer(w_decay))(x)
         x = BatchNormalization()(x)
         return Model(inputs, x, name=name)(x_in)
+
+    return output_layer
+
+
+def IoMProjectionLayer(cfg, name='IoMProjectionLayer'):
+    """Output Later"""
+
+    def output_layer(x_in):
+        x = inputs = Input(x_in.shape[1:])
+        new_emb = []
+        for i in range(cfg['m']):
+            x = Dense(cfg['q'],
+                      kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
+                      name="IoMProjection")(x)  # extra connection layer
+            new_emb.append(x)
+
+        hashcode = concatenate(new_emb)
+
+        return Model(inputs, hashcode, name=name)(x_in)
 
     return output_layer
 
@@ -208,8 +228,9 @@ def IoMFaceModelFromArFace(size=None, channels=3, arcmodel=None, name='IoMface_m
         x = PermLayer(permKey)(x)  # permutation before project to IoM hash code
     # here I add one extra hidden layer
     # x = Dense(1024, kernel_regularizer=_regularizer(w_decay))(x)
-    x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-              name="IoMProjection")(x)  # extra connection layer
+    x = IoMProjectionLayer(cfg)(x)
+    # x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
+    #           name="IoMProjection")(x)  # extra connection layer
     logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x)  # loss need to change
     return Model(inputs, logist, name=name)
 
@@ -277,9 +298,9 @@ def IoMFaceModelFromArFace_T(size=None, channels=3, arcmodel=None, name='IoMface
 
 
 def IoMFaceModelFromArFace_T1(size=None, channels=3, arcmodel=None, name='IoMface_model',
-                             margin=0.5, logist_scale=64, embd_shape=512,
-                             head_type='ArcHead', backbone_type='ResNet50',
-                             w_decay=5e-4, use_pretrain=True, training=False, permKey=None, cfg=None):
+                              margin=0.5, logist_scale=64, embd_shape=512,
+                              head_type='ArcHead', backbone_type='ResNet50',
+                              w_decay=5e-4, use_pretrain=True, training=False, permKey=None, cfg=None):
     """IoMFaceModelFromArFace Model"""
     x = inputs = Input([size, size, channels], name='input_image')
     x = arcmodel(x)
@@ -290,6 +311,7 @@ def IoMFaceModelFromArFace_T1(size=None, channels=3, arcmodel=None, name='IoMfac
               name="IoMProjection")(x)  # extra connection layer
     logist = IoMHead(m=cfg['m'], q=cfg['q'], T=0.01, isTraining=training)(x)  # loss need to change
     return Model(inputs, logist, name=name)
+
 
 def IoMFaceModelFromArFaceMLossHead(size=None, channels=3, arcmodel=None, name='IoM_Mloss_Head_model',
                                     margin=0.5, logist_scale=64, embd_shape=512,
