@@ -7,10 +7,9 @@ import tensorflow as tf
 import modules
 import csv
 
-from modules.evaluations import get_val_data, perform_val,perform_val_yts
+from modules.evaluations import get_val_data, perform_val, perform_val_yts
 from modules.models import ArcFaceModel, IoMFaceModelFromArFace
 from modules.utils import set_memory_growth, load_yaml, l2_norm
-
 
 flags.DEFINE_string('cfg_path', './configs/iom_res50_random.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
@@ -18,8 +17,7 @@ flags.DEFINE_string('img_path', '', 'path to input image')
 
 # modules.utils.set_memory_growth()
 
-mycfg = {'m':0, 'q': 0}
-
+mycfg = {'m': 0, 'q': 0}
 
 
 def callMe():
@@ -31,20 +29,20 @@ def callMe():
     logger.setLevel(logging.FATAL)
     set_memory_growth()
 
-    cfg = load_yaml('./configs/iom_res50_random.yaml')#    cfg = load_yaml(FLAGS.cfg_path)
+    cfg = load_yaml('./configs/iom_res50_random.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
     permKey = None
-    if cfg['head_type'] == 'IoMHead':#
-        #permKey = generatePermKey(cfg['embd_shape'])
-        permKey = tf.eye(cfg['embd_shape']) # for training, we don't permutate, won't influence the performance
+    if cfg['head_type'] == 'IoMHead':  #
+        # permKey = generatePermKey(cfg['embd_shape'])
+        permKey = tf.eye(cfg['embd_shape'])  # for training, we don't permutate, won't influence the performance
 
     arcmodel = ArcFaceModel(size=cfg['input_size'],
-                         embd_shape=cfg['embd_shape'],
-                         backbone_type=cfg['backbone_type'],
-                         head_type='ArcHead',
-                         training=False,
-                         cfg=cfg)
+                            embd_shape=cfg['embd_shape'],
+                            backbone_type=cfg['backbone_type'],
+                            head_type='ArcHead',
+                            training=False,
+                            cfg=cfg)
 
-    ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50' )
+    ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50')
     if ckpt_path is not None:
         print("[*] load ckpt from {}".format(ckpt_path))
         arcmodel.load_weights(ckpt_path)
@@ -75,9 +73,9 @@ def callMe():
         def evl(isLUT):
             print("[*] Perform Retrieval Evaluation on Y.T.F and F.S...")
             mAp_ytf, rr_ytf = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_ytf'], img_ext='jpg',
-                                              isLUT=isLUT,cfg=cfg)
+                                              isLUT=isLUT, cfg=cfg)
             mAp_fs, rr_fs = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_fs'], img_ext='png',
-                                            isLUT=isLUT,cfg=cfg)
+                                            isLUT=isLUT, cfg=cfg)
             print("    Y.T.F mAP {:.4f}, F.S mAP: {:.2f}".format(mAp_ytf, mAp_fs))
             print("    Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(rr_ytf[0], rr_fs[0]))
 
@@ -124,7 +122,7 @@ def callMe():
                                                                                            best_th_cfp_fp,
                                                                                            mAp_ytf, rr_ytf[0],
                                                                                            mAp_fs, rr_fs[0])
-            with open('./logs/' + cfg['sub_name'] + "_Output.md", "a") as text_file:
+            with open('./logs/' + cfg['sub_name'] + "_OutputNewArc.md", "a") as text_file:
                 text_file.write(log_str)
             print(log_str)
 
@@ -132,10 +130,10 @@ def callMe():
                 q, m, isLUT, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, auc_lfw,
                 auc_agedb30, auc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
 
-            with open('./logs/' + cfg['sub_name'] + "_Output_line.md", "a") as text_file:
+            with open('./logs/' + cfg['sub_name'] + "_Output_lineNewArc.md", "a") as text_file:
                 text_file.write(log_str2)
 
-        evl(0)# no LUT
+        evl(0)  # no LUT
         evl(4)
         evl(8)
         evl(16)
@@ -155,16 +153,16 @@ def callMe():
 #     except SystemExit:
 #         pass
 # 32,64,128,
-# for m in [512]:
-#     for q in [ 8, 16]:
+for m in [512]:
+    for q in [2, 4, 8, 16]:
+        print(m, q, '****')
+        mycfg['m'] = m
+        mycfg['q'] = q
+        callMe()
+
+# for m in [2048]:
+#     for q in [2]:
 #         print(m,q,'****')
 #         mycfg['m'] = m
 #         mycfg['q'] = q
 #         callMe()
-
-for m in [2048]:
-    for q in [2]:
-        print(m,q,'****')
-        mycfg['m'] = m
-        mycfg['q'] = q
-        callMe()

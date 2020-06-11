@@ -61,7 +61,6 @@ def OutputLayer(embd_shape, w_decay=5e-4, name='OutputLayer'):
 
 def IoMProjectionLayer(cfg, name='IoMProjectionLayer'):
     """Output Later"""
-
     def output_layer(x_in):
         x = inputs = Input(x_in.shape[1:])
         new_emb = []
