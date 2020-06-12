@@ -109,6 +109,20 @@ def calculate_accuracy(threshold, dist, actual_issame):
     acc = float(tp + tn) / dist.size
     return tpr, fpr, acc
 
+def eucliden_dist(embeddings1, embeddings2):
+    diff = np.subtract(embeddings1, embeddings2)
+    dist = np.sum(np.square(diff), 1)
+    return dist
+
+def cosin_dist(embeddings1, embeddings2):
+    dist = np.dot(embeddings1, embeddings2) / (np.linalg.norm(embeddings1) * (np.linalg.norm(embeddings2)))
+    return dist
+
+def Hamming_dist(embeddings1, embeddings2):
+    smstr = np.nonzero(embeddings1, embeddings2)
+    # print(smstr)  # 不为0 的元素的下标
+    dist = np.shape(smstr[0])[0]/np.shape(embeddings1[0])[0]
+    return dist
 
 def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
                   nrof_folds=10,cfg=None,measure = pdist):
@@ -124,11 +138,14 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
     best_thresholds = np.zeros((nrof_folds))
     indices = np.arange(nrof_pairs)
 
-    diff = np.subtract(embeddings1, embeddings2)
-    dist = np.sum(np.square(diff), 1)
-    if cfg['head_type'] == 'IoMHead':
-        # dist = dist/(cfg['q']*cfg['embd_shape']) # should divide by the largest distance
-        dist = dist / (tf.math.reduce_max(dist).numpy()+10)  # should divide by the largest distance
+    # diff = np.subtract(embeddings1, embeddings2)
+    # dist = np.sum(np.square(diff), 1)
+    # if cfg['head_type'] == 'IoMHead':
+    #     # dist = dist/(cfg['q']*cfg['embd_shape']) # should divide by the largest distance
+    #     dist = dist / (tf.math.reduce_max(dist).numpy()+10)  # should divide by the largest distance
+    dist = Hamming_dist(embeddings1, embeddings2)
+    # dist = eucliden_dist(embeddings1, embeddings2)
+    # dist = cosin_dist(embeddings1, embeddings2)
     print("[*] dist {}".format(dist))
     for fold_idx, (train_set, test_set) in enumerate(k_fold.split(indices)):
         # Find the best threshold for the fold
