@@ -147,7 +147,7 @@ def cosin_dist(embeddings1, embeddings2):
     dist = np.zeros(np.shape(embeddings1)[0])
     for i in range(np.shape(embeddings1)[0]):
         dist[i] = cal(embeddings1[i, :], embeddings2[i, :])
-    return np.array(dist)
+    return np.array(1-dist)
 
 
 def Jaccard_dist(embeddings1, embeddings2):
@@ -180,9 +180,9 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
     # if cfg['head_type'] == 'IoMHead':
     #     # dist = dist/(cfg['q']*cfg['embd_shape']) # should divide by the largest distance
     #     dist = dist / (tf.math.reduce_max(dist).numpy()+10)  # should divide by the largest distance
-    # dist = Hamming_dist(embeddings1, embeddings2)
+    dist = Hamming_dist(embeddings1, embeddings2)
     # dist = eucliden_dist(embeddings1, embeddings2)
-    dist = cosin_dist(embeddings1, embeddings2)
+    # dist = cosin_dist(embeddings1, embeddings2)
     print("[*] dist {}".format(dist))
     for fold_idx, (train_set, test_set) in enumerate(k_fold.split(indices)):
         # Find the best threshold for the fold
