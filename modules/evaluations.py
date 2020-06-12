@@ -17,6 +17,7 @@ from modules.dataset import load_data_split
 from metrics.retrieval import streaming_mean_averge_precision,streaming_mean_cmc_at_k
 from sklearn import preprocessing
 from modules.LUT import genLUT
+import scipy.spatial.distance as dist
 
 
 def pdist(a, b=None):
@@ -123,6 +124,11 @@ def Hamming_dist(embeddings1, embeddings2):
     # print(smstr)  # 不为0 的元素的下标
     dist = np.shape(smstr[0])[0]/np.shape(embeddings1[0])[0]
     return dist
+
+def Jaccard_dist(embeddings1, embeddings2):
+    matv = np.array([embeddings1, embeddings2])
+    dist2 = dist.pdist(matv, 'jaccard')
+    return dist2
 
 def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
                   nrof_folds=10,cfg=None,measure = pdist):
