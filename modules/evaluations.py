@@ -182,8 +182,8 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
     # if cfg['head_type'] == 'IoMHead':
     #     # dist = dist/(cfg['q']*cfg['embd_shape']) # should divide by the largest distance
     #     dist = dist / (tf.math.reduce_max(dist).numpy()+10)  # should divide by the largest distance
-    dist = Hamming_dist(embeddings1, embeddings2)
-    # dist = eucliden_dist(embeddings1, embeddings2)
+    # dist = Hamming_dist(embeddings1, embeddings2)
+    dist = eucliden_dist(embeddings1, embeddings2)
     # dist = cosin_dist(embeddings1, embeddings2)
     print("[*] dist {}".format(dist))
     for fold_idx, (train_set, test_set) in enumerate(k_fold.split(indices)):
