@@ -120,7 +120,8 @@ def cosin_dist(embeddings1, embeddings2):
     return dist
 
 def Hamming_dist(embeddings1, embeddings2):
-    smstr = np.nonzero(embeddings1, embeddings2)
+    diff = np.subtract(embeddings1, embeddings2)
+    smstr = np.nonzero(diff)
     # print(smstr)  # 不为0 的元素的下标
     dist = np.shape(smstr[0])[0]/np.shape(embeddings1[0])[0]
     return dist
