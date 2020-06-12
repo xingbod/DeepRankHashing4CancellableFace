@@ -130,7 +130,7 @@ def Hamming_dist(embeddings1, embeddings2):
 
     dist = np.zeros(np.shape(embeddings1)[0])
     for i in range(np.shape(embeddings1)[0]):
-        dist.append(cal(embeddings1[i, :], embeddings2[i, :]))
+        dist[i] = cal(embeddings1[i, :], embeddings2[i, :])
     return dist
 
 
