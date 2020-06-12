@@ -22,7 +22,7 @@ mycfg = {'m': 0, 'q': 0}
 
 def callMe():
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+    os.environ['CUDA_VISIBLE_DEVICES'] = FLAGS.gpu
 
     logger = tf.get_logger()
     logger.disabled = True
