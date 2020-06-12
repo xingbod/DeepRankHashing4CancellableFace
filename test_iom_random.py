@@ -71,15 +71,15 @@ def callMe():
         # np.save('./output_embeds.npy', embeds)
     else:
         def evl(isLUT):
-            # print("[*] Perform Retrieval Evaluation on Y.T.F and F.S...")
-            # mAp_ytf, rr_ytf = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_ytf'], img_ext='jpg',
-            #                                   isLUT=isLUT, cfg=cfg)
-            # mAp_fs, rr_fs = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_fs'], img_ext='png',
-            #                                 isLUT=isLUT, cfg=cfg)
-            # print("    Y.T.F mAP {:.4f}, F.S mAP: {:.2f}".format(mAp_ytf, mAp_fs))
-            # print("    Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(rr_ytf[0], rr_fs[0]))
-            mAp_fs = mAp_ytf =0
-            rr_ytf = rr_fs = [0]
+            print("[*] Perform Retrieval Evaluation on Y.T.F and F.S...")
+            mAp_ytf, rr_ytf = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_ytf'], img_ext='jpg',
+                                              isLUT=isLUT, cfg=cfg)
+            mAp_fs, rr_fs = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_fs'], img_ext='png',
+                                            isLUT=isLUT, cfg=cfg)
+            print("    Y.T.F mAP {:.4f}, F.S mAP: {:.2f}".format(mAp_ytf, mAp_fs))
+            print("    Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(rr_ytf[0], rr_fs[0]))
+            # mAp_fs = mAp_ytf =0
+            # rr_ytf = rr_fs = [0]
             print("[*] Loading LFW, AgeDB30 and CFP-FP...")
             lfw, agedb_30, cfp_fp, lfw_issame, agedb_30_issame, cfp_fp_issame = \
                 get_val_data(cfg['test_dataset'])
