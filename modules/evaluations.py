@@ -131,7 +131,7 @@ def Hamming_dist(embeddings1, embeddings2):
     dist = []
     for i in range(np.shape(embeddings1)[0]):
         dist.append(cal(embeddings1[i, :], embeddings2[i, :]))
-    return dist
+    return np.array(dist)
 
 
 def eucliden_dist(embeddings1, embeddings2):
@@ -148,7 +148,7 @@ def cosin_dist(embeddings1, embeddings2):
     dist = []
     for i in range(np.shape(embeddings1)[0]):
         dist.append(cal(embeddings1[i, :], embeddings2[i, :]))
-    return dist
+    return np.array(dist)
 
 
 def Jaccard_dist(embeddings1, embeddings2):
@@ -160,7 +160,7 @@ def Jaccard_dist(embeddings1, embeddings2):
     dist = []
     for i in range(np.shape(embeddings1)[0]):
         dist.append(cal(embeddings1[i, :], embeddings2[i, :]))
-    return dist
+    return np.array(dist)
 
 
 def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
@@ -183,7 +183,7 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
     #     # dist = dist/(cfg['q']*cfg['embd_shape']) # should divide by the largest distance
     #     dist = dist / (tf.math.reduce_max(dist).numpy()+10)  # should divide by the largest distance
     # dist = Hamming_dist(embeddings1, embeddings2)
-    dist = eucliden_dist(embeddings1, embeddings2)
+    # dist = eucliden_dist(embeddings1, embeddings2)
     # dist = cosin_dist(embeddings1, embeddings2)
     print("[*] dist {}".format(dist))
     for fold_idx, (train_set, test_set) in enumerate(k_fold.split(indices)):
