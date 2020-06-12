@@ -127,7 +127,6 @@ def Hamming_dist(embeddings1, embeddings2):
         # print('smstr',smstr)  # 不为0 的元素的下标
         dist = np.shape(smstr)[1] / np.shape(embeddings1)[0]
         return dist
-
     dist = np.zeros(np.shape(embeddings1)[0])
     for i in range(np.shape(embeddings1)[0]):
         dist[i] = cal(embeddings1[i, :], embeddings2[i, :])
@@ -145,9 +144,9 @@ def cosin_dist(embeddings1, embeddings2):
         dist = np.dot(embeddings1, embeddings2) / (np.linalg.norm(embeddings1) * (np.linalg.norm(embeddings2)))
         return dist
 
-    dist = []
+    dist = np.zeros(np.shape(embeddings1)[0])
     for i in range(np.shape(embeddings1)[0]):
-        dist.append(cal(embeddings1[i, :], embeddings2[i, :]))
+        dist[i] = cal(embeddings1[i, :], embeddings2[i, :])
     return np.array(dist)
 
 
@@ -156,10 +155,9 @@ def Jaccard_dist(embeddings1, embeddings2):
         matv = np.array([embeddings1, embeddings2])
         dist2 = dist.pdist(matv, 'jaccard')
         return dist2
-
-    dist = []
+    dist = np.zeros(np.shape(embeddings1)[0])
     for i in range(np.shape(embeddings1)[0]):
-        dist.append(cal(embeddings1[i, :], embeddings2[i, :]))
+        dist[i] = cal(embeddings1[i, :], embeddings2[i, :])
     return np.array(dist)
 
 
