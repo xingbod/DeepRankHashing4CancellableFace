@@ -14,7 +14,7 @@ from sklearn import metrics
 from scipy.optimize import brentq
 from scipy import interpolate
 from modules.dataset import load_data_split
-from metrics.retrieval import streaming_mean_averge_precision,streaming_mean_cmc_at_k
+from metrics.retrieval import streaming_mean_averge_precision, streaming_mean_cmc_at_k
 from sklearn import preprocessing
 from modules.LUT import genLUT
 import scipy.spatial.distance as dist
@@ -37,10 +37,10 @@ def pdist(a, b=None):
     sq_sum_a = tf.reduce_sum(tf.square(a), axis=1)
     if b is None:
         return -2 * tf.matmul(a, tf.transpose(a)) + \
-            tf.reshape(sq_sum_a, (-1, 1)) + tf.reshape(sq_sum_a, (1, -1))
+               tf.reshape(sq_sum_a, (-1, 1)) + tf.reshape(sq_sum_a, (1, -1))
     sq_sum_b = tf.reduce_sum(tf.square(b), axis=1)
     return -2 * tf.matmul(a, tf.transpose(b)) + \
-        tf.reshape(sq_sum_a, (-1, 1)) + tf.reshape(sq_sum_b, (1, -1))
+           tf.reshape(sq_sum_a, (-1, 1)) + tf.reshape(sq_sum_b, (1, -1))
 
 
 def cosine_distance(a, b=None):
@@ -58,13 +58,12 @@ def cosine_distance(a, b=None):
         between elements `a[i]` and `b[j]`.
     """
     # print('***********a*******',a)
-    a = tf.cast(a, tf.float32) # cast to float before norm it
+    a = tf.cast(a, tf.float32)  # cast to float before norm it
     a_normed = tf.nn.l2_normalize(a, axis=1)
     b_normed = a_normed if b is None else tf.nn.l2_normalize(tf.cast(b, tf.float32), axis=1)
     return (
-        tf.constant(1.0, tf.float32) -
-        tf.matmul(a_normed, tf.transpose(b_normed)))
-
+            tf.constant(1.0, tf.float32) -
+            tf.matmul(a_normed, tf.transpose(b_normed)))
 
 
 def get_val_pair(path, name):
@@ -110,29 +109,62 @@ def calculate_accuracy(threshold, dist, actual_issame):
     acc = float(tp + tn) / dist.size
     return tpr, fpr, acc
 
+
 def eucliden_dist(embeddings1, embeddings2):
     diff = np.subtract(embeddings1, embeddings2)
     dist = np.sum(np.square(diff), 1)
     return dist
 
-def cosin_dist(embeddings1, embeddings2):
-    dist = np.dot(embeddings1, embeddings2) / (np.linalg.norm(embeddings1) * (np.linalg.norm(embeddings2)))
-    return dist
+
+import numpy as np
+import scipy.spatial.distance as dist
+
 
 def Hamming_dist(embeddings1, embeddings2):
-    diff = np.subtract(embeddings1, embeddings2)
-    smstr = np.nonzero(diff)
-    # print(smstr)  # 不为0 的元素的下标
-    dist = np.shape(smstr[0])[0]/np.shape(embeddings1[0])[0]
+    def cal(embeddings1, embeddings2):
+        diff = np.subtract(embeddings1, embeddings2)
+        smstr = np.nonzero(diff)
+        # print('smstr',smstr)  # 不为0 的元素的下标
+        dist = np.shape(smstr)[1] / np.shape(embeddings1)[0]
+        return dist
+
+    dist = []
+    for i in range(np.shape(embeddings1)[0]):
+        dist.append(cal(embeddings1[i, :], embeddings2[i, :]))
     return dist
 
+
+def eucliden_dist(embeddings1, embeddings2):
+    diff = np.subtract(embeddings1, embeddings2)
+    dist = np.sum(np.square(diff), 1)
+    return dist
+
+
+def cosin_dist(embeddings1, embeddings2):
+    def cal(embeddings1, embeddings2):
+        dist = np.dot(embeddings1, embeddings2) / (np.linalg.norm(embeddings1) * (np.linalg.norm(embeddings2)))
+        return dist
+
+    dist = []
+    for i in range(np.shape(embeddings1)[0]):
+        dist.append(cal(embeddings1[i, :], embeddings2[i, :]))
+    return dist
+
+
 def Jaccard_dist(embeddings1, embeddings2):
-    matv = np.array([embeddings1, embeddings2])
-    dist2 = dist.pdist(matv, 'jaccard')
-    return dist2
+    def cal(embeddings1, embeddings2):
+        matv = np.array([embeddings1, embeddings2])
+        dist2 = dist.pdist(matv, 'jaccard')
+        return dist2
+
+    dist = []
+    for i in range(np.shape(embeddings1)[0]):
+        dist.append(cal(embeddings1[i, :], embeddings2[i, :]))
+    return dist
+
 
 def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
-                  nrof_folds=10,cfg=None,measure = pdist):
+                  nrof_folds=10, cfg=None, measure=pdist):
     assert (embeddings1.shape[0] == embeddings2.shape[0])
     assert (embeddings1.shape[1] == embeddings2.shape[1])
     nrof_pairs = min(len(actual_issame), embeddings1.shape[0])
@@ -181,11 +213,11 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
     eer = brentq(lambda x: 1. - x - interpolate.interp1d(fpr, tpr)(x), 0., 1.)
     # print('Equal Error Rate (EER): %1.3f' % eer)
 
-    return tpr, fpr, accuracy, best_thresholds,auc,eer
+    return tpr, fpr, accuracy, best_thresholds, auc, eer
 
 
 def calculate_roc_cosine(thresholds, embeddings1, embeddings2, actual_issame,
-                  nrof_folds=10,cfg=None):
+                         nrof_folds=10, cfg=None):
     assert (embeddings1.shape[0] == embeddings2.shape[0])
     assert (embeddings1.shape[1] == embeddings2.shape[1])
     nrof_pairs = min(len(actual_issame), embeddings1.shape[0])
@@ -236,26 +268,27 @@ def calculate_roc_cosine(thresholds, embeddings1, embeddings2, actual_issame,
     fpr = np.mean(fprs, 0)
     return tpr, fpr, accuracy, best_thresholds
 
-def evaluate(embeddings, actual_issame, nrof_folds=10,cfg=None):
+
+def evaluate(embeddings, actual_issame, nrof_folds=10, cfg=None):
     # Calculate evaluation metrics
     thresholds = np.arange(0, 4, 0.01)
-    embeddings1 = embeddings[0::2]# 隔行采样
-    embeddings2 = embeddings[1::2]# 隔行采样
-    tpr, fpr, accuracy, best_thresholds,auc,eer= calculate_roc(
+    embeddings1 = embeddings[0::2]  # 隔行采样
+    embeddings2 = embeddings[1::2]  # 隔行采样
+    tpr, fpr, accuracy, best_thresholds, auc, eer = calculate_roc(
         thresholds, embeddings1, embeddings2, np.asarray(actual_issame),
         nrof_folds=nrof_folds, cfg=cfg)
 
-    return tpr, fpr, accuracy, best_thresholds,auc,eer
+    return tpr, fpr, accuracy, best_thresholds, auc, eer
 
 
 def perform_val(embedding_size, batch_size, model,
-                carray, issame, nrof_folds=10, is_ccrop=False, is_flip=False,cfg=None,isLUT=0):
+                carray, issame, nrof_folds=10, is_ccrop=False, is_flip=False, cfg=None, isLUT=0):
     """perform val"""
-    if cfg['head_type']=='IoMHead':
-         embedding_size = int(embedding_size / cfg['q'])
+    if cfg['head_type'] == 'IoMHead':
+        embedding_size = int(embedding_size / cfg['q'])
     embeddings = np.zeros([len(carray), embedding_size])
 
-    for idx in tqdm.tqdm(range(0, len(carray), batch_size),ascii = True):
+    for idx in tqdm.tqdm(range(0, len(carray), batch_size), ascii=True):
         batch = carray[idx:idx + batch_size]
         batch = np.transpose(batch, [0, 2, 3, 1]) * 0.5 + 0.5
         if is_ccrop:
@@ -269,37 +302,39 @@ def perform_val(embedding_size, batch_size, model,
             batch = ccrop_batch(batch)
             emb_batch = model(batch)
         # print(emb_batch)
-        if cfg['head_type']=='IoMHead':
-            embeddings[idx:idx + batch_size] = emb_batch # not working? why
+        if cfg['head_type'] == 'IoMHead':
+            embeddings[idx:idx + batch_size] = emb_batch  # not working? why
         else:
             embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         # embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         # print(embeddings)
-    if isLUT:# length of bin
+    if isLUT:  # length of bin
         # here do the binary convert
         # # here convert the embedding to binary
-        LUT1 = genLUT(q=cfg['q'],bin_dim=isLUT)
+        LUT1 = genLUT(q=cfg['q'], bin_dim=isLUT)
         embeddings = tf.cast(embeddings, tf.int32)
         LUV = tf.gather(LUT1, embeddings)
         embeddings = tf.reshape(LUV, (embeddings.shape[0], isLUT * embeddings.shape[1]))
 
         ##### end ########
-    tpr, fpr, accuracy, best_thresholds,auc,eer = evaluate(
-        embeddings, issame, nrof_folds,cfg)
+    tpr, fpr, accuracy, best_thresholds, auc, eer = evaluate(
+        embeddings, issame, nrof_folds, cfg)
 
-    return accuracy.mean(), best_thresholds.mean(),auc,eer,embeddings
+    return accuracy.mean(), best_thresholds.mean(), auc, eer, embeddings
 
 
 '''
 below if for archead with IoM layer
 '''
+
+
 def perform_val2(embedding_size, batch_size, model,
-                carray, issame, nrof_folds=10, is_ccrop=False, is_flip=False,cfg=None):
+                 carray, issame, nrof_folds=10, is_ccrop=False, is_flip=False, cfg=None):
     """perform val"""
     embedding_size = int(embedding_size / cfg['q'])
     embeddings = np.zeros([len(carray), embedding_size])
 
-    for idx in tqdm.tqdm(range(0, len(carray), batch_size),ascii = True):
+    for idx in tqdm.tqdm(range(0, len(carray), batch_size), ascii=True):
         batch = carray[idx:idx + batch_size]
         batch = np.transpose(batch, [0, 2, 3, 1]) * 0.5 + 0.5
         if is_ccrop:
@@ -313,31 +348,38 @@ def perform_val2(embedding_size, batch_size, model,
             batch = ccrop_batch(batch)
             emb_batch = model(batch)
         # print(emb_batch)
-        embeddings[idx:idx + batch_size] = emb_batch # not working? why
+        embeddings[idx:idx + batch_size] = emb_batch  # not working? why
         # embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         # print(embeddings)
-    tpr, fpr, accuracy, best_thresholds,auc,eer = evaluate(
-        embeddings, issame, nrof_folds,cfg)
+    tpr, fpr, accuracy, best_thresholds, auc, eer = evaluate(
+        embeddings, issame, nrof_folds, cfg)
 
-    return accuracy.mean(), best_thresholds.mean(),auc,eer,embeddings
+    return accuracy.mean(), best_thresholds.mean(), auc, eer, embeddings
+
 
 '''
 new add, in case val during train
 '''
-def val_LFW(model,cfg):
+
+
+def val_LFW(model, cfg):
     lfw, lfw_issame = get_val_pair(cfg['test_dataset'], 'lfw_align_112/lfw')
     return perform_val(
-        cfg['q']*cfg['m'], 32, model, lfw, lfw_issame,
+        cfg['q'] * cfg['m'], 32, model, lfw, lfw_issame,
         is_ccrop=cfg['is_ccrop'], cfg=cfg)
+
 
 '''
 2020/04/29 new add by Xingbo, evaluate y.t.f and f.s
 ds_path = 'E:/my research/etri2020/facedataset/facescrub_images_112x112'
 
 '''
-def perform_val_yts(batch_size, model,ds_path,is_ccrop=False, is_flip=False,cfg=None,img_ext='png',isLUT=False):
+
+
+def perform_val_yts(batch_size, model, ds_path, is_ccrop=False, is_flip=False, cfg=None, img_ext='png', isLUT=False):
     """perform val for youtube face and facescrb"""
-    def extractFeat(dataset,model):
+
+    def extractFeat(dataset, model):
         feats = []
         names = []
         n = 0
@@ -349,14 +391,15 @@ def perform_val_yts(batch_size, model,ds_path,is_ccrop=False, is_flip=False,cfg=
                 mylabel = label_batch[i].numpy()
                 names.append(mylabel)
         print(f"[*] finanly we have {n} extracted samples features")
-        return feats,names
+        return feats, names
+
     gallery = load_data_split(ds_path, batch_size, subset='train_gallery', img_ext=img_ext)
     probes = load_data_split(ds_path, batch_size, subset='test', img_ext=img_ext)
     gallery_feats, gallery_names = extractFeat(gallery, model)
     probes_feats, probes_names = extractFeat(probes, model)
     if isLUT:
         # here do the binary convert
-        LUT1 = genLUT(q=cfg['q'],bin_dim=isLUT)
+        LUT1 = genLUT(q=cfg['q'], bin_dim=isLUT)
         gallery_feats = tf.cast(gallery_feats, tf.int32)
         LUV = tf.gather(LUT1, gallery_feats)
         gallery_feats = tf.reshape(LUV, (gallery_feats.shape[0], isLUT * gallery_feats.shape[1]))
@@ -367,11 +410,9 @@ def perform_val_yts(batch_size, model,ds_path,is_ccrop=False, is_flip=False,cfg=
 
         ##### end ########
 
-
-    mAp = streaming_mean_averge_precision(probes_feats, probes_names, gallery_feats, gallery_names,k=50)
+    mAp = streaming_mean_averge_precision(probes_feats, probes_names, gallery_feats, gallery_names, k=50)
     rr = streaming_mean_cmc_at_k(probes_feats, probes_names, gallery_feats, gallery_names, 10)
-    return mAp,rr
-
+    return mAp, rr
 
 
 if __name__ == '__main__':
@@ -380,7 +421,7 @@ if __name__ == '__main__':
 
     diff = np.subtract(embeddings1, embeddings2)
     dist = np.sum(np.square(diff), 1)
-    print('diff',diff)
-    print('dist',dist)
-    pd = pdist(embeddings1,embeddings2)
+    print('diff', diff)
+    print('dist', dist)
+    pd = pdist(embeddings1, embeddings2)
     print(pd)
