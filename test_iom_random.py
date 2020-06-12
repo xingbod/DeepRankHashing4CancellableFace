@@ -172,6 +172,14 @@ for trail in [1, 2, 3]:
             mycfg['m'] = m
             mycfg['q'] = q
             callMe()
+
+for trail in [1, 2, 3]:
+    for m in [1024, 2048]:
+        for q in [2, 4]:
+            print(m, q, '****')
+            mycfg['m'] = m
+            mycfg['q'] = q
+            callMe()
 # for m in [2048]:
 #     for q in [2]:
 #         print(m,q,'****')
