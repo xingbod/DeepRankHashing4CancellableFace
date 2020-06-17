@@ -123,7 +123,7 @@ def callMe():
                                                                                            best_th_cfp_fp,
                                                                                            mAp_ytf, rr_ytf[0],
                                                                                            mAp_fs, rr_fs[0])
-            with open('./logs/' + cfg['sub_name'] + "_OutputNewArc.md", "a") as text_file:
+            with open('./logs/' + cfg['sub_name'] + "_OutputHamming.md", "a") as text_file:
                 text_file.write(log_str)
             print(log_str)
 
@@ -131,7 +131,7 @@ def callMe():
                 q, m, isLUT, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, auc_lfw,
                 auc_agedb30, auc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
 
-            with open('./logs/' + cfg['sub_name'] + "_Output_lineNewArc.md", "a") as text_file:
+            with open('./logs/' + cfg['sub_name'] + "_Output_lineHamming.md", "a") as text_file:
                 text_file.write(log_str2)
 
         evl(0)  # no LUT
