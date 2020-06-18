@@ -134,7 +134,7 @@ def callMe():
             with open('./logs/' + cfg['sub_name'] + "_Output_lineCosine.md", "a") as text_file:
                 text_file.write(log_str2)
 
-        evl(0,measure='Cosine')  # no LUT
+        evl(0,measure='Hamming')  # no LUT
         # evl(4)
         # evl(8)
         # evl(16)
