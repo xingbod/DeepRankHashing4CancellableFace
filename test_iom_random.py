@@ -165,15 +165,15 @@ def callMe():
 # mycfg['m'] = 512
 # mycfg['q'] = 8
 # callMe()
-for m in [256, 512]:
-    for q in [2,3, 4,5,6,7, 8,9,10,11,12,13,14,15,16]:
-        print(m, q, '****')
-        mycfg['m'] = m
-        mycfg['q'] = q
-        callMe()
+# for m in [256, 512]:
+#     for q in [2,3, 4,5,6,7, 8,9,10,11,12,13,14,15,16]:
+#         print(m, q, '****')
+#         mycfg['m'] = m
+#         mycfg['q'] = q
+#         callMe()
 
 for m in [1024, 2048]:
-    for q in [2, 4]:
+    for q in [2,3, 4,5,6,7, 8,9,10,11,12,13,14,15,16]:
         print(m, q, '****')
         mycfg['m'] = m
         mycfg['q'] = q
