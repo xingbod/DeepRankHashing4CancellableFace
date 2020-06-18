@@ -166,6 +166,7 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
                   nrof_folds=10, cfg=None, measure='Euclidean'):
     assert (embeddings1.shape[0] == embeddings2.shape[0])
     assert (embeddings1.shape[1] == embeddings2.shape[1])
+    print('[*] Using distance :', measure)
     nrof_pairs = min(len(actual_issame), embeddings1.shape[0])
     nrof_thresholds = len(thresholds)
     k_fold = KFold(n_splits=nrof_folds, shuffle=False)
