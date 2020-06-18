@@ -18,6 +18,7 @@ from metrics.retrieval import streaming_mean_averge_precision, streaming_mean_cm
 from sklearn import preprocessing
 from modules.LUT import genLUT
 import scipy.spatial.distance as dist
+import sklearn.metrics
 
 
 def pdist(a, b=None):
@@ -181,12 +182,18 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
     #     # dist = dist/(cfg['q']*cfg['embd_shape']) # should divide by the largest distance
     #     dist = dist / (tf.math.reduce_max(dist).numpy()+10)  # should divide by the largest distance
     if measure == 'Euclidean':
-        dist = eucliden_dist(embeddings1, embeddings2)
+        dist = sklearn.metrics.pairwise_distances(embeddings1, embeddings2, metric='euclidean')
+        dist = tf.linalg.diag_part(dist)
+        # dist = eucliden_dist(embeddings1, embeddings2)
         dist = dist / (tf.math.reduce_max(dist).numpy() + 1)
     elif measure == 'Hamming':
-        dist = Hamming_dist(embeddings1, embeddings2)
+        dist = sklearn.metrics.pairwise_distances(embeddings1, embeddings2, metric='hamming')
+        dist = tf.linalg.diag_part(dist)
+        # dist = Hamming_dist(embeddings1, embeddings2)
     elif measure == 'Cosine':
-        dist = cosin_dist(embeddings1, embeddings2)
+        dist = sklearn.metrics.pairwise_distances(embeddings1, embeddings2, metric='cosine')
+        dist = tf.linalg.diag_part(dist)
+        # dist = cosin_dist(embeddings1, embeddings2)
         dist[dist < 0] = 0
 
     print("[*] dist {}".format(dist))
