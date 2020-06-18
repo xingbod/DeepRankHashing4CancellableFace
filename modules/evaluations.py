@@ -180,10 +180,10 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
     # if cfg['head_type'] == 'IoMHead':
     #     # dist = dist/(cfg['q']*cfg['embd_shape']) # should divide by the largest distance
     #     dist = dist / (tf.math.reduce_max(dist).numpy()+10)  # should divide by the largest distance
-    dist = Hamming_dist(embeddings1, embeddings2)
-    # dist = eucliden_dist(embeddings1, embeddings2)
+    # dist = Hamming_dist(embeddings1, embeddings2)
+    dist = eucliden_dist(embeddings1, embeddings2)
     # dist = cosin_dist(embeddings1, embeddings2)
-    # dist = dist / (tf.math.reduce_max(dist).numpy() + 1)
+    dist = dist / (tf.math.reduce_max(dist).numpy() + 1)
     print("[*] dist {}".format(dist))
     for fold_idx, (train_set, test_set) in enumerate(k_fold.split(indices)):
         # Find the best threshold for the fold
@@ -213,60 +213,6 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
     # print('Equal Error Rate (EER): %1.3f' % eer)
 
     return tpr, fpr, accuracy, best_thresholds, auc, eer
-
-
-def calculate_roc_cosine(thresholds, embeddings1, embeddings2, actual_issame,
-                         nrof_folds=10, cfg=None):
-    assert (embeddings1.shape[0] == embeddings2.shape[0])
-    assert (embeddings1.shape[1] == embeddings2.shape[1])
-    nrof_pairs = min(len(actual_issame), embeddings1.shape[0])
-    nrof_thresholds = len(thresholds)
-    k_fold = KFold(n_splits=nrof_folds, shuffle=False)
-
-    tprs = np.zeros((nrof_folds, nrof_thresholds))
-    fprs = np.zeros((nrof_folds, nrof_thresholds))
-    accuracy = np.zeros((nrof_folds))
-    best_thresholds = np.zeros((nrof_folds))
-    indices = np.arange(nrof_pairs)
-
-    embeddings1_norm = tf.reduce_sum(embeddings1, axis=1)
-    embeddings2_norm = tf.reduce_sum(embeddings2, axis=1)
-    factor = embeddings1_norm + embeddings2_norm
-
-    diff = tf.reduce_sum(tf.multiply(embeddings1, embeddings2), axis=1)
-
-    dist = tf.divide(diff, factor)
-    # a_n_vec = tf.divide(a_n_product, denom2)
-
-    # diff = np.subtract(embeddings1, embeddings2)
-    # dist = np.sum(np.square(diff), 1)
-    # if cfg['head_type'] == 'IoMHead':
-    #     # dist = dist/(cfg['q']*cfg['embd_shape']) # should divide by the largest distance
-    #     dist = dist / (cfg['q']*100 )  # should divide by the largest distance
-    # print(dist)
-    for fold_idx, (train_set, test_set) in enumerate(k_fold.split(indices)):
-        # Find the best threshold for the fold
-        acc_train = np.zeros((nrof_thresholds))
-        for threshold_idx, threshold in enumerate(thresholds):
-            _, _, acc_train[threshold_idx] = calculate_accuracy(
-                threshold, dist[train_set], actual_issame[train_set])
-        best_threshold_index = np.argmax(acc_train)
-
-        best_thresholds[fold_idx] = thresholds[best_threshold_index]
-        for threshold_idx, threshold in enumerate(thresholds):
-            tprs[fold_idx, threshold_idx], fprs[fold_idx, threshold_idx], _ = \
-                calculate_accuracy(threshold,
-                                   dist[test_set],
-                                   actual_issame[test_set])
-        _, _, accuracy[fold_idx] = calculate_accuracy(
-            thresholds[best_threshold_index],
-            dist[test_set],
-            actual_issame[test_set])
-
-    tpr = np.mean(tprs, 0)
-    fpr = np.mean(fprs, 0)
-    return tpr, fpr, accuracy, best_thresholds
-
 
 def evaluate(embeddings, actual_issame, nrof_folds=10, cfg=None):
     # Calculate evaluation metrics
