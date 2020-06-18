@@ -187,6 +187,7 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
         dist = Hamming_dist(embeddings1, embeddings2)
     elif measure == 'Cosine':
         dist = cosin_dist(embeddings1, embeddings2)
+        dist[dist < 0] = 0
 
     print("[*] dist {}".format(dist))
     for fold_idx, (train_set, test_set) in enumerate(k_fold.split(indices)):
