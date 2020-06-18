@@ -162,7 +162,7 @@ def Jaccard_dist(embeddings1, embeddings2):
 
 
 def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
-                  nrof_folds=10, cfg=None, measure=pdist):
+                  nrof_folds=10, cfg=None, measure='Euclidean'):
     assert (embeddings1.shape[0] == embeddings2.shape[0])
     assert (embeddings1.shape[1] == embeddings2.shape[1])
     nrof_pairs = min(len(actual_issame), embeddings1.shape[0])
@@ -180,10 +180,14 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
     # if cfg['head_type'] == 'IoMHead':
     #     # dist = dist/(cfg['q']*cfg['embd_shape']) # should divide by the largest distance
     #     dist = dist / (tf.math.reduce_max(dist).numpy()+10)  # should divide by the largest distance
-    # dist = Hamming_dist(embeddings1, embeddings2)
-    dist = eucliden_dist(embeddings1, embeddings2)
-    # dist = cosin_dist(embeddings1, embeddings2)
-    dist = dist / (tf.math.reduce_max(dist).numpy() + 1)
+    if measure == 'Euclidean':
+        dist = eucliden_dist(embeddings1, embeddings2)
+        dist = dist / (tf.math.reduce_max(dist).numpy() + 1)
+    elif measure == 'Hamming':
+        dist = Hamming_dist(embeddings1, embeddings2)
+    elif measure == 'Cosine':
+        dist = cosin_dist(embeddings1, embeddings2)
+
     print("[*] dist {}".format(dist))
     for fold_idx, (train_set, test_set) in enumerate(k_fold.split(indices)):
         # Find the best threshold for the fold
@@ -214,20 +218,20 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
 
     return tpr, fpr, accuracy, best_thresholds, auc, eer
 
-def evaluate(embeddings, actual_issame, nrof_folds=10, cfg=None):
+def evaluate(embeddings, actual_issame, nrof_folds=10,measure='Hamming', cfg=None):
     # Calculate evaluation metrics
     thresholds = np.arange(0, 4, 0.01)
     embeddings1 = embeddings[0::2]  # 隔行采样
     embeddings2 = embeddings[1::2]  # 隔行采样
     tpr, fpr, accuracy, best_thresholds, auc, eer = calculate_roc(
         thresholds, embeddings1, embeddings2, np.asarray(actual_issame),
-        nrof_folds=nrof_folds, cfg=cfg)
+        nrof_folds=nrof_folds, cfg=cfg,measure=measure)
 
     return tpr, fpr, accuracy, best_thresholds, auc, eer
 
 
 def perform_val(embedding_size, batch_size, model,
-                carray, issame, nrof_folds=10, is_ccrop=False, is_flip=False, cfg=None, isLUT=0):
+                carray, issame, nrof_folds=10, is_ccrop=False, is_flip=False, cfg=None, isLUT=0,measure='Hamming'):
     """perform val"""
     if cfg['head_type'] == 'IoMHead':
         embedding_size = int(embedding_size / cfg['q'])
@@ -263,7 +267,7 @@ def perform_val(embedding_size, batch_size, model,
 
         ##### end ########
     tpr, fpr, accuracy, best_thresholds, auc, eer = evaluate(
-        embeddings, issame, nrof_folds, cfg)
+        embeddings, issame, nrof_folds, cfg,measure=measure)
 
     return accuracy.mean(), best_thresholds.mean(), auc, eer, embeddings
 
