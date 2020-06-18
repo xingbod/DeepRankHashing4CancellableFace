@@ -184,17 +184,24 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
     if measure == 'Euclidean':
         dist = sklearn.metrics.pairwise_distances(embeddings1, embeddings2, metric='euclidean')
         dist = tf.linalg.diag_part(dist)
+        dist = dist.numpy()
         # dist = eucliden_dist(embeddings1, embeddings2)
         dist = dist / (tf.math.reduce_max(dist).numpy() + 1)
     elif measure == 'Hamming':
         dist = sklearn.metrics.pairwise_distances(embeddings1, embeddings2, metric='hamming')
         dist = tf.linalg.diag_part(dist)
+        dist = dist.numpy()
         # dist = Hamming_dist(embeddings1, embeddings2)
     elif measure == 'Cosine':
         dist = sklearn.metrics.pairwise_distances(embeddings1, embeddings2, metric='cosine')
         dist = tf.linalg.diag_part(dist)
+        dist = dist.numpy()
         # dist = cosin_dist(embeddings1, embeddings2)
         dist[dist < 0] = 0
+    elif measure == 'Jaccard':
+        dist = sklearn.metrics.pairwise_distances(embeddings1, embeddings2, metric='jaccard')
+        dist = tf.linalg.diag_part(dist)
+        dist = dist.numpy()
 
     print("[*] dist {}".format(dist))
     for fold_idx, (train_set, test_set) in enumerate(k_fold.split(indices)):
@@ -202,7 +209,7 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
         acc_train = np.zeros((nrof_thresholds))
         for threshold_idx, threshold in enumerate(thresholds):
             _, _, acc_train[threshold_idx] = calculate_accuracy(
-                threshold, dist[train_set], actual_issame[train_set])
+                    threshold, dist[train_set], actual_issame[train_set])
         best_threshold_index = np.argmax(acc_train)
 
         best_thresholds[fold_idx] = thresholds[best_threshold_index]
