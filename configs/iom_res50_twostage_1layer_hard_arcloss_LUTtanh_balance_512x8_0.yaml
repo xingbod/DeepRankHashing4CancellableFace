@@ -17,7 +17,7 @@ hidden_layer_remark: '1'
 code_balance_loss: True
 
 # train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split /media/xingbo/Storage/facedata/ms1m_align_112/imgs
-train_dataset: '/home/xingbo/facedata/ms1m_align_112/imgs'
+train_dataset: '/media/xingbo/Storage/facedata/ms1m_align_112/imgs'
 #train_dataset: '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160'
 img_ext: 'jpg'
 dataset_ext: 'ms'
@@ -32,7 +32,7 @@ epochs: 50
 base_lr: 0.001
 w_decay: !!float 5e-4
 save_steps: 10000
-q: 4
+q: 8
 # m, the projection length would be m x q
 m: 512
 # test
