@@ -1,6 +1,6 @@
 # general x.x.134.222
 samples_per_class: 4
-classes_per_batch: 70
+classes_per_batch: 50
 batch_size: 240
 eval_batch_size: 200
 input_size: 112
