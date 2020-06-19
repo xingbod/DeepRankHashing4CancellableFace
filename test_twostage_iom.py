@@ -93,7 +93,7 @@ def main(_argv):
         embeds = l2_norm(model(img))
         np.save('./output_embeds.npy', embeds)
     else:
-        def evl(isLUT):
+        def evl(isLUT,measure):
             # print("[*] Perform Retrieval Evaluation on Y.T.F and F.S...")
             # mAp_ytf, rr_ytf = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_ytf'], img_ext='jpg',
             #                                   isLUT=isLUT, cfg=cfg)
@@ -110,20 +110,20 @@ def main(_argv):
             print("[*] Perform Evaluation on LFW...")
             acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = perform_val(
                 cfg['embd_shape'], cfg['eval_batch_size'], model, lfw, lfw_issame,
-                is_ccrop=cfg['is_ccrop'], cfg=cfg, isLUT=isLUT)
+                is_ccrop=cfg['is_ccrop'], cfg=cfg, isLUT=isLUT,measure=measure)
             print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
 
             print("[*] Perform Evaluation on AgeDB30...")
             acc_agedb30, best_th_agedb30, auc_agedb30, eer_agedb30, embeddings_agedb30 = perform_val(
                 cfg['embd_shape'], cfg['eval_batch_size'], model, agedb_30,
-                agedb_30_issame, is_ccrop=cfg['is_ccrop'], cfg=cfg, isLUT=isLUT)
+                agedb_30_issame, is_ccrop=cfg['is_ccrop'], cfg=cfg, isLUT=isLUT,measure=measure)
             print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_agedb30, best_th_agedb30, auc_agedb30,
                                                                               eer_agedb30))
 
             print("[*] Perform Evaluation on CFP-FP...")
             acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp, eer_cfp_fp, embeddings_cfp_fp = perform_val(
                 cfg['embd_shape'], cfg['eval_batch_size'], model, cfp_fp, cfp_fp_issame,
-                is_ccrop=cfg['is_ccrop'], cfg=cfg, isLUT=isLUT)
+                is_ccrop=cfg['is_ccrop'], cfg=cfg, isLUT=isLUT,measure=measure)
             print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp,
                                                                               eer_cfp_fp))
 
@@ -153,9 +153,7 @@ def main(_argv):
                 text_file.write(log_str2)
 
             print(log_str2)
-
-
-        evl(0,'Hamming')
+        evl(0, 'Hamming')
         # evl(8)
 
 
