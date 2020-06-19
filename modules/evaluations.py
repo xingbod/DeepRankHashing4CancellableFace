@@ -203,6 +203,9 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
         dist = sklearn.metrics.pairwise_distances(embeddings1, embeddings2, metric='jaccard')
         dist = tf.linalg.diag_part(dist)
         dist = dist.numpy()
+    elif measure == 'Euclidean_native':
+        dist = eucliden_dist(embeddings1, embeddings2)
+        dist = dist / (tf.math.reduce_max(dist).numpy() + 1)
 
     print("[*] dist {}".format(dist))
     for fold_idx, (train_set, test_set) in enumerate(k_fold.split(indices)):
