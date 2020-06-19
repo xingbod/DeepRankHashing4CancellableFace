@@ -8,7 +8,7 @@ import tensorflow as tf
 import time
 import gc
 
-flags.DEFINE_string('dataset_path', '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160/',
+flags.DEFINE_string('dataset_path', 'G:/facedataset/vggface2_train/vgg_mtcnnpy_160/',
                     'path to dataset')
 flags.DEFINE_string('output_path', 'vgg16_binary_triplet.tfrecord',
                     'path to ouput tfrecord')

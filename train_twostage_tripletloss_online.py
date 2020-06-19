@@ -171,9 +171,9 @@ def main(_):
                     reg_loss = tf.constant(0.0, tf.float64)
                     quanti_loss = tf.constant(0.0, tf.float64)
                 if cfg['bin_lut_loss']=='tanh':
-                    bin_loss = bin_LUT_loss.binary_loss_LUT(labels, logist) * 0.001
+                    bin_loss = bin_LUT_loss.binary_loss_LUT(labels, logist,q) * 0.001
                 elif cfg['bin_lut_loss']=='sigmoid':
-                    bin_loss = bin_LUT_loss.binary_loss_LUT_sigmoid(labels, logist) * 0.001
+                    bin_loss = bin_LUT_loss.binary_loss_LUT_sigmoid(labels, logist,q) * 0.001
                 else:
                     bin_loss = tf.constant(0.0,tf.float64)
                 if 'code_balance_loss' in cfg:

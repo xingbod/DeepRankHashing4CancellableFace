@@ -2,6 +2,7 @@
 
 import tensorflow as tf
 from modules.LUT import genLUT
+import sklearn.metrics
 
 
 def _pairwise_inner_product(embeddings):
@@ -103,7 +104,7 @@ def _get_triplet_mask(labels):
     return mask
 
 
-def binary_loss_LUT(labels, embeddings,scala=100):
+def binary_loss_LUT(labels, embeddings,bin_dim, scala=100):
     """Build the triplet loss over a batch of embeddings.
 
     We generate all the valid triplets and average the loss over the positive ones.
@@ -119,14 +120,15 @@ def binary_loss_LUT(labels, embeddings,scala=100):
         triplet_loss: scalar tensor containing the triplet loss
     """
 
-    bin_dim = 8
+    # bin_dim = 8
     LUT1 = genLUT(bin_dim = bin_dim)
     embeddings = tf.cast(embeddings, tf.int32)
     LUV = tf.gather(LUT1, embeddings)
     embeddings = tf.reshape(LUV, (embeddings.shape[0], bin_dim * embeddings.shape[1]))
 
     # Get the pairwise distance matrix
-    pairwise_dist = _pairwise_inner_product(embeddings)
+    pairwise_dist = sklearn.metrics.pairwise_distances(embeddings, metric='hamming')
+    # pairwise_dist = _pairwise_inner_product(embeddings)
 
     product_dist = tf.tanh(tf.cast(pairwise_dist, tf.float64)) * 0.5
 
@@ -150,7 +152,7 @@ def binary_loss_LUT(labels, embeddings,scala=100):
     return final_loss
 
 
-def binary_loss_LUT_sigmoid(labels, embeddings,scala=100):
+def binary_loss_LUT_sigmoid(labels, embeddings,bin_dim,scala=100):
     """Build the triplet loss over a batch of embeddings.
 
     We generate all the valid triplets and average the loss over the positive ones.
@@ -166,7 +168,7 @@ def binary_loss_LUT_sigmoid(labels, embeddings,scala=100):
         triplet_loss: scalar tensor containing the triplet loss
     """
 
-    bin_dim = 8
+    # bin_dim = 8
     LUT1 = genLUT(bin_dim = bin_dim)
     embeddings = tf.cast(embeddings, tf.int32)
     LUV = tf.gather(LUT1, embeddings)
