@@ -1,6 +1,7 @@
 """Define functions to create the triplet loss with online triplet mining."""
 
 import tensorflow as tf
+import sklearn.metrics
 
 
 def _pairwise_distances(embeddings, squared=False):
@@ -190,7 +191,8 @@ def batch_hard_triplet_loss(labels, embeddings, margin, squared=False):
         triplet_loss: scalar tensor containing the triplet loss
     """
     # Get the pairwise distance matrix
-    pairwise_dist = _pairwise_distances(embeddings, squared=squared)
+    pairwise_dist = sklearn.metrics.pairwise_distances(embeddings, metric='euclidean')
+    # pairwise_dist = _pairwise_distances(embeddings, squared=squared)
 
     # For each anchor, get the hardest positive
     # First, we need to get a mask for every valid positive (they should have same label)
