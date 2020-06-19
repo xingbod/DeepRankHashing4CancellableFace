@@ -175,7 +175,8 @@ def binary_loss_LUT_sigmoid(labels, embeddings,bin_dim,scala=100):
     embeddings = tf.reshape(LUV, (embeddings.shape[0], bin_dim * embeddings.shape[1]))
 
     # Get the pairwise distance matrix
-    pairwise_dist = _pairwise_inner_product(embeddings)
+    pairwise_dist = sklearn.metrics.pairwise_distances(embeddings, metric='hamming')
+    # pairwise_dist = _pairwise_inner_product(embeddings)
 
     product_dist = tf.math.sigmoid(tf.cast(pairwise_dist, tf.float64))
 
