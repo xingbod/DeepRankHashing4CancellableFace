@@ -163,7 +163,6 @@ def main(_argv):
         # evl(8, 'Euclidean')
         # evl(8, 'Jaccard')
         evl(q, 'Euclidean')
-
         # evl(8)
 
 
