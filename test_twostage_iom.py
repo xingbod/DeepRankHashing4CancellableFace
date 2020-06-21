@@ -103,6 +103,9 @@ def main(_argv):
             # print("    Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(rr_ytf[0], rr_fs[0]))
             mAp_fs = mAp_ytf =0
             rr_ytf = rr_fs = [0]
+            if isLUT==0 and measure == 'Jaccard' :
+                isLUT = q
+
             print("[*] Loading LFW, AgeDB30 and CFP-FP...")
             lfw, agedb_30, cfp_fp, lfw_issame, agedb_30_issame, cfp_fp_issame = \
                 get_val_data(cfg['test_dataset'])
