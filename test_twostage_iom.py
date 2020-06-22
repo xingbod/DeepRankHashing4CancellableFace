@@ -103,6 +103,9 @@ def main(_argv):
             # print("    Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(rr_ytf[0], rr_fs[0]))
             mAp_fs = mAp_ytf =0
             rr_ytf = rr_fs = [0]
+            if isLUT==0 and measure == 'Jaccard' :
+                isLUT = q
+
             print("[*] Loading LFW, AgeDB30 and CFP-FP...")
             lfw, agedb_30, cfp_fp, lfw_issame, agedb_30_issame, cfp_fp_issame = \
                 get_val_data(cfg['test_dataset'])
@@ -146,15 +149,20 @@ def main(_argv):
             with open('./logs/' + cfg['sub_name'] + "_Output.md", "a") as text_file:
                 text_file.write(log_str)
             print(log_str)
-            log_str2 = '''| q = {:.2f}, m = {:.2f},LUT={}\t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f}\n\n '''.format(
-                q, m, isLUT, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, acc_lfw,
+            log_str2 = '''| q = {:.2f}, m = {:.2f},LUT={},dist={} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f}\n\n '''.format(
+                q, m, isLUT,measure, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, acc_lfw,
                 acc_agedb30, acc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
             with open('./logs/' + cfg['sub_name'] + "_Output.md", "a") as text_file:
                 text_file.write(log_str2)
 
             print(log_str2)
-        evl(0, 'Hamming')
-        evl(0, 'Euclidean')
+        # evl(0, 'Hamming')
+        # evl(0, 'Euclidean')
+        # evl(0, 'Jaccard')
+        # evl(8, 'Hamming')
+        # evl(8, 'Euclidean')
+        # evl(8, 'Jaccard')
+        evl(q, 'Euclidean')
         # evl(8)
 
 

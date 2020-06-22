@@ -72,8 +72,8 @@ def callMe():
     else:
         def evl(isLUT,measure):
 
-            if measure == 'Jaccard':
-                isLUT = q
+            # if measure == 'Jaccard':
+            #     isLUT = q
 
             # print("[*] Perform Retrieval Evaluation on Y.T.F and F.S...")
             # mAp_ytf, rr_ytf = perform_val_yts(cfg['eval_batch_size'], model, cfg['test_dataset_ytf'], img_ext='jpg',
@@ -131,17 +131,23 @@ def callMe():
             #     text_file.write(log_str)
             print(log_str)
 
-            log_str2 = '''| q = {:.2f}, m = {:.2f},LUT={}\t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f}\n\n '''.format(
-                q, m, isLUT, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, auc_lfw,
+            log_str2 = '''| q = {:.2f}, m = {:.2f},LUT={},dist={}\t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f}\n\n '''.format(
+                q, m, isLUT,measure, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, auc_lfw,
                 auc_agedb30, auc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
 
             with open('./logs/' + cfg['sub_name'] + "_Output_line_"+measure+".md", "a") as text_file:
                 text_file.write(log_str2)
 
-        evl(0,measure='Euclidean')  # no LUT
-        evl(0,measure='Jaccard')  # no LUT
-        evl(0,measure='Cosine')  # no LUT
-        evl(0,measure='Hamming')  # no LUT
+        # evl(0,measure='Euclidean')  # no LUT
+        # evl(0,measure='Jaccard')  # no LUT
+        # evl(0,measure='Cosine')  # no LUT
+        # evl(0,measure='Hamming')  # no LUT
+
+        evl(q, measure='Euclidean')  # no LUT
+        # evl(q, measure='Jaccard')  # no LUT
+        # evl(q, measure='Cosine')  # no LUT
+        # evl(q, measure='Hamming')  # no LUT
+
         # evl(4)
         # evl(8)
         # evl(16)
@@ -172,8 +178,8 @@ def callMe():
 # mycfg['m'] = 512
 # mycfg['q'] = 8
 # callMe()
-for m in [128, 256, 512,1024, 2048]:
-    for q in [2 , 4, 6, 8,10,12,14,16]:
+for m in [32, 64, 128, 256, 512,1024,2048]:
+    for q in [2 ,4, 6, 8,10,12,16]:
         print(m, q, '****')
         mycfg['m'] = m
         mycfg['q'] = q
