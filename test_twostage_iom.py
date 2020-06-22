@@ -157,8 +157,9 @@ def main(_argv):
 
             print(log_str2)
         evl(0, 'Hamming')
+        evl(q, 'Hamming')
         evl(0, 'Euclidean')
-        evl(q, 'Jaccard')
+        # evl(q, 'Jaccard')
         # evl(8, 'Hamming')
         evl(q, 'Euclidean')
         # evl(8, 'Jaccard')
