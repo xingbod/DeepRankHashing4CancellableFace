@@ -3,6 +3,7 @@
 import tensorflow as tf
 from modules.LUT import genLUT
 import sklearn.metrics
+import math
 
 
 def _pairwise_inner_product(embeddings):
@@ -104,7 +105,7 @@ def _get_triplet_mask(labels):
     return mask
 
 
-def binary_loss_LUT(labels, embeddings,bin_dim, scala=100):
+def binary_loss_LUT(labels, embeddings,q, scala=100):
     """Build the triplet loss over a batch of embeddings.
 
     We generate all the valid triplets and average the loss over the positive ones.
@@ -121,7 +122,7 @@ def binary_loss_LUT(labels, embeddings,bin_dim, scala=100):
     """
 
     # bin_dim = 8
-    LUT1 = genLUT(q=tf.math.pow(2,bin_dim),bin_dim = bin_dim)
+    LUT1 = genLUT(q=q,bin_dim = math.ceil(math.log2(q)))
     embeddings = tf.cast(embeddings, tf.int32)
     LUV = tf.gather(LUT1, embeddings)
     embeddings = tf.reshape(LUV, (embeddings.shape[0], bin_dim * embeddings.shape[1]))
