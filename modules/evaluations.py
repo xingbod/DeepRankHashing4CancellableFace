@@ -135,6 +135,15 @@ def Hamming_dist(embeddings1, embeddings2):
     return dist
 
 
+def Hamming_scipy(embeddings1, embeddings2):
+    def cal(embed1, embed2):
+        dist = distance.hamming(embed1, embed2)
+        return dist
+    dist = np.zeros(np.shape(embeddings1)[0])
+    for i in range(np.shape(embeddings1)[0]):
+        dist[i] = cal(embeddings1[i, :], embeddings2[i, :])
+    return dist
+
 def eucliden_dist(embeddings1, embeddings2):
     diff = np.subtract(embeddings1, embeddings2)
     dist = np.sum(np.square(diff), 1)
@@ -190,8 +199,8 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
         # dist = eucliden_dist(embeddings1, embeddings2)
         dist = dist / (tf.math.reduce_max(dist).numpy() + 1)
     elif measure == 'Hamming':
-        # dist = sklearn.metrics.pairwise_distances(embeddings1, embeddings2, metric='hamming')
-        dist = distance.hamming(embeddings1, embeddings2)
+        dist = sklearn.metrics.pairwise_distances(embeddings1, embeddings2, metric='hamming')
+        # dist = distance.hamming(embeddings1, embeddings2)
         dist = tf.linalg.diag_part(dist)
         dist = dist.numpy()
         # dist = Hamming_dist(embeddings1, embeddings2)
@@ -210,6 +219,9 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
         dist = dist / (tf.math.reduce_max(dist).numpy() + 1)
     elif measure == 'Hamming_native':
         dist = Hamming_dist(embeddings1, embeddings2)
+        dist = dist / (tf.math.reduce_max(dist).numpy() + 1)
+    elif measure == 'Hamming_scipy':
+        dist = Hamming_scipy(embeddings1, embeddings2)
         dist = dist / (tf.math.reduce_max(dist).numpy() + 1)
 
     print("[*] dist {}".format(dist))
