@@ -122,7 +122,8 @@ def binary_loss_LUT(labels, embeddings,q, scala=100):
     """
 
     # bin_dim = 8
-    LUT1 = genLUT(q=q,bin_dim = math.ceil(math.log2(q)))
+    bin_dim = math.ceil(math.log2(q))
+    LUT1 = genLUT(q=q,bin_dim = bin_dim)
     embeddings = tf.cast(embeddings, tf.int32)
     LUV = tf.gather(LUT1, embeddings)
     embeddings = tf.reshape(LUV, (embeddings.shape[0], bin_dim * embeddings.shape[1]))
