@@ -1,6 +1,6 @@
 # general
 samples_per_class: 4
-classes_per_batch: 60
+classes_per_batch: 50
 batch_size: 240
 eval_batch_size: 200
 input_size: 112
