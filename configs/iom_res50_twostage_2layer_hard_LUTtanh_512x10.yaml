@@ -24,7 +24,7 @@ img_ext: 'jpg'
 dataset_ext: 'ms'
 # for metric learning, we have 1. triplet_semi batch_hard_triplet 2. batch_all_triplet_loss 3. batch_all_arc_triplet_loss
 loss_fun: 'batch_hard_triplet'
-triplet_margin: 10
+triplet_margin: 30
 binary_img: False
 num_classes: 85742
 # I generate 1 milion triplets
