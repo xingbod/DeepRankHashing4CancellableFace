@@ -19,6 +19,7 @@ from sklearn import preprocessing
 from modules.LUT import genLUT
 import scipy.spatial.distance as dist
 import sklearn.metrics
+from scipy.spatial import distance
 
 
 def pdist(a, b=None):
@@ -189,7 +190,8 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
         # dist = eucliden_dist(embeddings1, embeddings2)
         dist = dist / (tf.math.reduce_max(dist).numpy() + 1)
     elif measure == 'Hamming':
-        dist = sklearn.metrics.pairwise_distances(embeddings1, embeddings2, metric='hamming')
+        # dist = sklearn.metrics.pairwise_distances(embeddings1, embeddings2, metric='hamming')
+        dist = distance.hamming(embeddings1, embeddings2)
         dist = tf.linalg.diag_part(dist)
         dist = dist.numpy()
         # dist = Hamming_dist(embeddings1, embeddings2)
