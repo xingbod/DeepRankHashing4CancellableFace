@@ -23,7 +23,8 @@ xingbod@gmail.com
 def genLUT(q=8,bin_dim=8,isPerm=False):
   LUT = []
   a = list(range(q))
-  random.shuffle(a)
+  if isPerm:
+    random.shuffle(a)
   for digit in range(q):
     LUT.append([int(d) for d in bin(a[digit])[2:].zfill(bin_dim)])
   # for digit in range(q):
