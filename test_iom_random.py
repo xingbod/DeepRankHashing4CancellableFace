@@ -132,10 +132,10 @@ def callMe():
             print(log_str)
 
             log_str2 = '''| q = {:.2f}, m = {:.2f},LUT={},dist={}\t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f}\n\n '''.format(
-                q, m, isLUT, measure, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, acc_lfw,
-                acc_agedb30, acc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
+                q, m, isLUT,measure, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, auc_lfw,
+                auc_agedb30, auc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
 
-            with open('./logs/' + cfg['sub_name'] + "_Output_line_"+measure+"correct.md", "a") as text_file:
+            with open('./logs/' + cfg['sub_name'] + "_Output_line_"+measure+"3.md", "a") as text_file:
                 text_file.write(log_str2)
 
         # evl(0,measure='Euclidean')  # no LUT
@@ -179,17 +179,12 @@ def callMe():
 # mycfg['q'] = 8
 # callMe()
 for m in [32, 64, 128, 256, 512,1024,2048]:
-    for q in [8]:
-        print(m, q, '****')
-        mycfg['m'] = m
-        mycfg['q'] = q
-        callMe()
-for m in [ 512]:
     for q in [2 ,4, 6, 8,10,12,16]:
         print(m, q, '****')
         mycfg['m'] = m
         mycfg['q'] = q
         callMe()
+
 # for m in [1024, 2048]:
 #     for q in [2,3, 4,5,6,7, 8,9,10,11,12,13,14,15,16]:
 #         print(m, q, '****')
