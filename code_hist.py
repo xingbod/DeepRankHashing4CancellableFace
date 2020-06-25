@@ -58,6 +58,9 @@ def main(_argv):
                             training=False,
                             # here equal false, just get the model without acrHead, to load the model trained by arcface
                             cfg=cfg)
+    ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50')
+    print("[*] load ckpt from {}".format(ckpt_path))
+    arcmodel.load_weights(ckpt_path)
     if cfg['loss_fun'] == 'margin_loss':
         model = IoMFaceModelFromArFaceMLossHead(size=cfg['input_size'],
                                                 arcmodel=arcmodel, training=False,
@@ -93,11 +96,11 @@ def main(_argv):
 
     def evl(isLUT, measure, model, logremark):
 
-        print("[*] Loading LFW, AgeDB30 and CFP-FP...")
+        print("[*] Loading LFW, AgeDB30 and CFP-FP...",logremark)
         lfw, agedb_30, cfp_fp, lfw_issame, agedb_30_issame, cfp_fp_issame = \
             get_val_data(cfg['test_dataset'])
 
-        print("[*] Perform Evaluation on LFW...")
+        print("[*] Perform Evaluation on LFW...",logremark)
         acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = perform_val(
             cfg['embd_shape'], cfg['eval_batch_size'], model, lfw, lfw_issame,
             is_ccrop=cfg['is_ccrop'], cfg=cfg, isLUT=0, measure=measure)
@@ -108,7 +111,7 @@ def main(_argv):
         plt.hist(reshaped_array, density=True, bins=15)  # `density=False` would make counts
         plt.ylabel('Probability')
         plt.xlabel('Code value')
-        plt.savefig('histogram_'+logremark+'_iom_' + + cfg['sub_name'] + +'.svg', format='svg')
+        plt.savefig('histogram_'+logremark+'_iom_'  + cfg['sub_name']  +'.svg', format='svg')
 
         # with open('embeddings/' + cfg['sub_name'] + '_embeddings_lfw.csv', 'w', newline='') as file:
         #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
@@ -123,7 +126,7 @@ def main(_argv):
         plt.hist(reshaped_array, density=True, bins=15)  # `density=False` would make counts
         plt.ylabel('Probability')
         plt.xlabel('Code value')
-        plt.savefig('histogram_'+logremark+'_iom_binary_' + + cfg['sub_name'] + +'.svg', format='svg')
+        plt.savefig('histogram_'+logremark+'_iom_binary_' +  cfg['sub_name'] +'.svg', format='svg')
 
         # with open('embeddings/' + cfg['sub_name'] + '_embeddings_bin_lfw.csv', 'w', newline='') as file:
         #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
