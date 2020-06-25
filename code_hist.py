@@ -110,32 +110,33 @@ def main(_argv):
         x = x.astype(int)
         reshaped_array = x.reshape(x.size)
         counter = collections.Counter(reshaped_array)
-
-        fig = plt.figure()
-        ax = fig.add_axes([0, 0, 1, 1])
         x = counter.keys()
         frequency = counter.values()
         y = [x / reshaped_array.size for x in frequency]
-        ax.bar(x, y)
-        ax.set_title('title test',fontsize=12,color='r')
+        plt.bar(x, y)
         plt.ylabel('Probability')
         plt.xlabel('Code value')
-        plt.show()
+        # plt.show()
         plt.savefig('histogram_'+logremark+'_iom_'  + cfg['sub_name']  +'.svg', format='svg')
-
+        plt.close('all')
 
         # with open('embeddings/' + cfg['sub_name'] + '_embeddings_lfw.csv', 'w', newline='') as file:
         #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
         #     writer.writerows(embeddings_lfw)
-
+        #
         # acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw_bin = perform_val(
         #     cfg['embd_shape'], cfg['eval_batch_size'], model, lfw, lfw_issame,
         #     is_ccrop=cfg['is_ccrop'], cfg=cfg, isLUT=q, measure=measure)
+        # print(" Binary   acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
         #
         # x = np.asarray(embeddings_lfw_bin)
-        # x.astype(int)
+        # x = x.astype(int)
         # reshaped_array = x.reshape(x.size)
-        # plt.hist(reshaped_array, density=True, bins=15)  # `density=False` would make counts
+        # counter = collections.Counter(reshaped_array)
+        # x = counter.keys()
+        # frequency = counter.values()
+        # y = [x / reshaped_array.size for x in frequency]
+        # plt.bar(x, y)
         # plt.ylabel('Probability')
         # plt.xlabel('Code value')
         # plt.savefig('histogram_'+logremark+'_iom_binary_' +  cfg['sub_name'] +'.svg', format='svg')
