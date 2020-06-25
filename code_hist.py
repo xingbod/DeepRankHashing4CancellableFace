@@ -100,6 +100,7 @@ def main(_argv):
         lfw, agedb_30, cfp_fp, lfw_issame, agedb_30_issame, cfp_fp_issame = \
             get_val_data(cfg['test_dataset'])
 
+
         print("[*] Perform Evaluation on LFW...",logremark)
         acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = perform_val(
             cfg['embd_shape'], cfg['eval_batch_size'], model, lfw, lfw_issame,
