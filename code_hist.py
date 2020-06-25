@@ -108,7 +108,7 @@ def main(_argv):
 
         x = np.asarray(embeddings_lfw)
         reshaped_array = x.reshape(x.size)
-        plt.hist(reshaped_array, density=True, bins=15)  # `density=False` would make counts
+        plt.hist(reshaped_array, density=True, bins=30)  # `density=False` would make counts
         plt.ylabel('Probability')
         plt.xlabel('Code value')
         plt.savefig('histogram_'+logremark+'_iom_'  + cfg['sub_name']  +'.svg', format='svg')
@@ -123,7 +123,7 @@ def main(_argv):
 
         x = np.asarray(embeddings_lfw_bin)
         reshaped_array = x.reshape(x.size)
-        plt.hist(reshaped_array, density=True, bins=15)  # `density=False` would make counts
+        plt.hist(reshaped_array, density=True, bins=30)  # `density=False` would make counts
         plt.ylabel('Probability')
         plt.xlabel('Code value')
         plt.savefig('histogram_'+logremark+'_iom_binary_' +  cfg['sub_name'] +'.svg', format='svg')
