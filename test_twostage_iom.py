@@ -49,27 +49,27 @@ def main(_argv):
         # here I add the extra IoM layer and head
         if cfg['hidden_layer_remark'] == '1':
             model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                           arcmodel=arcmodel, training=True,
+                                           arcmodel=arcmodel, training=False,
                                            permKey=permKey, cfg=cfg)
         elif cfg['hidden_layer_remark'] == '2':
             model = IoMFaceModelFromArFace2(size=cfg['input_size'],
-                                            arcmodel=arcmodel, training=True,
+                                            arcmodel=arcmodel, training=False,
                                             permKey=permKey, cfg=cfg)
         elif cfg['hidden_layer_remark'] == '3':
             model = IoMFaceModelFromArFace3(size=cfg['input_size'],
-                                            arcmodel=arcmodel, training=True,
+                                            arcmodel=arcmodel, training=False,
                                             permKey=permKey, cfg=cfg)
         elif cfg['hidden_layer_remark'] == 'T':# 2 layers
             model = IoMFaceModelFromArFace_T(size=cfg['input_size'],
-                                            arcmodel=arcmodel, training=True,
+                                            arcmodel=arcmodel, training=False,
                                             permKey=permKey, cfg=cfg)
         elif cfg['hidden_layer_remark'] == 'T1':
             model = IoMFaceModelFromArFace_T1(size=cfg['input_size'],
-                                            arcmodel=arcmodel, training=True,
+                                            arcmodel=arcmodel, training=False,
                                             permKey=permKey, cfg=cfg)
         else:
             model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                           arcmodel=arcmodel, training=True,
+                                           arcmodel=arcmodel, training=False,
                                            permKey=permKey, cfg=cfg)
     if FLAGS.ckpt_epoch == '':
         ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
