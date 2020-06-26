@@ -106,9 +106,9 @@ def main(_argv):
             cfg['embd_shape'], cfg['eval_batch_size'], model, lfw, lfw_issame,
             is_ccrop=cfg['is_ccrop'], cfg=cfg, isLUT=isLUT, measure=measure)
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
-        with open('embeddings/' + cfg['sub_name'] + '_embeddings_lfw.csv', 'w', newline='') as file:
-            writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
-            writer.writerows(embeddings_lfw)
+        # with open('embeddings/' + cfg['sub_name'] + '_embeddings_lfw.csv', 'w', newline='') as file:
+        #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
+        #     writer.writerows(embeddings_lfw)
         print("[*] Perform Evaluation on AgeDB30...")
         acc_agedb30, best_th_agedb30, auc_agedb30, eer_agedb30, embeddings_agedb30 = perform_val(
             cfg['embd_shape'], cfg['eval_batch_size'], model, agedb_30,
