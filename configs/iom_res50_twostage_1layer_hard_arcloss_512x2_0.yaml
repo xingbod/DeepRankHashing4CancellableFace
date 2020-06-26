@@ -12,8 +12,10 @@ sub_name: 'iom_res50_twostage_1layer_hardarc_LUT_512x2_0'
 backbone_type: 'ResNet50' # 'ResNet50', 'MobileNetV2'
 head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
-bin_lut_loss: True
-
+bin_lut_loss: 'tanh'
+hidden_layer_remark: '1'
+code_balance_loss: False
+quanti: True
 # train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split /media/xingbo/Storage/facedata/ms1m_align_112/imgs
 train_dataset: '/home/xingbo/facedata/ms1m_align_112/imgs'
 #train_dataset: '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160'
