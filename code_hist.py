@@ -1,5 +1,5 @@
 '''
-Copyright © 2020 by Xingbo Dong
+Copyright ? 2020 by Xingbo Dong
 xingbod@gmail.com
 Monash University
 
