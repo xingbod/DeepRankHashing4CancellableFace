@@ -143,7 +143,9 @@ def main(_):
             with tf.GradientTape() as tape:
                 logist = model((inputs, labels), training=True)
                 reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.double)
-                quanti_loss = tf.cast(loss_fn_quanti(logist),tf.float64)
+                quanti_loss = 0.0
+                if cfg['quanti']:
+                    quanti_loss = tf.cast(loss_fn_quanti(logist),tf.float64)
                 code_balance_loss_cal = 0.0
                 # for metric learning, we have 1. batch_hard_triplet 2. batch_all_triplet_loss 3. batch_all_arc_triplet_loss
                 if cfg['loss_fun'] == 'batch_hard_triplet':
