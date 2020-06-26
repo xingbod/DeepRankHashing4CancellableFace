@@ -117,12 +117,12 @@ def main(_argv):
         plt.ylabel('Probability')
         plt.xlabel('Code value')
         # plt.show()
-        plt.savefig('histogram_'+logremark+'_iom_'  + cfg['sub_name']  +'.svg', format='svg')
+        plt.savefig('histogram_'+logremark+'_iom_' + cfg['sub_name']  +'.svg', format='svg')
         plt.close('all')
 
-        # with open('embeddings/' + cfg['sub_name'] + '_embeddings_lfw.csv', 'w', newline='') as file:
-        #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
-        #     writer.writerows(embeddings_lfw)
+        with open('embeddings/' + cfg['sub_name'] + '_embeddings_lfw.csv', 'w', newline='') as file:
+            writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
+            writer.writerows(embeddings_lfw)
         #
         # acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw_bin = perform_val(
         #     cfg['embd_shape'], cfg['eval_batch_size'], model, lfw, lfw_issame,
