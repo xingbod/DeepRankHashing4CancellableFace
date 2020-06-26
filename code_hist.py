@@ -120,7 +120,7 @@ def main(_argv):
         plt.savefig('histogram_'+logremark+'_iom_' + cfg['sub_name']  +'.svg', format='svg')
         plt.close('all')
 
-        with open('embeddings/' + cfg['sub_name'] + '_embeddings_lfw.csv', 'w', newline='') as file:
+        with open('embeddings/' +logremark+ cfg['sub_name'] + '_embeddings_lfw.csv', 'w', newline='') as file:
             writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
             writer.writerows(embeddings_lfw)
         #
