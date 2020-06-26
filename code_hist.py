@@ -117,7 +117,7 @@ def main(_argv):
         plt.ylabel('Probability')
         plt.xlabel('Code value')
         # plt.show()
-        plt.savefig('histogram_'+logremark+'_iom_' + cfg['sub_name']  +'.svg', format='svg')
+        plt.savefig('plots/histogram_'+logremark+'_iom_' + cfg['sub_name']  +'.svg', format='svg')
         plt.close('all')
 
         with open('embeddings/' +logremark  + cfg['sub_name'] + '_embeddings_lfw.csv', 'w', newline='') as file:
