@@ -100,8 +100,8 @@ def callMe():
                 writer.writerows(embeddings_lfw)
 
             with open('embeddings/' +  '_issame_lfw.csv', 'w', newline='') as file:
-                writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
-                writer.writerows(lfw_issame)
+                file.write(lfw_issame)
+                # writer.writerows(lfw_issame)
 
             print("[*] Perform Evaluation on AgeDB30...")
             acc_agedb30, best_th_agedb30, auc_agedb30, eer_agedb30, embeddings_agedb30 = perform_val(
