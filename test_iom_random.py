@@ -140,13 +140,13 @@ def callMe():
                 q, m, isLUT, measure, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, acc_lfw,
                 acc_agedb30, acc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
 
-            with open('./logs/' + cfg['sub_name'] + "_Output_line_"+measure+"0702.md", "a") as text_file:
+            with open('./logs/' + cfg['sub_name'] + "_Output_line_"+measure+"0702_stat.md", "a") as text_file:
                 text_file.write(log_str2)
 
         evl(0,measure='Euclidean')  # no LUT
-        # evl(0,measure='Jaccard')  # no LUT
-        # evl(0,measure='Cosine')  # no LUT
-        # evl(0,measure='Hamming')  # no LUT
+        evl(0,measure='Jaccard')  # no LUT
+        evl(0,measure='Cosine')  # no LUT
+        evl(0,measure='Hamming')  # no LUT
 
         # evl(q, measure='Euclidean')  # no LUT
         # evl(q, measure='Jaccard')  # no LUT
@@ -189,8 +189,8 @@ def callMe():
 #         mycfg['m'] = m
 #         mycfg['q'] = q
 #         callMe()
-for m in [128]:
-    for q in [2 ,4, 6, 8,16,32,64]:
+for m in [32, 64, 128, 256, 512,1024]:
+    for q in [2,6, 8,16,32,64]:
         print(m, q, '****')
         mycfg['m'] = m
         mycfg['q'] = q
