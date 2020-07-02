@@ -190,7 +190,7 @@ def callMe():
 #         mycfg['q'] = q
 #         callMe()
 for i in range(3):
-    for m in [32, 64, 128, 256, 512, 1024]:
+    for m in [32, 64, 128, 256, 512]:
         for q in [2, 4, 8, 16, 32, 64]:
             print(m, q, '****')
             mycfg['m'] = m
