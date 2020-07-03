@@ -40,8 +40,9 @@ def binary_balance_loss_q(embeddings,steps,summary_writer,q=2,scala=100):
     prab = frequency / tf.reduce_sum(frequency)
     final_loss = tf.reduce_sum(tf.abs(prab-1/q)) * scala
     # Get final mean triplet loss
-    with summary_writer.as_default():
-        tf.summary.histogram('code_balance/',values, step=steps)
+    if steps% 5 ==0:
+        with summary_writer.as_default():
+            tf.summary.histogram('code_balance/', values, step=steps)
     return final_loss
 
 if __name__ == '__main__':
