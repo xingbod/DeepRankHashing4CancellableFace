@@ -140,18 +140,18 @@ def callMe():
                 q, m, isLUT, measure, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, acc_lfw,
                 acc_agedb30, acc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
 
-            with open('./logs/' + cfg['sub_name'] + "_Output_line_"+measure+"0702_stat2.md", "a") as text_file:
+            with open('./logs/' + cfg['sub_name'] + "_Output_line_"+measure+"0703_stat2.md", "a") as text_file:
                 text_file.write(log_str2)
 
-        evl(0,measure='Euclidean')  # no LUT
-        evl(0,measure='Jaccard')  # no LUT
-        evl(0,measure='Cosine')  # no LUT
-        evl(0,measure='Hamming')  # no LUT
+        # evl(0,measure='Euclidean')  # no LUT
+        # evl(0,measure='Jaccard')  # no LUT
+        # evl(0,measure='Cosine')  # no LUT
+        # evl(0,measure='Hamming')  # no LUT
 
-        # evl(q, measure='Euclidean')  # no LUT
+        evl(q, measure='Euclidean')  # no LUT
         # evl(q, measure='Jaccard')  # no LUT
         # evl(q, measure='Cosine')  # no LUT
-        # evl(q, measure='Hamming')  # no LUT
+        evl(q, measure='Hamming')  # no LUT
 
         # evl(4)
         # evl(8)
