@@ -288,6 +288,7 @@ def perform_val(embedding_size, batch_size, model,
             emb_batch = model(batch)
         # print(emb_batch)
         if cfg['head_type'] == 'IoMHead':
+            emb_batch = tf.cast(emb_batch, tf.int32)
             embeddings[idx:idx + batch_size] = emb_batch  # not working? why
         else:
             embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
