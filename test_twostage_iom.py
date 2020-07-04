@@ -6,6 +6,7 @@ import numpy as np
 import tensorflow as tf
 import modules
 import csv
+import math
 
 from modules.evaluations import get_val_data, perform_val, perform_val_yts
 from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
@@ -155,7 +156,7 @@ def main(_argv):
     evl(0, 'Euclidean')
     # evl(q, 'Jaccard')
     # evl(8, 'Hamming')
-    evl(q, 'Euclidean')
+    evl(int(math.log2(q)), 'Euclidean')
     # evl(8, 'Jaccard')
     # evl(q, 'Euclidean')
     # evl(8)
