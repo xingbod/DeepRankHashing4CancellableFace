@@ -6,7 +6,7 @@ import numpy as np
 import tensorflow as tf
 import modules
 import csv
-
+import math
 from modules.evaluations import get_val_data, perform_val, perform_val_yts
 from modules.models import ArcFaceModel, IoMFaceModelFromArFace
 from modules.utils import set_memory_growth, load_yaml, l2_norm
@@ -148,10 +148,10 @@ def callMe():
         # evl(0,measure='Cosine')  # no LUT
         # evl(0,measure='Hamming')  # no LUT
 
-        evl(q, measure='Euclidean')  # no LUT
+        evl(int(math.log2(q)), measure='Euclidean')  # no LUT
         # evl(q, measure='Jaccard')  # no LUT
         # evl(q, measure='Cosine')  # no LUT
-        evl(q, measure='Hamming')  # no LUT
+        evl(int(math.log2(q)), measure='Hamming')  # no LUT
 
         # evl(4)
         # evl(8)
