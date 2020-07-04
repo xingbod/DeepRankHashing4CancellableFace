@@ -181,7 +181,8 @@ def main(_):
                 if 'code_balance_loss' in cfg:
                     if cfg['code_balance_loss'] :
                         code_balance_loss_cal = code_balance_loss.binary_balance_loss_q(logist,steps,summary_writer, q=cfg['q'])
-
+                    else:
+                        code_balance_loss.binary_balance_loss_q(logist, steps, summary_writer, q=cfg['q'])
                 total_loss = pred_loss + reg_loss * 0.5 + quanti_loss + bin_loss + code_balance_loss_cal
 
             grads = tape.gradient(total_loss, model.trainable_variables)
