@@ -179,10 +179,11 @@ def main(_):
                 else:
                     bin_loss = tf.constant(0.0,tf.float64)
                 if 'code_balance_loss' in cfg:
+                    code_balance_loss_cal_real = code_balance_loss.binary_balance_loss_q(logist, steps, summary_writer,
+                                                                 q=cfg['q'])
                     if cfg['code_balance_loss'] :
-                        code_balance_loss_cal = code_balance_loss.binary_balance_loss_q(logist,steps,summary_writer, q=cfg['q'])
-                    else:
-                        code_balance_loss.binary_balance_loss_q(logist, steps, summary_writer, q=cfg['q'])
+                        code_balance_loss_cal = code_balance_loss_cal_real
+
                 total_loss = pred_loss + reg_loss * 0.5 + quanti_loss + bin_loss + code_balance_loss_cal
 
             grads = tape.gradient(total_loss, model.trainable_variables)
@@ -209,7 +210,7 @@ def main(_):
                     tf.summary.scalar(
                         'loss/quanti bin_loss', bin_loss, step=steps)
                     tf.summary.scalar(
-                        'loss/code balance loss', code_balance_loss_cal, step=steps)
+                        'loss/code balance loss', code_balance_loss_cal_real, step=steps)
                     tf.summary.scalar(
                         'learning rate', optimizer.lr, step=steps)
 
