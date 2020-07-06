@@ -179,8 +179,7 @@ def main(_):
                 else:
                     bin_loss = tf.constant(0.0,tf.float64)
                 if 'code_balance_loss' in cfg:
-                    code_balance_loss_cal_real = code_balance_loss.binary_balance_loss_q(logist, steps, summary_writer,
-                                                                 q=cfg['q'])
+                    code_balance_loss_cal_real = code_balance_loss.binary_balance_loss_q(logist, steps, summary_writer, q=cfg['q'])
                     if cfg['code_balance_loss'] :
                         code_balance_loss_cal = code_balance_loss_cal_real
 
