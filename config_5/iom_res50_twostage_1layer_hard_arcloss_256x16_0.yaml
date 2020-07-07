@@ -18,7 +18,7 @@ hidden_layer_remark: '1'
 code_balance_loss: False
 quanti: True
 # train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split /media/xingbo/Storage/facedata/ms1m_align_112/imgs
-train_dataset: '/media/Storage/facedata/ms1m_align_112/imgs'
+train_dataset: '/home/datascience/xingbo/ms1m_align_112/imgs'
 #train_dataset: '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160'
 img_ext: 'jpg'
 dataset_ext: 'ms'
