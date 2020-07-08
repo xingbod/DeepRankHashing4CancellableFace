@@ -8,12 +8,12 @@ input_size: 112
 embd_shape: 512
 #iom_res50_twostage_triplet -- only two stage with triplet loss
 #iom_res50_twostage_triplet and quantization loss -- triplet loss + quantization loss, this in another config file
-sub_name: 'cfg_ba_1layer_arc_quanti_luttanh_balance_256x8_0'
+sub_name: 'cfg_ba_1layer_arc_quanti_luttanh_balance_256x32_0'
 backbone_type: 'ResNet50' # 'ResNet50', 'MobileNetV2'
 head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
 bin_lut_loss: 'tanh'
-hidden_layer_remark: '2'
+hidden_layer_remark: '1'
 code_balance_loss: True
 quanti: True
 # train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split /media/xingbo/Storage/facedata/ms1m_align_112/imgs
