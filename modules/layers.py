@@ -79,7 +79,7 @@ class MaxIndexLinearTraining(tf.keras.layers.Layer):
     self.units = units
     self.q = q
     self.iteratenum = tf.dtypes.cast(units/self.q, tf.int32)
-    self.helpvector =  tf.cast( tf.range(0, self.q , 1) + 1,tf.double)
+    self.helpvector =  tf.cast( tf.range(0, self.q , 1) ,tf.double) # + 1 removed 20200708 xingbo
     self.T = T# default is 1, while can try T<< 1, to spike the distribution
 
 
