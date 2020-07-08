@@ -44,22 +44,40 @@ def binary_balance_loss_q(embeddings,steps,summary_writer,q=2,scala=100):
         with summary_writer.as_default():
             tf.summary.histogram('code_balance/', values, step=steps)
     return final_loss
+'''
+Regularizing Neural Networks by Penalizing Confident Output Distributions 
+Gabriel Pereyra, George Tucker, Jan Chorowski, Lukasz Kaiser, Geoffrey Hinton
 
+H\left(p_{\theta}(\boldsymbol{y} \mid \boldsymbol{x})\right)=-\sum_{i} p_{\theta}\left(\boldsymbol{y}_{i} \mid \boldsymbol{x}\right) \log \left(p_{\theta}\left(\boldsymbol{y}_{i} \mid \boldsymbol{x}\right)\right)
+
+\mathcal{L}(\theta)=-\sum \log p_{\theta}(\boldsymbol{y} \mid \boldsymbol{x})-\beta H\left(p_{\theta}(\boldsymbol{y} \mid \boldsymbol{x})\right)
+
+H(p)= - sum(p*log(p))
+L = -sum(log(p)) - beta H(p) 
+
+
+'''
 def binary_balance_loss_merge(embeddings,steps,summary_writer,q=2,scala=100):
     values = tf.cast(embeddings, tf.int32)
     final_loss_mean = tf.reduce_sum(tf.math.abs(tf.reduce_mean(values, 1) - (q - 1) / 2.0))
 
     frequency = tf.math.bincount(values, minlength=q, maxlength=q)
     prab = frequency / tf.reduce_sum(frequency)
-    final_loss_hist = -tf.math.log(1-tf.reduce_sum(tf.abs(prab - 1 / q))) * scala
+    # final_loss_hist = -tf.math.log(1-tf.reduce_sum(tf.abs(prab - 1 / q))) * scala
+
+    # second way?
+    prab = prab + 1e-8
+    H = -tf.reduce_sum(prab * tf.math.log(prab))
+    final_loss_entropy = -tf.reduce_sum(tf.math.log(prab))- H
+
 
     if steps % 5 == 0:
         with summary_writer.as_default():
             tf.summary.scalar('loss/code balance loss_mean/', final_loss_mean, step=steps)
-            tf.summary.scalar('loss/code balance loss_histo/', final_loss_hist, step=steps)
+            tf.summary.scalar('loss/code balance loss_histo/', final_loss_entropy, step=steps)
             tf.summary.histogram('code_balance/', values, step=steps)
 
-    final_loss = final_loss_hist + final_loss_mean
+    final_loss = final_loss_entropy + final_loss_mean
     return final_loss
 
 
