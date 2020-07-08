@@ -65,7 +65,7 @@ def IoMProjectionLayer(cfg, name='IoMProjectionLayer'):
         x_input = inputs = Input(x_in.shape[1:])
         new_emb = []
         for i in range(cfg['m']):
-            x = Dense(cfg['q'],kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None), activation='tanh')(x_input)  # extra connection layer
+            x = Dense(cfg['q'],kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None), activation='sigmoid')(x_input)  # extra connection layer
             new_emb.append(x)
 
         hashcode = concatenate(new_emb)
