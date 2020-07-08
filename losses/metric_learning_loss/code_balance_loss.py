@@ -86,4 +86,4 @@ if __name__ == '__main__':
                   [1, 4, 0, 5, 1, 4, 5, 5, 5, 2],
                   [6, 0, 2, 0, 2, 3, 5, 3, 4, 4],
                   [6, 0, 0, 0, 3, 6, 5, 1, 4, 3]]
-    print(binary_balance_loss(embeddings,q=6))
+    print(binary_balance_loss_merge(embeddings,q=6))
