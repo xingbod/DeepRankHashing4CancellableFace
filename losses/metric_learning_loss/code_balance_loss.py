@@ -68,7 +68,7 @@ def binary_balance_loss_merge(embeddings,steps,summary_writer,q=2,scala=100):
     frequency = tf.math.bincount(values, minlength=q, maxlength=q)
     prab = frequency / tf.reduce_sum(frequency)
     # final_loss_hist = -tf.math.log(1-tf.reduce_sum(tf.abs(prab - 1 / q))) * scala
-
+    print('[***] ',prab)
     # second way?
     prab = prab + 1e-8
     H = -tf.reduce_sum(prab * tf.math.log(prab))
