@@ -45,6 +45,24 @@ def binary_balance_loss_q(embeddings,steps,summary_writer,q=2,scala=100):
             tf.summary.histogram('code_balance/', values, step=steps)
     return final_loss
 
+def binary_balance_loss_merge(embeddings,steps,summary_writer,q=2,scala=100):
+    values = tf.cast(embeddings, tf.int32)
+    final_loss_mean = tf.reduce_sum(tf.math.abs(tf.reduce_mean(values, 1) - (q - 1) / 2.0))
+
+    frequency = tf.math.bincount(values, minlength=q, maxlength=q)
+    prab = frequency / tf.reduce_sum(frequency)
+    final_loss_hist = tf.reduce_sum(tf.abs(prab - 1 / q)) * scala
+
+    if steps % 5 == 0:
+        with summary_writer.as_default():
+            tf.summary.scalar('loss/code balance loss_mean/', final_loss_mean, step=steps)
+            tf.summary.scalar('loss/code balance loss_histo/', final_loss_hist, step=steps)
+            tf.summary.histogram('code_balance/', values, step=steps)
+
+    final_loss = final_loss_hist + final_loss_mean
+    return final_loss
+
+
 if __name__ == '__main__':
     embeddings = [[6.0, 4, 7, 5, 4, 6, 4, 5, 0, 2],
                   [1, 4, 0, 5, 1, 4, 5, 5, 5, 2],
