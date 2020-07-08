@@ -101,7 +101,7 @@ def binary_balance_loss_entropy(embeddings,steps,summary_writer,q=2,scala=100):
             tf.summary.scalar('loss/code balance loss_histo/', final_loss_entropy, step=steps)
             tf.summary.histogram('code_balance/', values, step=steps)
 
-    final_loss = final_loss_entropy  * 500
+    final_loss = final_loss_entropy  * 200
     return final_loss
 
 if __name__ == '__main__':
