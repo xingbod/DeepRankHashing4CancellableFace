@@ -16,7 +16,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import tensorflow as tf
 
 
-def binary_balance_loss(embeddings,q=2,scala=100):
+def binary_balance_loss(embeddings,steps,summary_writer,q=2,scala=100):
     """Build the triplet loss over a batch of embeddings.
 
     We generate all the valid triplets and average the loss over the positive ones.
@@ -32,6 +32,9 @@ def binary_balance_loss(embeddings,q=2,scala=100):
         triplet_loss: scalar tensor containing the triplet loss
     """
     final_loss = tf.reduce_sum(tf.math.abs(tf.reduce_mean(embeddings,1)-(q-1)/2.0))
+    if steps% 5 ==0:
+        with summary_writer.as_default():
+            tf.summary.histogram('code_balance/', embeddings, step=steps)
     return final_loss
 
 def binary_balance_loss_q(embeddings,steps,summary_writer,q=2,scala=100):
