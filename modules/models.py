@@ -168,7 +168,7 @@ def IoMFaceModelFromArFace(size=None, channels=3, arcmodel=None, name='IoMface_m
     # x = Dense(1024, kernel_regularizer=_regularizer(w_decay))(x)
     # x = IoMProjectionLayer(cfg)(x)
     x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-              name="IoMProjection")(x)  # extra connection layer
+              name="IoMProjection", activation='relu')(x)  # extra connection layer , activation='relu' ##20200708 xingbo add
     logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x)  # loss need to change
     return Model(inputs, logist, name=name)
 
