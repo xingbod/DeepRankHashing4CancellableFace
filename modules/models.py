@@ -162,7 +162,7 @@ def IoMFaceModelFromArFace(size=None, channels=3, arcmodel=None, name='IoMface_m
     """IoMFaceModelFromArFace Model"""
     x = inputs = Input([size, size, channels], name='input_image')
     x = arcmodel(x)
-    x = Dropout(0.2)(x)# 2020 07 09 add by xingbo
+    # x = Dropout(0.2)(x)# 2020 07 09 add by xingbo
     if not (permKey is None):
         x = PermLayer(permKey)(x)  # permutation before project to IoM hash code
     # here I add one extra hidden layer
