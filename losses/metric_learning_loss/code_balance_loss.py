@@ -77,9 +77,15 @@ def binary_balance_loss_merge(embeddings,steps,summary_writer,q=2,scala=100):
     if steps % 5 == 0:
         print('[***] ', prab)
         with summary_writer.as_default():
-            tf.summary.scalar('loss/code balance loss_mean/', final_loss_mean, step=steps)
-            tf.summary.scalar('loss/code balance loss_histo/', final_loss_entropy, step=steps)
-            tf.summary.histogram('code_balance/', values, step=steps)
+            if tf.__version__.startswith('1'):
+                tf.contrib.summary.scalar('loss/code balance loss_mean/', final_loss_mean, step=steps)
+                tf.contrib.summary.scalar('loss/code balance loss_histo/', final_loss_entropy, step=steps)
+                tf.contrib.summary.histogram('code_balance/', values, step=steps)
+            else:
+                tf.summary.scalar('loss/code balance loss_mean/', final_loss_mean, step=steps)
+                tf.summary.scalar('loss/code balance loss_histo/', final_loss_entropy, step=steps)
+                tf.summary.histogram('code_balance/', values, step=steps)
+
 
     final_loss = final_loss_entropy + final_loss_mean
     return final_loss
