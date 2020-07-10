@@ -4,6 +4,9 @@ from absl.flags import FLAGS
 import os
 import numpy as np
 import tensorflow as tf
+if tf.__version__.startswith('1'):
+    print('[*] enable eager execution')
+    tf.compat.v1.enable_eager_execution()
 import modules
 import csv
 import math

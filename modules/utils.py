@@ -13,8 +13,7 @@ def generatePermKey(size):
 
 def set_memory_growth():
     setUpGPU()
-    if tf.__version__.startswith('1'):
-        tf.compat.v1.enable_eager_execution()
+
     # gpus = tf.config.experimental.list_physical_devices('GPU')
     # if gpus:
     #     try:
