@@ -2,7 +2,7 @@ from absl import app, flags, logging
 from absl.flags import FLAGS
 import os
 import tensorflow as tf
-if tf.__version__.startswith('1'):# important is you want to run with tf1.x,
+if tf.__version__.startswith('1'):# important if you want to run with tf1.x,
     print('[*] enable eager execution')
     tf.compat.v1.enable_eager_execution()
 import time
@@ -146,7 +146,6 @@ def main(_):
                                                                                   'classes_per_batch'], is_ccrop=False)
                 train_dataset = iter(train_dataset)
             inputs, labels = next(train_dataset) #print(inputs[0][1][:])  labels[2][:]
-            print(labels)
             with tf.GradientTape() as tape:
                 logist = model((inputs, labels), training=True)
                 reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.double)
