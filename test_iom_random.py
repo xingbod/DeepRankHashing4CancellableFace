@@ -4,7 +4,7 @@ from absl.flags import FLAGS
 import os
 import numpy as np
 import tensorflow as tf
-if tf.__version__.startswith('1'):
+if tf.__version__.startswith('1'):# important is you want to run with tf1.x,
     print('[*] enable eager execution')
     tf.compat.v1.enable_eager_execution()
 import modules
