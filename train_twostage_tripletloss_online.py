@@ -126,9 +126,12 @@ def main(_):
     if FLAGS.mode == 'eager_tf':
         # Eager mode is great for debugging
         # Non eager graph mode is recommended for real training
-        summary_writer = tf.summary.create_file_writer(
-            './logs/' + cfg['sub_name'])
-
+        if tf.__version__.startswith('1'):  # important is you want to run with tf1.x,
+            summary_writer = tf.summary.FileWriter(
+                './logs/' + cfg['sub_name'])
+        else:
+            summary_writer = tf.summary.create_file_writer(
+                './logs/' + cfg['sub_name'])
         train_dataset = iter(train_dataset)
 
         while epochs <= cfg['epochs']:
