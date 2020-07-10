@@ -127,7 +127,7 @@ def main(_):
         # Eager mode is great for debugging
         # Non eager graph mode is recommended for real training
         if tf.__version__.startswith('1'):  # important is you want to run with tf1.x,
-            summary_writer = tf.summary.FileWriter(
+            summary_writer = tf.contrib.summary.create_file_writer(
                 './logs/' + cfg['sub_name'])
         else:
             summary_writer = tf.summary.create_file_writer(
