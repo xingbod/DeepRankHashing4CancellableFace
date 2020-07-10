@@ -9,7 +9,7 @@ backbone_type: 'ResNet50' # 'ResNet50', 'MobileNetV2'
 head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
 isLUT: False
-hidden_layer_remark: '2'
+hidden_layer_remark: '3'
 
 # train
 train_dataset: './data/triplets_ds.tfrecord'
