@@ -87,7 +87,7 @@ def pair_parser(imgs,totalsamples, dataset='VGG2'):
         for i in range(totalsamples):
             # if tf 1.15 tf.compat.v1.strings.split
             # labels.append(tf.strings.to_number( tf.strings.split(imgs[None,i],os.path.sep)[0,-2], out_type=tf.dtypes.int32))
-            print(tf.compat.v1.strings.split(imgs[None, i], os.path.sep))
+            print(tf.compat.v1.strings.split(imgs[None, i], os.path.sep)[0,-2])
             labels.append(tf.compat.v1.string_to_number(tf.compat.v1.strings.split(imgs[None, i], os.path.sep)[0, -2], out_type=tf.dtypes.int32))
     return images,labels
 
