@@ -172,12 +172,12 @@ def callMe():
         # evl(0,measure='Euclidean')  # no LUT
         # evl(0,measure='Jaccard')  # no LUT
         # evl(0,measure='Cosine')  # no LUT
-        # evl(0,measure='Hamming')  # no LUT
+        evl(0,measure='Hamming')  # no LUT
 
-        evl(int(math.log2(q)), measure='Euclidean')  # no LUT
+        # evl(int(math.log2(q)), measure='Euclidean')  # no LUT
         # evl(q, measure='Jaccard')  # no LUT
         # evl(q, measure='Cosine')  # no LUT
-        evl(int(math.log2(q)), measure='Hamming')  # no LUT
+        # evl(int(math.log2(q)), measure='Hamming')  # no LUT
 
         # evl(4)
         # evl(8)
