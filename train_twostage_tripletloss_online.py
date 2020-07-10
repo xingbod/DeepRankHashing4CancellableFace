@@ -146,6 +146,7 @@ def main(_):
                                                                                   'classes_per_batch'], is_ccrop=False)
                 train_dataset = iter(train_dataset)
             inputs, labels = next(train_dataset) #print(inputs[0][1][:])  labels[2][:]
+            print(labels)
             with tf.GradientTape() as tape:
                 logist = model((inputs, labels), training=True)
                 reg_loss = tf.cast(tf.reduce_sum(model.losses),tf.double)
