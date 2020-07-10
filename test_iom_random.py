@@ -8,8 +8,8 @@ import modules
 import csv
 import math
 from modules.evaluations import get_val_data, perform_val, perform_val_yts
-from modules.models import ArcFaceModel, IoMFaceModelFromArFace
 from modules.utils import set_memory_growth, load_yaml, l2_norm
+from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
 
 flags.DEFINE_string('cfg_path', './configs/iom_res50_random.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
@@ -51,9 +51,32 @@ def callMe():
         exit()
     m = cfg['m'] = mycfg['m']
     q = cfg['q'] = mycfg['q']
-    model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                   arcmodel=arcmodel, training=False,
-                                   permKey=permKey, cfg=cfg)
+
+    # here I add the extra IoM layer and head
+    if cfg['hidden_layer_remark'] == '1':
+        model = IoMFaceModelFromArFace(size=cfg['input_size'],
+                                       arcmodel=arcmodel, training=False,
+                                       permKey=permKey, cfg=cfg)
+    elif cfg['hidden_layer_remark'] == '2':
+        model = IoMFaceModelFromArFace2(size=cfg['input_size'],
+                                        arcmodel=arcmodel, training=False,
+                                        permKey=permKey, cfg=cfg)
+    elif cfg['hidden_layer_remark'] == '3':
+        model = IoMFaceModelFromArFace3(size=cfg['input_size'],
+                                        arcmodel=arcmodel, training=False,
+                                        permKey=permKey, cfg=cfg)
+    elif cfg['hidden_layer_remark'] == 'T':  # 2 layers
+        model = IoMFaceModelFromArFace_T(size=cfg['input_size'],
+                                         arcmodel=arcmodel, training=False,
+                                         permKey=permKey, cfg=cfg)
+    elif cfg['hidden_layer_remark'] == 'T1':
+        model = IoMFaceModelFromArFace_T1(size=cfg['input_size'],
+                                          arcmodel=arcmodel, training=False,
+                                          permKey=permKey, cfg=cfg)
+    else:
+        model = IoMFaceModelFromArFace(size=cfg['input_size'],
+                                       arcmodel=arcmodel, training=False,
+                                       permKey=permKey, cfg=cfg)
     model.summary(line_length=80)
     model.layers[0].trainable = False
     # for layer in model.layers:
@@ -140,7 +163,7 @@ def callMe():
                 q, m, isLUT, measure, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, acc_lfw,
                 acc_agedb30, acc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
 
-            with open('./logs/' + cfg['sub_name'] + "_Output_line_"+measure+"0704_stat.md", "a") as text_file:
+            with open('./logs/' + cfg['sub_name'] + "_Output_line_"+measure+'_layer_'+cfg['hidden_layer_remark']+"_0710_stat.md", "a") as text_file:
                 text_file.write(log_str2)
 
         # evl(0,measure='Euclidean')  # no LUT
