@@ -205,20 +205,36 @@ def main(_):
                                       learning_rate.numpy(),end - start,(steps_per_epoch -(steps % steps_per_epoch)) * (end - start) /60.0))
 
                 with summary_writer.as_default():
-                    tf.summary.scalar(
-                        'loss/total loss', total_loss, step=steps)
-                    tf.summary.scalar(
-                        'loss/pred loss', pred_loss, step=steps)
-                    tf.summary.scalar(
-                        'loss/reg loss', reg_loss, step=steps)
-                    tf.summary.scalar(
-                        'loss/quanti loss', quanti_loss, step=steps)
-                    tf.summary.scalar(
-                        'loss/quanti bin_loss', bin_loss, step=steps)
-                    tf.summary.scalar(
-                        'loss/code balance loss', code_balance_loss_cal, step=steps)
-                    tf.summary.scalar(
-                        'learning rate', optimizer.lr, step=steps)
+                    if tf.__version__.startswith('1'):
+                        tf.contrib.summary.scalar(
+                            'loss/total loss', total_loss, step=steps)
+                        tf.contrib.summary.scalar(
+                            'loss/pred loss', pred_loss, step=steps)
+                        tf.contrib.summary.scalar(
+                            'loss/reg loss', reg_loss, step=steps)
+                        tf.contrib.summary.scalar(
+                            'loss/quanti loss', quanti_loss, step=steps)
+                        tf.contrib.summary.scalar(
+                            'loss/quanti bin_loss', bin_loss, step=steps)
+                        tf.contrib.summary.scalar(
+                            'loss/code balance loss', code_balance_loss_cal, step=steps)
+                        tf.contrib.summary.scalar(
+                            'learning rate', optimizer.lr, step=steps)
+                    else:
+                        tf.summary.scalar(
+                            'loss/total loss', total_loss, step=steps)
+                        tf.summary.scalar(
+                            'loss/pred loss', pred_loss, step=steps)
+                        tf.summary.scalar(
+                            'loss/reg loss', reg_loss, step=steps)
+                        tf.summary.scalar(
+                            'loss/quanti loss', quanti_loss, step=steps)
+                        tf.summary.scalar(
+                            'loss/quanti bin_loss', bin_loss, step=steps)
+                        tf.summary.scalar(
+                            'loss/code balance loss', code_balance_loss_cal, step=steps)
+                        tf.summary.scalar(
+                            'learning rate', optimizer.lr, step=steps)
 
             if steps % cfg['save_steps'] == 0:
                 print('[*] save ckpt file!')
