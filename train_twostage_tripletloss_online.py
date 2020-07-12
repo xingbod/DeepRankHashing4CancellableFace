@@ -92,7 +92,7 @@ def main(_):
             model = IoMFaceModelFromArFace_T(size=cfg['input_size'],
                                             arcmodel=arcmodel, training=True,
                                             permKey=permKey, cfg=cfg)
-        elif cfg['hidden_layer_remark'] == 'T1':
+        elif cfg['hidden_layer_remark'] == 'T1':# one layer
             model = IoMFaceModelFromArFace_T1(size=cfg['input_size'],
                                             arcmodel=arcmodel, training=True,
                                             permKey=permKey, cfg=cfg)

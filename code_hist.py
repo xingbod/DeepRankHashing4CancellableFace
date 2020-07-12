@@ -62,36 +62,36 @@ def main(_argv):
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50')
     print("[*] load ckpt from {}".format(ckpt_path))
     arcmodel.load_weights(ckpt_path)
-    if cfg['loss_fun'] == 'margin_loss':
-        model = IoMFaceModelFromArFaceMLossHead(size=cfg['input_size'],
-                                                arcmodel=arcmodel, training=False,
-                                                permKey=permKey, cfg=cfg)
+    # if cfg['loss_fun'] == 'margin_loss':
+    #     model = IoMFaceModelFromArFaceMLossHead(size=cfg['input_size'],
+    #                                             arcmodel=arcmodel, training=False,
+    #                                             permKey=permKey, cfg=cfg)
+    # else:
+    # here I add the extra IoM layer and head
+    if cfg['hidden_layer_remark'] == '1':
+        model = IoMFaceModelFromArFace(size=cfg['input_size'],
+                                       arcmodel=arcmodel, training=False,
+                                       permKey=permKey, cfg=cfg)
+    elif cfg['hidden_layer_remark'] == '2':
+        model = IoMFaceModelFromArFace2(size=cfg['input_size'],
+                                        arcmodel=arcmodel, training=False,
+                                        permKey=permKey, cfg=cfg)
+    elif cfg['hidden_layer_remark'] == '3':
+        model = IoMFaceModelFromArFace3(size=cfg['input_size'],
+                                        arcmodel=arcmodel, training=False,
+                                        permKey=permKey, cfg=cfg)
+    elif cfg['hidden_layer_remark'] == 'T':  # 2 layers
+        model = IoMFaceModelFromArFace_T(size=cfg['input_size'],
+                                         arcmodel=arcmodel, training=False,
+                                         permKey=permKey, cfg=cfg)
+    elif cfg['hidden_layer_remark'] == 'T1':
+        model = IoMFaceModelFromArFace_T1(size=cfg['input_size'],
+                                          arcmodel=arcmodel, training=False,
+                                          permKey=permKey, cfg=cfg)
     else:
-        # here I add the extra IoM layer and head
-        if cfg['hidden_layer_remark'] == '1':
-            model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                           arcmodel=arcmodel, training=False,
-                                           permKey=permKey, cfg=cfg)
-        elif cfg['hidden_layer_remark'] == '2':
-            model = IoMFaceModelFromArFace2(size=cfg['input_size'],
-                                            arcmodel=arcmodel, training=False,
-                                            permKey=permKey, cfg=cfg)
-        elif cfg['hidden_layer_remark'] == '3':
-            model = IoMFaceModelFromArFace3(size=cfg['input_size'],
-                                            arcmodel=arcmodel, training=False,
-                                            permKey=permKey, cfg=cfg)
-        elif cfg['hidden_layer_remark'] == 'T':  # 2 layers
-            model = IoMFaceModelFromArFace_T(size=cfg['input_size'],
-                                             arcmodel=arcmodel, training=False,
-                                             permKey=permKey, cfg=cfg)
-        elif cfg['hidden_layer_remark'] == 'T1':
-            model = IoMFaceModelFromArFace_T1(size=cfg['input_size'],
-                                              arcmodel=arcmodel, training=False,
-                                              permKey=permKey, cfg=cfg)
-        else:
-            model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                           arcmodel=arcmodel, training=False,
-                                           permKey=permKey, cfg=cfg)
+        model = IoMFaceModelFromArFace(size=cfg['input_size'],
+                                       arcmodel=arcmodel, training=False,
+                                       permKey=permKey, cfg=cfg)
     cfg['embd_shape'] = m * q
     model.summary(line_length=80)
     def evl(isLUT, measure, model, logremark):
@@ -146,11 +146,7 @@ def main(_argv):
         #     writer.writerows(embeddings_lfw_bin)
     evl(q, 'Euclidean',model,'random')
 
-    if cfg['loss_fun'] == 'margin_loss':
-        model = IoMFaceModelFromArFaceMLossHead(size=cfg['input_size'],
-                                                arcmodel=arcmodel, training=False,
-                                                permKey=permKey, cfg=cfg)
-    else:
+    if cfg['loss_fun']:
         # here I add the extra IoM layer and head
         if cfg['hidden_layer_remark'] == '1':
             model = IoMFaceModelFromArFace(size=cfg['input_size'],
@@ -176,6 +172,7 @@ def main(_argv):
             model = IoMFaceModelFromArFace(size=cfg['input_size'],
                                            arcmodel=arcmodel, training=False,
                                            permKey=permKey, cfg=cfg)
+
     cfg['embd_shape'] = m * q
     if FLAGS.ckpt_epoch == '':
         ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
