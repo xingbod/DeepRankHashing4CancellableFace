@@ -88,7 +88,7 @@ class MaxIndexLinearTraining(tf.keras.layers.Layer):
     for i in range(0,self.iteratenum.numpy()): # q=4
         my_variable1 = inputs[:,i*self.q+0:i*self.q+self.q]
         if self.T!=1:
-            my_variable1 = my_variable1 / self.T
+            my_variable1 = my_variable1 * self.T
         my_variable1 = tf.nn.softmax(my_variable1, axis=1)
         my_variable1 = tf.cast(my_variable1, tf.double)
         # init_index = K.argmax(res[:,0*self.q+0:0*self.q+self.q-1])
