@@ -12,11 +12,11 @@ sub_name: 'cfg9_1layer_arc_T500_256x32_0'
 backbone_type: 'ResNet50' # 'ResNet50', 'MobileNetV2'
 head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
-bin_lut_loss: 'none'
+bin_lut_loss: 'tanh'
 hidden_layer_remark: 'T1'
 T: 500
-code_balance_loss: False
-quanti: False
+code_balance_loss: True
+quanti: True
 # train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split /media/xingbo/Storage/facedata/ms1m_align_112/imgs
 train_dataset: '/home/datascience/xingbo/ms1m_align_112/imgs'
 #train_dataset: '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160'
