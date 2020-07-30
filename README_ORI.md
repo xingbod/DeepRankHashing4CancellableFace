@@ -1,34 +1,48 @@
-# [IoMFace-tf2/1](https://github.com/charlesLucky/IoMArcFace)
+# [arcface-tf2](https://github.com/peteryuX/arcface-tf2)
 
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/peteryuX/arcface-tf2.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/peteryuX/arcface-tf2/context:python)
+![Star](https://img.shields.io/github/stars/peteryuX/arcface-tf2)
+![Fork](https://img.shields.io/github/forks/peteryuX/arcface-tf2)
+![License](https://img.shields.io/github/license/peteryuX/arcface-tf2)
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/peteryuX/arcface-tf2/blob/master/notebooks/colab-github-demo.ipynb)
+
+:fire: ArcFace (Additive Angular Margin Loss for Deep Face Recognition, published in CVPR 2019) implemented in Tensorflow 2.0+. This is an unofficial implementation. :fire:
+
+>  Additive Angular Margin Loss(ArcFace) has a clear geometric interpretation due to the exact correspondence to the geodesic distance on the hypersphere, and consistently outperforms the state-of-the-art and can be easily implemented with negligible computational overhead.
+
+Original Paper: &nbsp; [Arxiv](https://arxiv.org/abs/1801.07698) &nbsp; [CVPR2019](http://openaccess.thecvf.com/content_CVPR_2019/html/Deng_ArcFace_Additive_Angular_Margin_Loss_for_Deep_Face_Recognition_CVPR_2019_paper.html)
+
+Offical Implementation: &nbsp; [MXNet](https://github.com/deepinsight/insightface)
+
+<img src="photo/architecture.JPG">
 
 ****
 
 ## Contents
+:bookmark_tabs:
+
 * [Installation](#Installation)
 * [Data Preparing](#Data-Preparing)
 * [Training and Testing](#Training-and-Testing)
+* [Benchmark and Models](#Benchmark-and-Models)
 * [References](#References)
 
 ## Installation
+:pizza:
+
 Create a new python virtual environment by [Anaconda](https://www.anaconda.com/) or just use pip in your python environment and then clone this repository as following.
 
 ### Clone this repo
 ```bash
-git clone https://github.com/charlesLucky/IoMArcFace.git
-cd IoMArcFace
+git clone https://github.com/peteryuX/arcface-tf2.git
+cd arcface-tf2
 ```
 
 ### Conda
 ```bash
 conda env create -f environment.yml
-conda activate deepIoM-tf2
-```
-
-If you use tensorflow 1.15.0, kindly use:
-
-```bash
-conda env create -f environment_tf1.yml
-conda activate deepIoM-tf1
+conda activate arcface-tf2
 ```
 
 ### Pip
@@ -37,14 +51,11 @@ conda activate deepIoM-tf1
 pip install -r requirements.txt
 ```
 
-If you use tensorflow 1.15.0, kindly use:
-
-```bash
-pip install -r requirements_tf1.txt
-```
 ****
 
 ## Data Preparing
+:beer:
+
 All datasets used in this repository can be found from [face.evoLVe.PyTorch's Data-Zoo](https://github.com/ZhaoJ9014/face.evoLVe.PyTorch#Data-Zoo).
 
 Note:
@@ -52,7 +63,6 @@ Note:
 - Both training and testing dataset are "Align_112x112" version.
 
 ### Training Dataset
-To train the ArcFace, MS-Celeb-1M need to be downloaded first:
 
 Download [MS-Celeb-1M](https://drive.google.com/file/d/1X202mvYe5tiXFhOx82z4rPiPogXD435i/view?usp=sharing) datasets, then extract and convert them to tfrecord as traning data as following.
 
@@ -66,8 +76,6 @@ python data/convert_train_tfrecord.py --dataset_path="/path/to/ms1m_align_112/im
 
 Note:
 - You can run `python ./dataset_checker.py` to check if the dataloader work.
-
-To train the deep IoM, use the dataset directory directly, no need to convert images into binary due to the use of triple sampling.
 
 ### Testing Dataset
 
@@ -87,8 +95,9 @@ Download [LFW](https://drive.google.com/file/d/1WO5Meh_yAau00Gm2Rz2Pc0SRldLQYigT
 ****
 
 ## Training and Testing
-### To train ArcFace model
-You can modify your own dataset path or other settings of model in [./configs/*.yaml]() for training and testing, which like below.
+:lollipop:
+
+You can modify your own dataset path or other settings of model in [./configs/*.yaml](https://github.com/peteryuX/arcface-tf2/tree/master/configs) for training and testing, which like below.
 
 ```python
 # general (shared both in training and testing)
@@ -120,70 +129,10 @@ Note:
 - The `is_ccrop` means doing central-cropping on both trainging and testing data or not.
 - The `binary_img` is used to choose the type of training data, which should be according to the data type you created in the [Data-Preparing](#Data-Preparing).
 
-### To train deep IoM in the second stage
-
-The model (checkpoints file) of the first stage shall be stored under [checkpoints/arc_res50/*]()
-
-You can modify settings of model in [./config_*/*.yaml]() for training and testing, which like below.
-
-```python
-# general
-samples_per_class: 4
-classes_per_batch: 50
-batch_size: 240
-eval_batch_size: 200
-input_size: 112
-# embd_shape is for the Resnet, backbone
-embd_shape: 512
-```
-```python
-sub_name: 'cfg9_1layer_arc_all_T300_256x32_0'
-backbone_type: 'ResNet50' # 'ResNet50', 'MobileNetV2'
-head_type: IoMHead # 'ArcHead', 'NormHead'
-bin_lut_loss: 'tanh'
-hidden_layer_remark: '1'
-#T: 300
-code_balance_loss: True
-quanti: True
-# train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split /media/xingbo/Storage/facedata/ms1m_align_112/imgs
-train_dataset: '/home/datascience/xingbo/ms1m_align_112/imgs'
-#train_dataset: '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160'
-img_ext: 'jpg'
-dataset_ext: 'ms'
-# for metric learning, we have 1. triplet_semi batch_hard_triplet 2. batch_all_triplet_loss 3. batch_all_arc_triplet_loss batch_hard_arc_triplet_loss
-loss_fun: 'batch_hard_arc_triplet_loss'
-triplet_margin: 0
-binary_img: False
-num_classes: 85742
-# I generate 1 milion triplets
-num_samples: 3000000
-epochs: 50
-base_lr: 0.001
-w_decay: !!float 5e-4
-save_steps: 10000
-q: 32
-# m, the projection length would be m x q
-m: 256
-# test
-test_dataset: './data/test_dataset'
-test_dataset_ytf: './data/test_dataset/aligned_images_DB_YTF/'
-test_dataset_fs: './data/test_dataset/facescrub_images_112x112/'
-```
-Note:
-- The `sub_name` is the name of outputs directory used in checkpoints and logs folder. (make sure of setting it unique to other models)
-- The `head_type` is used to choose [ArcFace](https://arxiv.org/abs/1801.07698) head or normal fully connected layer head for classification in training. (see more detail in [./modules/models.py](https://github.com/peteryuX/arcface-tf2/blob/master/modules/models.py#L90-L94))
-- The `bin_lut_loss` is the name of binarization look up table (LUT) loss used in training. (tanh,sigmoid, or none)
-- The `hidden_layer_remark` means how many hidden layers used. (possible value: 1,2,3,T1,T2)
-- The `code_balance_loss` means using code balance loss on trainging or not.
-- The `quanti` means using quantization loss on trainging or not.
-- The `loss_fun` is the name of training loss used in traning. (possible value:batch_hard_triplet,batch_all_triplet_loss,batch_all_arc_triplet_loss,batch_hard_arc_triplet_loss,semihard_triplet_loss )
-- The `triplet_margin` is the name of outputs directory used in checkpoints and logs folder. (make sure of setting it unique to other models)
-- The `q` q in IoM
-- The `m` m in IoM
 
 ### Training
 
-Stage 1: Here have two modes for training the arcface your model, which should be perform the same results at the end.
+Here have two modes for training your model, which should be perform the same results at the end.
 ```bash
 # traning with tf.GradientTape(), great for debugging.
 python train.py --mode="eager_tf" --cfg_path="./configs/arc_res50.yaml"
@@ -191,26 +140,48 @@ python train.py --mode="eager_tf" --cfg_path="./configs/arc_res50.yaml"
 # training with model.fit().
 python train.py --mode="fit" --cfg_path="./configs/arc_res50.yaml"
 ```
-Stage 2: Training the deep IoM:
+
+### Testing
+
+You can download my trained models for testing from [Benchmark and Models](#Benchmark-and-Models) without training it yourself. And, evaluate the models you got with the corresponding cfg file on the testing dataset. The testing code in [./modules/evaluations.py](https://github.com/peteryuX/arcface-tf2/blob/master/modules/evaluations.py) were modified from [face.evoLVe](https://github.com/ZhaoJ9014/face.evoLVe.PyTorch).
 
 ```bash
-# traning with tf.GradientTape(),For deep IoM, can only train by eager_tf
-nohup python -u train_twostage_tripletloss_online.py --cfg_path config_10/iom_res50_twostage_1layer_hard_arcloss_256x8_0.yaml >1layer_hard_arcloss_256x8_0.log & 
-
-
-### Testing the performance of deep IoM
-
-```bash
-python  test_twostage_iom.py --cfg_path config_10/iom_res50_twostage_1layer_hard_arcloss_256x8_0.yaml 
+python test.py --cfg_path="./configs/arc_res50.yaml"
 ```
 
+### Encode Input Image
+
+You can also encode image into latent vector by model. For example, encode the image from [./data/BruceLee.jpg](https://github.com/peteryuX/arcface-tf2/blob/master/data/BruceLee.jpg) and save to `./output_embeds.npy` as following.
+
+```bash
+python test.py --cfg_path="./configs/arc_res50.yaml" --img_path="./data/BruceLee.jpg"
+```
+
+****
+
+## Benchmark and Models
+:coffee:
+
+Verification results (%) of different backbone, head tpye, data augmentation and loss function.
+
+| Backbone | Head | Loss | CCrop | LFW | AgeDB-30 | CFP-FP | Download Link |
+|----------|------|------|-------|-----|--------|----------|---------------|
+| [ResNet50](https://arxiv.org/abs/1512.03385) | [ArcFace](https://arxiv.org/abs/1801.07698) | Softmax | False | 99.35 | 95.03  |  90.36   | [GoogleDrive](https://drive.google.com/file/d/1HasWQb86s4xSYy36YbmhRELg9LBmvhvt/view?usp=sharing) |
+| [MobileNetV2](https://arxiv.org/abs/1801.04381) | [ArcFace](https://arxiv.org/abs/1801.07698) | Softmax | False | 98.67 | 90.87  |  88.51   | [GoogleDrive](https://drive.google.com/file/d/1qG8BChcPHzKuGwjJhrpeIxBqQmhpLvTX/view?usp=sharing) |
+| [ResNet50](https://arxiv.org/abs/1512.03385) | [ArcFace](https://arxiv.org/abs/1801.07698) | Softmax | True | 99.28 | 94.82 | 93.14 | [GoogleDrive](https://drive.google.com/file/d/1zUulC-4hSY_kPqZpcoIHO96OmjMivuKB/view?usp=sharing) |
+| [MobileNetV2](https://arxiv.org/abs/1801.04381) | [ArcFace](https://arxiv.org/abs/1801.07698) | Softmax | True | 98.50 | 91.43 | 89.44 | [GoogleDrive](https://drive.google.com/file/d/1nSnIc0eV0MkSjg48x29PJwTt3fGXKDU4/view?usp=sharing) |
+
+Note:
+- The 'CCrop' tag above means doing central-cropping on both trainging and testing data, which could eliminate the redundant boundary of intput face data (especially for AgeDB-30).
+- All training settings of the models can be found in the corresponding [./configs/*.yaml](https://github.com/peteryuX/arcface-tf2/tree/master/configs) files.
+
+****
 
 ## References
+:hamburger:
 
 Thanks for these source codes porviding me with knowledges to complete this repository.
 
-- https://github.com/peteryuX/arcface-tf2
-    - ArcFace (Additive Angular Margin Loss for Deep Face Recognition, published in CVPR 2019) implemented in Tensorflow 2.0+. This is an unofficial implementation.
 - https://github.com/deepinsight/insightface (Official)
     - Face Analysis Project on MXNet http://insightface.ai
 - https://github.com/zzh8829/yolov3-tf2

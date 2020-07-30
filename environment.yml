@@ -1,4 +1,4 @@
-name: arcface-tf2
+name: deepIoM-tf2
 channels:
   - conda-forge
 
