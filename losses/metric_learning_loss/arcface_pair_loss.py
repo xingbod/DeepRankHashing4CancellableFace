@@ -262,13 +262,20 @@ def batch_hard_triplet_arcloss(labels, embeddings,steps,summary_writer,arc_margi
 
     # Get final mean triplet loss
     with summary_writer.as_default():
-
-        tf.summary.scalar('margin/hardest_positive_dist', tf.reduce_mean(hardest_positive_dist), step=steps)
-        tf.summary.scalar('margin/hardest_negative_dist', tf.reduce_mean(hardest_negative_dist), step=steps)
-        tf.summary.scalar('margin/' + POSITIVE_LOSS, tf.reduce_sum(triplet_arcloss_positive), step=steps)
-        tf.summary.scalar('margin/' + NEGATIVE_LOSS, tf.reduce_sum(triplet_arcloss_negetive), step=steps)
-        tf.summary.histogram('margin/' + POSITIVE_DISTANCES, anchor_positive_dist, step=steps)
-        tf.summary.histogram('margin/' + NEGATIVE_DISTANCES, mask_anchor_negative, step=steps)
+        if tf.__version__.startswith('1'):
+            tf.contrib.summary.scalar('margin/hardest_positive_dist', tf.reduce_mean(hardest_positive_dist), step=steps)
+            tf.contrib.summary.scalar('margin/hardest_negative_dist', tf.reduce_mean(hardest_negative_dist), step=steps)
+            tf.contrib.summary.scalar('margin/' + POSITIVE_LOSS, tf.reduce_sum(triplet_arcloss_positive), step=steps)
+            tf.contrib.summary.scalar('margin/' + NEGATIVE_LOSS, tf.reduce_sum(triplet_arcloss_negetive), step=steps)
+            tf.contrib.summary.histogram('margin/' + POSITIVE_DISTANCES, anchor_positive_dist, step=steps)
+            tf.contrib.summary.histogram('margin/' + NEGATIVE_DISTANCES, mask_anchor_negative, step=steps)
+        else:
+            tf.summary.scalar('margin/hardest_positive_dist', tf.reduce_mean(hardest_positive_dist), step=steps)
+            tf.summary.scalar('margin/hardest_negative_dist', tf.reduce_mean(hardest_negative_dist), step=steps)
+            tf.summary.scalar('margin/' + POSITIVE_LOSS, tf.reduce_sum(triplet_arcloss_positive), step=steps)
+            tf.summary.scalar('margin/' + NEGATIVE_LOSS, tf.reduce_sum(triplet_arcloss_negetive), step=steps)
+            tf.summary.histogram('margin/' + POSITIVE_DISTANCES, anchor_positive_dist, step=steps)
+            tf.summary.histogram('margin/' + NEGATIVE_DISTANCES, mask_anchor_negative, step=steps)
 
     return triplet_arcloss
 
