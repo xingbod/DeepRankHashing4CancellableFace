@@ -19,7 +19,7 @@ quanti: True
 # train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split /media/xingbo/Storage/facedata/ms1m_align_112/imgs
 train_dataset: '/media/Storage/facedata/vgg_mtcnnpy_160'
 #train_dataset: '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160'
-img_ext: 'jpg'
+img_ext: 'png'
 dataset_ext: 'VGG2'
 # for metric learning, we have 1. triplet_semi batch_hard_triplet 2. batch_all_triplet_loss 3. batch_all_arc_triplet_loss batch_hard_arc_triplet_loss
 loss_fun: 'batch_hard_arc_triplet_loss'
