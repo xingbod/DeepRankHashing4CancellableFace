@@ -44,6 +44,13 @@ pip install -r requirements_tf1.txt
 ```
 ****
 
+If encounter any probelm, you may need to use:
+
+```bash
+conda install tensorflow-gpu==1.15.0
+```
+
+
 ## Data Preparing
 All datasets used in this repository can be found from [face.evoLVe.PyTorch's Data-Zoo](https://github.com/ZhaoJ9014/face.evoLVe.PyTorch#Data-Zoo).
 
