@@ -9,7 +9,9 @@ from tensorflow.keras.layers import (
 )
 from tensorflow.keras.applications import (
     MobileNetV2,
-    ResNet50
+    ResNet50,
+    VGG16,
+    VGG19
 )
 from .layers import (
     BatchNormalization,
@@ -38,6 +40,12 @@ def Backbone(backbone_type='ResNet50', use_pretrain=True):
         elif backbone_type == 'MobileNetV2':
             return MobileNetV2(input_shape=x_in.shape[1:], include_top=False,
                                weights=weights)(x_in)
+        elif backbone_type == 'VGG16':
+            return VGG16(input_shape=x_in.shape[1:], include_top=False,
+                         weights=weights)(x_in)
+        elif backbone_type == 'VGG19':
+            return VGG19(input_shape=x_in.shape[1:], include_top=False,
+                         weights=weights)(x_in)
         else:
             raise TypeError('backbone_type error!')
 
