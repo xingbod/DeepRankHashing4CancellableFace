@@ -1,0 +1,49 @@
+numTrainClasses = 100, numTestClasses = 366
+
+Set 1:
+	Train: #img = 3788, #pos = 95826, #class2: 100. Test: #img = 12240, #pos = 303512.
+	Gal: 266 / 266, GenProb: 8538 / 266, ImpProb: 3436 / 100.
+
+Set 2:
+	Train: #img = 3404, #pos = 83970, #class2: 100. Test: #img = 12624, #pos = 315368.
+	Gal: 266 / 266, GenProb: 9254 / 266, ImpProb: 3104 / 100.
+
+Set 3:
+	Train: #img = 3492, #pos = 88422, #class2: 100. Test: #img = 12536, #pos = 310916.
+	Gal: 266 / 266, GenProb: 8982 / 266, ImpProb: 3288 / 100.
+
+Set 4:
+	Train: #img = 3388, #pos = 80682, #class2: 100. Test: #img = 12640, #pos = 318656.
+	Gal: 266 / 266, GenProb: 9230 / 266, ImpProb: 3144 / 100.
+
+Set 5:
+	Train: #img = 3384, #pos = 80532, #class2: 100. Test: #img = 12644, #pos = 318806.
+	Gal: 266 / 266, GenProb: 8542 / 266, ImpProb: 3836 / 100.
+
+Set 6:
+	Train: #img = 3416, #pos = 85268, #class2: 100. Test: #img = 12612, #pos = 314070.
+	Gal: 266 / 266, GenProb: 9226 / 266, ImpProb: 3120 / 100.
+
+Set 7:
+	Train: #img = 3228, #pos = 80570, #class2: 100. Test: #img = 12800, #pos = 318768.
+	Gal: 266 / 266, GenProb: 9238 / 266, ImpProb: 3296 / 100.
+
+Set 8:
+	Train: #img = 3328, #pos = 81536, #class2: 100. Test: #img = 12700, #pos = 317802.
+	Gal: 266 / 266, GenProb: 8910 / 266, ImpProb: 3524 / 100.
+
+Set 9:
+	Train: #img = 3416, #pos = 87332, #class2: 100. Test: #img = 12612, #pos = 312006.
+	Gal: 266 / 266, GenProb: 8710 / 266, ImpProb: 3636 / 100.
+
+Set 10:
+	Train: #img = 3644, #pos = 91978, #class2: 100. Test: #img = 12384, #pos = 307360.
+	Gal: 266 / 266, GenProb: 8494 / 266, ImpProb: 3624 / 100.
+
+Average:
+	Train: #img = 3448, #pos = 85611, #class2: 100. Test: #img = 12579, #pos = 313726.
+	Gal: 266 / 266, GenProb: 8912 / 266, ImpProb: 3400 / 100.
+
+Development Set:
+	Train: #img = 3516, #pos = 86922, #class2: 100.
+	Test:  #img = 3580, #pos = 88666, #class2: 100.
