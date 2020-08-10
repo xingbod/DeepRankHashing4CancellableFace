@@ -2,6 +2,8 @@
 %the cosine similarity measure for the BLUFR benchmark and report results.
 close all; clear; clc;
 
+load('E:\my research\etri2020\arcface-tf2\matlab\data\lfw_512_insightface_embeddings.mat')
+
 feaFile = '../data/lfw.mat'; % Mat file storing extracted features
 configFile = '../config/lfw/blufr_lfw_config.mat'; % configuration file for this evaluation
 outDir = '../result/'; % output directory
@@ -24,10 +26,10 @@ load(configFile);
 %% Load your own features here. The features should be extracted according
 % to the order of the imageList in the configFile. It is 13233xd for the 
 % LFW database where d is the feature dimensionality.
-load(feaFile, 'Descriptors');
-
+% load(feaFile, 'Descriptors');
+Descriptors = lfw_512_insightface_embeddings;
 % You may apply the sqrt transform if the feature is histogram based.
-Descriptors = sqrt(double(Descriptors));
+% Descriptors = sqrt(double(Descriptors));
 
 numTrials = length(testIndex);
 

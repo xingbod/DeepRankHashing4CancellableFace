@@ -10,6 +10,9 @@ from tensorflow.keras.layers import (
 from tensorflow.keras.applications import (
     MobileNetV2,
     ResNet50,
+    InceptionResNetV2,
+    InceptionV3,
+    Xception,
     VGG16,
     VGG19
 )
@@ -40,6 +43,15 @@ def Backbone(backbone_type='ResNet50', use_pretrain=True):
         elif backbone_type == 'MobileNetV2':
             return MobileNetV2(input_shape=x_in.shape[1:], include_top=False,
                                weights=weights)(x_in)
+        elif backbone_type == 'InceptionResNetV2':
+            return InceptionResNetV2(input_shape=x_in.shape[1:], include_top=False,
+                               weights=weights)(x_in)
+        elif backbone_type == 'InceptionV3':
+            return InceptionV3(input_shape=x_in.shape[1:], include_top=False,
+                               weights=weights)(x_in)
+        elif backbone_type == 'Xception':
+            return Xception(input_shape=x_in.shape[1:], include_top=False,
+                               weights=weights)(x_in)
         elif backbone_type == 'VGG16':
             return VGG16(input_shape=x_in.shape[1:], include_top=False,
                          weights=weights)(x_in)
@@ -69,11 +81,13 @@ def OutputLayer(embd_shape, w_decay=5e-4, name='OutputLayer'):
 
 def IoMProjectionLayer(cfg, name='IoMProjectionLayer'):
     """Output Later"""
+
     def output_layer(x_in):
         x_input = inputs = Input(x_in.shape[1:])
         new_emb = []
         for i in range(cfg['m']):
-            x = Dense(cfg['q'],kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None), activation='tanh')(x_input)  # extra connection layer
+            x = Dense(cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
+                      activation='tanh')(x_input)  # extra connection layer
             # x = Dense(cfg['q'],kernel_initializer=tf.keras.initializers.GlorotUniform())(x_input)  # extra connection layer
             # x = Dense(cfg['q'],kernel_initializer=tf.keras.initializers.GlorotNormal())(x_input)  # extra connection layer
             new_emb.append(x)
@@ -214,10 +228,10 @@ def IoMFaceModelFromArFace3(size=None, channels=3, arcmodel=None, name='IoMface_
     if not (permKey is None):
         x = PermLayer(permKey)(x)  # permutation before project to IoM hash code
     # here I add one extra hidden layer
-    x = Dense(512, kernel_regularizer=_regularizer(w_decay))(x)#, activation='relu'
+    x = Dense(512, kernel_regularizer=_regularizer(w_decay))(x)  # , activation='relu'
     # x = BatchNormalization()(x)
     x = Dropout(rate=0.5)(x)
-    x = Dense(512, kernel_regularizer=_regularizer(w_decay))(x)#, activation='relu'
+    x = Dense(512, kernel_regularizer=_regularizer(w_decay))(x)  # , activation='relu'
     x = BatchNormalization()(x)
     x = Dropout(rate=0.5)(x)
     x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
@@ -285,10 +299,6 @@ def IoMFaceModelFromArFaceMLossHead(size=None, channels=3, arcmodel=None, name='
         return Model(inputs, hashcodes, name=name)
 
 
-
-
-
-
 '''
 def ArcFaceModel2(size=None, channels=3, num_classes=None, name='arcface_model',
                  margin=0.5, logist_scale=64, embd_shape=512,
@@ -345,4 +355,3 @@ def IoMFaceModel(size=None, channels=3, num_classes=None, name='IoMface_model',
         logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x)  # loss need to change
     return Model(inputs, logist, name=name)
 '''
-

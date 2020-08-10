@@ -1,5 +1,5 @@
 Verification:
-	@ FAR = 0.1%: VR = 5.23%.
+	@ FAR = 0.1%: VR = 99.63%.
 Open-set Identification:
-	@ Rank = 1, FAR = 1%: DIR = 3.02%.
+	@ Rank = 1, FAR = 1%: DIR = 97.59%.
 
