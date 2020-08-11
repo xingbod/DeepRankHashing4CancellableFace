@@ -1,8 +1,9 @@
 load('E:\my research\etri2020\arcface-tf2\matlab\data\lfw_feat.csv')
-load('E:\my research\etri2020\arcface-tf2\matlab\data\lfw_name.csv')
-load('E:\my research\etri2020\arcface-tf2\matlab\data\lfw_label.mat')
+load('E:\my research\etri2020\arcface-tf2\matlab\data\lfw_feat_dIoM_512x2.csv')
+% load('E:\my research\etri2020\arcface-tf2\matlab\data\lfw_name.csv')
+% load('E:\my research\etri2020\arcface-tf2\matlab\data\lfw_label.mat')
 
-fid=importdata('E:\my research\etri2020\arcface-tf2\matlab\data\lfw_name.csv');
+fid=importdata('E:\my research\etri2020\arcface-tf2\matlab\data\lfw_name.txt');
 lfw_name=[];
 for i=1:size(fid,1)
     lfw_name = [lfw_name; string(cell2mat(fid(i)))+".jpg"];
@@ -16,11 +17,13 @@ end
 
 my_index=[];
 for i=1:size(fid,1)
-  indx = find(lfw_name(i)==lfw_name2);
+  indx = find(lfw_name2(i)==lfw_name);
     my_index = [my_index, indx];
 end
 
 align_lfw_feat = lfw_feat(my_index,:);
+align_lfw_feat_dIoM_512x2 = lfw_feat_dIoM_512x2(my_index,:);
 align_lfw_name = lfw_name(my_index);
 
-save('align_lfw_feat.mat','align_lfw_feat')
+save('data/align_lfw_feat.mat','align_lfw_feat')
+save('data/align_lfw_feat_dIoM_512x2.mat','align_lfw_feat_dIoM_512x2')

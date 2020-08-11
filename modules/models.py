@@ -52,6 +52,9 @@ def Backbone(backbone_type='ResNet50', use_pretrain=True):
         elif backbone_type == 'Xception':
             return Xception(input_shape=x_in.shape[1:], include_top=False,
                                weights=weights)(x_in)
+        elif backbone_type == 'lresnet100e_ir':
+            from .lresnet100e_ir import LResNet100E_IR
+            return LResNet100E_IR()(x_in)
         elif backbone_type == 'VGG16':
             return VGG16(input_shape=x_in.shape[1:], include_top=False,
                          weights=weights)(x_in)

@@ -5,7 +5,7 @@ addpath('matlab_tools')
 addpath_recurse('BLUFR')
 load('E:\my research\etri2020\arcface-tf2\matlab\data\lfw_512_insightface_embeddings.mat')
 % load('E:\my research\etri2020\arcface-tf2\matlab\data\lfw_feat.csv')
-load('data/align_lfw_feat.mat')
+% load('data/align_lfw_feat.mat')
 
 feaFile = 'BLUFR/data/lfw.mat'; % Mat file storing extracted features
 configFile = 'BLUFR/config/lfw/blufr_lfw_config.mat'; % configuration file for this evaluation
@@ -77,8 +77,8 @@ for t = 1 : numTrials
 %     X = normr(X);
     
     % Compute the cosine similarity score between the test samples.
-    score = X * X';
-%     score = 1- pdist2(X,X,'Hamming');
+%     score = X * X';
+    score = 1- pdist2(X,X)/100;
     
     % Get the class labels for the test data of the development set.
     testLabels = labels(testIndex{t});
@@ -169,3 +169,10 @@ save(outMatFile, 'reportVeriFar', 'reportOsiFar', 'reportRank', 'reportVR', 'rep
 % 	@ FAR = 0.1%: VR = 99.63%.
 % Open-set Identification:
 % 	@ Rank = 1, FAR = 1%: DIR = 97.58%.
+
+% My model
+% 
+% Verification:
+% 	@ FAR = 0.1%: VR = 91.50%.
+% Open-set Identification:
+% 	@ Rank = 1, FAR = 1%: DIR = 62.84%.
