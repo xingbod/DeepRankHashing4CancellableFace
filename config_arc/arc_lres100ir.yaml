@@ -1,5 +1,5 @@
 # general
-batch_size: 128
+batch_size: 110
 eval_batch_size: 200
 input_size: 112
 embd_shape: 512
