@@ -1,6 +1,6 @@
 # general
 batch_size: 60
-eval_batch_size: 60
+eval_batch_size: 40
 input_size: 112
 embd_shape: 512
 sub_name: 'arc_lresnet100e_ir'
