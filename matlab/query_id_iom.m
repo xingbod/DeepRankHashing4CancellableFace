@@ -1,7 +1,8 @@
+addpath('matlab_tools')
 correct_ret=0;
 incorrect_ret = 0;
-for i =1:size(facenet_probe_label_c,2)
-    i
+
+for i = progress(1:size(facenet_probe_label_c,2))
     query_sample = dec2bin( hash_facenet_probe_c(i,:),q)-'0';
     query_bin =reshape(query_sample',1,numel(gallery_sample));
 
