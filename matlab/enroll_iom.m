@@ -2,9 +2,9 @@ close all; clear; clc;
 addpath('matlab_tools')
 addpath_recurse('BLUFR')
 addpath_recurse('btp')
-% load('data\lfw_512_insightface_embeddings.mat')
-load('data\lfw_label.mat')
-load('data\align_lfw_feat_dIoM_512x2.mat')
+% load('data/lfw_512_insightface_embeddings.mat')
+load('data/lfw_label.mat')
+load('data/align_lfw_feat_dIoM_512x2.mat')
 
 % Descriptors = lfw_512_insightface_embeddings;
 Descriptors = align_lfw_feat_dIoM_512x2;
