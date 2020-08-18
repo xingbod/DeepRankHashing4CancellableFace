@@ -149,7 +149,7 @@ q=2;
 [identifiers ] = generate_identifier(m,q,6000);
 %%% mixing gallery
 mixing_facenet_gallery = [];
-for i = 1:size(facenet_gallery_label,2)
+for i = progress(1:size(facenet_gallery_label,2))
     gallery_sample = dec2bin( hash_facenet_gallery(i,:),q)-'0';
     gallery_bin =reshape(gallery_sample',1,numel(gallery_sample));
     mixing_facenet_gallery(i,:) = bitxor(gallery_bin,identifiers(facenet_gallery_label(i),:));
