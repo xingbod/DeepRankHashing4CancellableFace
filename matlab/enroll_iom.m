@@ -9,6 +9,9 @@ load('data/align_lfw_feat_dIoM_512x2.mat')
 % Descriptors = lfw_512_insightface_embeddings;
 Descriptors = align_lfw_feat_dIoM_512x2;
 
+m = size(align_lfw_feat_dIoM_512x2,2);
+q=max(max(align_lfw_feat_dIoM_512x2))+1;
+
 M = containers.Map({'abc'},{[]});
 for i=1:length(lfwlables)
     if isKey(M,char(lfwlables(i)))
@@ -144,8 +147,6 @@ hash_facenet_probe_o2=facenet_probe_o2;
 hash_facenet_probe_o3=facenet_probe_o3;
 hash_facenet_gallery=facenet_gallery;
 %%%% generate identifier, dimension same to hash code
-m = 512;
-q=2;
 [identifiers ] = generate_identifier(m,q,6000);
 %%% mixing gallery
 mixing_facenet_gallery = [];
@@ -154,3 +155,90 @@ for i = progress(1:size(facenet_gallery_label,2))
     gallery_bin =reshape(gallery_sample',1,numel(gallery_sample));
     mixing_facenet_gallery(i,:) = bitxor(gallery_bin,identifiers(facenet_gallery_label(i),:));
 end
+
+%% 
+correct_ret=0;
+incorrect_ret = 0;
+
+for i = progress(1:size(facenet_probe_label_c,2))
+    query_sample = dec2bin( hash_facenet_probe_c(i,:),q)-'0';
+    query_bin =reshape(query_sample',1,numel(gallery_sample));
+
+    dist = [];
+    for j=1: size(mixing_facenet_gallery,1)
+        gallery_bin =  mixing_facenet_gallery(j,:);
+        retrieved_id = bitxor(gallery_bin,query_bin);
+        dist = [dist pdist2(retrieved_id,identifiers(facenet_gallery_label(j),:),'Hamming')];
+    end
+    [row column]=find(dist==min(dist(:)));
+    if mode(facenet_gallery_label(column)) == facenet_probe_label_c(i)
+        correct_ret = correct_ret+1;
+    end
+end
+
+tar_c = correct_ret/size(facenet_probe_label_c,2);%  0.9517 96.90
+
+correct_ret=0;
+incorrect_ret = 0;
+
+for i = progress(1:size(hash_facenet_probe_o1,2))
+    query_sample = dec2bin( hash_facenet_probe_o1(i,:),q)-'0';
+    query_bin =reshape(query_sample',1,numel(gallery_sample));
+
+    dist = [];
+    for j=1: size(mixing_facenet_gallery,1)
+        gallery_bin =  mixing_facenet_gallery(j,:);
+        retrieved_id = bitxor(gallery_bin,query_bin);
+        dist = [dist pdist2(retrieved_id,identifiers(facenet_gallery_label(j),:),'Hamming')];
+    end
+    [row column]=find(dist==min(dist(:)));
+    if mode(facenet_gallery_label(column)) == facenet_probe_label_o1(i)
+        correct_ret = correct_ret+1;
+    end
+end
+tar_o1 = correct_ret/size(facenet_probe_label_o1,2);
+
+
+correct_ret=0;
+incorrect_ret = 0;
+
+for i = progress(1:size(hash_facenet_probe_o2,2))
+    query_sample = dec2bin( hash_facenet_probe_o2(i,:),q)-'0';
+    query_bin =reshape(query_sample',1,numel(gallery_sample));
+
+    dist = [];
+    for j=1: size(mixing_facenet_gallery,1)
+        gallery_bin =  mixing_facenet_gallery(j,:);
+        retrieved_id = bitxor(gallery_bin,query_bin);
+        dist = [dist pdist2(retrieved_id,identifiers(facenet_gallery_label(j),:),'Hamming')];
+    end
+    [row column]=find(dist==min(dist(:)));
+    if mode(facenet_gallery_label(column)) == facenet_probe_label_o2(i)
+        correct_ret = correct_ret+1;
+    end
+end
+tar_o2 = correct_ret/size(facenet_probe_label_o2,2);
+
+
+correct_ret=0;
+incorrect_ret = 0;
+
+for i = progress(1:size(hash_facenet_probe_o3,2))
+    query_sample = dec2bin( hash_facenet_probe_o3(i,:),q)-'0';
+    query_bin =reshape(query_sample',1,numel(gallery_sample));
+
+    dist = [];
+    for j=1: size(mixing_facenet_gallery,1)
+        gallery_bin =  mixing_facenet_gallery(j,:);
+        retrieved_id = bitxor(gallery_bin,query_bin);
+        dist = [dist pdist2(retrieved_id,identifiers(facenet_gallery_label(j),:),'Hamming')];
+    end
+    [row column]=find(dist==min(dist(:)));
+    if mode(facenet_gallery_label(column)) == facenet_probe_label_o3(i)
+        correct_ret = correct_ret+1;
+    end
+end
+tar_o3 = correct_ret/size(facenet_probe_label_o3,2);
+fprintf('tar_c/tar_o1/tar_o2/tar_o3 %8.5f %8.5f %8.5f %8.5f\n', tar_c,tar_o1,tar_o2,tar_o3) % 注意输出格式前须有%符号，
+
+
