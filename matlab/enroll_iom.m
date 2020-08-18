@@ -4,9 +4,10 @@ addpath_recurse('BLUFR')
 addpath_recurse('btp')
 % load('data\lfw_512_insightface_embeddings.mat')
 load('data\lfw_label.mat')
-load('data\align_lfw_feat.mat')
+load('data\align_lfw_feat_dIoM_512x2.mat')
 
-Descriptors = align_lfw_feat;
+% Descriptors = lfw_512_insightface_embeddings;
+Descriptors = align_lfw_feat_dIoM_512x2;
 
 M = containers.Map({'abc'},{[]});
 for i=1:length(lfwlables)
@@ -135,48 +136,21 @@ facenet_gallery_label = double(facenet_gallery_label);
 % facenet_probe_o3
 % facenet_probe_label_o3
 
-Nb=400;%400
-opts.lambda = 0.5;% 0.5 1 2
-opts.beta = 1;% 0.5 0.8 1
-opts.K = 16;
-opts.topP = 5;
-opts.L = 100; % train maximum number of bits
-opts.gaussian=1; %1/0=gaussian/laplace
-opts.dX=size(Descriptors,2);
-opts.softmod=0;
-opts.alpha=0.6;
-opts.model = random_IoM(opts);
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-model = opts.model;
-db_data.X=facenet_probe_c';
-[all_code, ~] = IoM(db_data, opts, model);
-hash_facenet_probe_c=all_code.Hx';
 
-db_data.X=facenet_probe_o1';
-[all_code, ~] = IoM(db_data, opts, model);
-hash_facenet_probe_o1=all_code.Hx';
-
-db_data.X=facenet_probe_o2';
-[all_code, ~] = IoM(db_data, opts, model);
-hash_facenet_probe_o2=all_code.Hx';
-
-db_data.X=facenet_probe_o3';
-[all_code, ~] = IoM(db_data, opts, model);
-hash_facenet_probe_o3=all_code.Hx';
-
-
-db_data.X=facenet_gallery';
-[all_code, ~] = IoM(db_data, opts, model);
-hash_facenet_gallery=all_code.Hx';
+hash_facenet_probe_c=facenet_probe_c;
+hash_facenet_probe_o1=facenet_probe_o1;
+hash_facenet_probe_o2=facenet_probe_o2;
+hash_facenet_probe_o3=facenet_probe_o3;
+hash_facenet_gallery=facenet_gallery;
 %%%% generate identifier, dimension same to hash code
-m = 100;
-q=4;
+m = 512;
+q=2;
 [identifiers ] = generate_identifier(m,q,6000);
 %%% mixing gallery
 mixing_facenet_gallery = [];
 for i = 1:size(facenet_gallery_label,2)
-    gallery_sample = dec2bin( hash_facenet_gallery(i,:)-1,q)-'0';
+    gallery_sample = dec2bin( hash_facenet_gallery(i,:),q)-'0';
     gallery_bin =reshape(gallery_sample',1,numel(gallery_sample));
     mixing_facenet_gallery(i,:) = bitxor(gallery_bin,identifiers(facenet_gallery_label(i),:));
 end
