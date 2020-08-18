@@ -2,7 +2,7 @@ addpath('../')
 load('../embeddings/res50_lfw_feat_dIoM_512x2.csv')
 % load('E:\my research\etri2020\arcface-tf2\matlab\data\lfw_name.csv')
 % load('E:\my research\etri2020\arcface-tf2\matlab\data\lfw_label.mat')
-
+Descriptor = res50_lfw_feat_dIoM_512x2;
 fid=importdata('../embeddings/lfw_name.txt');
 lfw_name=[];
 for i=1:size(fid,1)
@@ -22,7 +22,7 @@ for i=1:size(fid,1)
 end
 
 % align_lfw_feat = lfw_feat(my_index,:);
-align_lfw_feat_dIoM_512x2 = lfw_feat_dIoM_512x2(my_index,:);
+align_lfw_feat_dIoM_512x2 = Descriptor(my_index,:);
 align_lfw_name = lfw_name(my_index);
 
 % save('data/align_lfw_feat.mat','align_lfw_feat')
