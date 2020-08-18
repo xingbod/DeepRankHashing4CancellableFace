@@ -181,7 +181,7 @@ tar_c = correct_ret/size(facenet_probe_label_c,2);%  0.9517 96.90
 correct_ret=0;
 incorrect_ret = 0;
 
-for i = progress(1:size(hash_facenet_probe_o1,2))
+for i = progress(1:size(facenet_probe_label_o1,2))
     query_sample = dec2bin( hash_facenet_probe_o1(i,:),q)-'0';
     query_bin =reshape(query_sample',1,numel(gallery_sample));
 
@@ -202,7 +202,7 @@ tar_o1 = correct_ret/size(facenet_probe_label_o1,2);
 correct_ret=0;
 incorrect_ret = 0;
 
-for i = progress(1:size(hash_facenet_probe_o2,2))
+for i = progress(1:size(facenet_probe_label_o2,2))
     query_sample = dec2bin( hash_facenet_probe_o2(i,:),q)-'0';
     query_bin =reshape(query_sample',1,numel(gallery_sample));
 
@@ -223,7 +223,7 @@ tar_o2 = correct_ret/size(facenet_probe_label_o2,2);
 correct_ret=0;
 incorrect_ret = 0;
 
-for i = progress(1:size(hash_facenet_probe_o3,2))
+for i = progress(1:size(facenet_probe_label_o3,2))
     query_sample = dec2bin( hash_facenet_probe_o3(i,:),q)-'0';
     query_bin =reshape(query_sample',1,numel(gallery_sample));
 
