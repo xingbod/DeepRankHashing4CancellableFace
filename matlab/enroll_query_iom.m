@@ -159,7 +159,7 @@ end
 %% 
 correct_ret=0;
 incorrect_ret = 0;
-
+final_dist = [];
 for i = progress(1:size(facenet_probe_label_c,2))
     query_sample = dec2bin( hash_facenet_probe_c(i,:),q)-'0';
     query_bin =reshape(query_sample',1,numel(gallery_sample));
@@ -170,6 +170,7 @@ for i = progress(1:size(facenet_probe_label_c,2))
         retrieved_id = bitxor(gallery_bin,query_bin);
         dist = [dist pdist2(retrieved_id,identifiers(facenet_gallery_label(j),:),'Hamming')];
     end
+    final_dist = [final_dist ; dist];
     [row column]=find(dist==min(dist(:)));
     if mode(facenet_gallery_label(column)) == facenet_probe_label_c(i)
         correct_ret = correct_ret+1;
@@ -177,6 +178,15 @@ for i = progress(1:size(facenet_probe_label_c,2))
 end
 
 tar_c = correct_ret/size(facenet_probe_label_c,2);%  0.9517 96.90
+
+
+score_avg_mAP_iom = []; % open-set identification false accept rates of the 10 trials
+for k2=[1:10 20:10:100 200:100:1000]
+   score_avg_mAP_iom = [score_avg_mAP_iom average_precision(1-final_dist, facenet_gallery_label'==facenet_probe_label_c,k2)];
+end
+
+
+fprintf('avg_mAP_iom %8.5f\n', score_avg_mAP_iom(5)) % 注意输出格式前须有%符号，
 
 correct_ret=0;
 incorrect_ret = 0;
