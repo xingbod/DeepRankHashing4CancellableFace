@@ -3,7 +3,7 @@ addpath('../')
 load('../embeddings/lresnet100e_ir_lfw_feat_dIoM_512x2.csv')
 % load('E:\my research\etri2020\arcface-tf2\matlab\data\lfw_name.csv')
 % load('E:\my research\etri2020\arcface-tf2\matlab\data\lfw_label.mat')
-Descriptor = res50_lfw_feat_dIoM_512x2;
+Descriptor = lresnet100e_ir_lfw_feat_dIoM_512x2;
 fid=importdata('../embeddings/lfw_name.txt');
 lfw_name=[];
 for i=1:size(fid,1)
