@@ -182,7 +182,7 @@ tar_c = correct_ret/size(facenet_probe_label_c,2);%  0.9517 96.90
 
 score_avg_mAP_iom = []; % open-set identification false accept rates of the 10 trials
 for k2=[1:10 20:10:100 200:100:1000]
-   score_avg_mAP_iom = [score_avg_mAP_iom average_precision(1-final_dist, facenet_gallery_label'==facenet_probe_label_c,k2)];
+   score_avg_mAP_iom = [score_avg_mAP_iom average_precision(1-final_dist, facenet_probe_label_c==facenet_gallery_label',k2)];
 end
 
 
