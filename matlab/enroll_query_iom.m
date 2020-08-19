@@ -34,14 +34,13 @@ align_lfw_name = lfw_name(my_index);
 % save('data/align_lfw_feat_dIoM.mat','align_lfw_feat_dIoM')
 
 % close all; clear; clc;
-% load('data/lfw_label.mat')
+load('data/lfw_label.mat')
 % load('data/align_lfw_feat_dIoM_512x2.mat')
 
 Descriptors = align_lfw_feat_dIoM;
 
 m = size(Descriptors,2);
 q=max(max(Descriptors))+1;
-lfwlables = align_lfw_name;
 
 M = containers.Map({'abc'},{[]});
 for i=1:length(lfwlables)
