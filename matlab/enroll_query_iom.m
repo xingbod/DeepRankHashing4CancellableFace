@@ -1,13 +1,14 @@
 function enroll_query_iom(hashcode_path,filename_path)
 % hashcode_path e.g. res50_lfw_feat_dIoM_512x2.csv
 % filename_path e.g. lresnet100e_ir_lfw_name.txt
+% e.g. enroll_query_iom lresnet100e_ir_lfw_feat_dIoM_512x2.csv  lresnet100e_ir_lfw_name.txt
 addpath('../');
 addpath('matlab_tools')
 addpath_recurse('BLUFR')
 addpath_recurse('btp')
 
-Descriptor = importdata(('../embeddings/'+hashcode_path);
-fid_lfw_name=importdata('../embeddings/' + filename_path);
+Descriptor = importdata("../embeddings/"+hashcode_path);
+fid_lfw_name=importdata("../embeddings/" + filename_path);
 lfw_name=[];
 for i=1:size(fid_lfw_name,1)
     lfw_name = [lfw_name; string(cell2mat(fid_lfw_name(i)))+".jpg"];
