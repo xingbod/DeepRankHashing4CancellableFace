@@ -1,12 +1,15 @@
-%% This demo shows how to apply PCA dimension reduction along with 
-%the cosine similarity measure for the BLUFR benchmark and report results.
-close all; clear; clc;
-addpath('matlab_tools')
-addpath_recurse('BLUFR')
-addpath_recurse('btp')
-load('E:\my research\etri2020\arcface-tf2\matlab\data\align_lfw_feat_dIoM_512x2.mat')
+function [reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(varargin)
+%LFW_BLUFR 此处显示有关此函数的摘要
+%   此处显示详细说明
+ip = inputParser;
+%接下来设定默认值，还可以指定是必须参数还是可选参数等。
+ip.addRequired('Descriptors')
+ip.addParamValue('measure','Hamming');
+ip.parse(varargin{:});
+result=ip.Results;
 
-Descriptors = align_lfw_feat_dIoM_512x2;
+Descriptors = result.Descriptors;
+measure = result.measure;
 
 feaFile = 'BLUFR/data/lfw.mat'; % Mat file storing extracted features
 configFile = 'BLUFR/config/lfw/blufr_lfw_config.mat'; % configuration file for this evaluation
@@ -28,7 +31,7 @@ fprintf('Load data...\n\n');
 load(configFile);
 
 %% Load your own features here. The features should be extracted according
-% to the order of the imageList in the configFile. It is 13233xd for the 
+% to the order of the imageList in the configFile. It is 13233xd for the
 % LFW database where d is the feature dimensionality.
 
 
@@ -58,27 +61,27 @@ for t = 1 : numTrials
     fprintf('Process the %dth trial...\n\n', t);
     
     % Get the training data of the t'th trial.
-%     X = Descriptors(trainIndex{t}, :);
+    %     X = Descriptors(trainIndex{t}, :);
     
-    % Learn a PCA subspace. Note that if you apply a learning based dimension 
-    % reduction, it must be performed with the training data of each trial. 
+    % Learn a PCA subspace. Note that if you apply a learning based dimension
+    % reduction, it must be performed with the training data of each trial.
     % It is not allowed to learn and reduce the dimensionality of features
     % with the whole data beforehand and then do the 10-trial evaluation.
-%     W = PCA(X,pcaDims);
+    %     W = PCA(X,pcaDims);
     
     % Get the test data of the t'th trial
     X = Descriptors(testIndex{t}, :);
     
     % Transform the test data into the learned PCA subspace of pcaDims dimensions.
-%     X = X * W(:, 1 : pcaDims);
+    %     X = X * W(:, 1 : pcaDims);
     
     % Normlize each row to unit length. If you do not have this function,
     % do it manually.
-%     X = normr(X);
+    %     X = normr(X);
     
     % Compute the cosine similarity score between the test samples.
-%     score = X * X';
-    score = 1- pdist2(X,X,'Hamming');
+    %     score = X * X';
+    score = 1- pdist2(X,X,measure);
     
     % Get the class labels for the test data of the development set.
     testLabels = labels(testIndex{t});
@@ -95,7 +98,7 @@ for t = 1 : numTrials
     
     fprintf('Verification:\n');
     fprintf('\t@ FAR = %g%%: VR = %g%%.\n', reportVeriFar*100, VR(t, veriFarIndex)*100);
-
+    
     fprintf('Open-set Identification:\n');
     fprintf('\t@ Rank = %d, FAR = %g%%: DIR = %g%%.\n\n', reportRank, reportOsiFar*100, DIR(rankIndex, osiFarIndex, t)*100);
 end
@@ -139,31 +142,8 @@ fout = fopen(outLogFile, 'wt');
 fprintf(fout, '%s', str);
 fclose(fout);
 
-%% Plot the face verification ROC curve.
-figure; semilogx(meanVeriFAR * 100, fusedVR, 'LineWidth', 2);
-xlim([0,100]); ylim([0,100]); grid on;
-xlabel('False Accept Rate (%)');
-ylabel('Verification Rate (%)');
-title('Face Verification ROC Curve');
 
-%% Plot the open-set face identification ROC curve at the report rank.
-figure; semilogx(meanOsiFAR * 100, fusedDIR(rankIndex,:), 'LineWidth', 2);
-xlim([0,100]); ylim([0,100]); grid on;
-xlabel('False Accept Rate (%)');
-ylabel('Detection and Identification Rate (%)');
-title(sprintf('Open-set Identification ROC Curve at Rank %d', reportRank));
 
-%% Plot the open-set face identification CMC curve at the report FAR.
-figure; semilogx(rankPoints, fusedDIR(:,osiFarIndex), 'LineWidth', 2);
-xlim([0,100]); ylim([0,100]); grid on;
-xlabel('Rank');
-ylabel('Detection and Identification Rate (%)');
-title( sprintf('Open-set Identification CMC Curve at FAR = %g%%', reportOsiFar*100) );
 
-%% Save the results to a mat file. If your result is among the top 10 
-% results (ranked by verification rates at FAR=0.1%) maintained in our
-% project page, please send this mat file to us so that we can update the
-% top 10 results to include your algorithm's performance.
-save(outMatFile, 'reportVeriFar', 'reportOsiFar', 'reportRank', 'reportVR', 'reportDIR', ...
-    'meanVeriFAR', 'fusedVR', 'meanOsiFAR', 'fusedDIR', 'rankPoints', 'rankIndex', 'osiFarIndex');
-% 
+end
+
