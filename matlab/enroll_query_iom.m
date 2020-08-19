@@ -1,16 +1,46 @@
-close all; clear; clc;
+function enroll_query_iom(hashcode_path,filename_path)
+% hashcode_path e.g. res50_lfw_feat_dIoM_512x2.csv
+% filename_path e.g. lresnet100e_ir_lfw_name.txt
+addpath('../');
 addpath('matlab_tools')
 addpath_recurse('BLUFR')
 addpath_recurse('btp')
-% load('data/lfw_512_insightface_embeddings.mat')
-load('data/lfw_label.mat')
-load('data/align_lfw_feat_dIoM_512x2.mat')
 
-% Descriptors = lfw_512_insightface_embeddings;
-Descriptors = align_lfw_feat_dIoM_512x2;
+Descriptor = importdata(('../embeddings/'+hashcode_path);
+fid_lfw_name=importdata('../embeddings/' + filename_path);
+lfw_name=[];
+for i=1:size(fid_lfw_name,1)
+    lfw_name = [lfw_name; string(cell2mat(fid_lfw_name(i)))+".jpg"];
+end
 
-m = size(align_lfw_feat_dIoM_512x2,2);
-q=max(max(align_lfw_feat_dIoM_512x2))+1;
+fid2=importdata('BLUFR/list/lfw/image_list.txt');
+lfw_name2=[];
+for i=1:size(fid_lfw_name,1)
+    lfw_name2 = [lfw_name2; string(cell2mat(fid2(i)))];
+end
+
+my_index=[];
+for i=1:size(fid_lfw_name,1)
+    indx = find(lfw_name2(i)==lfw_name);
+    my_index = [my_index, indx];
+end
+
+% align_lfw_feat = lfw_feat(my_index,:);
+align_lfw_feat_dIoM = Descriptor(my_index,:);
+align_lfw_name = lfw_name(my_index);
+
+% save('data/align_lfw_feat.mat','align_lfw_feat')
+% save('data/align_lfw_feat_dIoM.mat','align_lfw_feat_dIoM')
+
+% close all; clear; clc;
+% load('data/lfw_label.mat')
+% load('data/align_lfw_feat_dIoM_512x2.mat')
+
+Descriptors = align_lfw_feat_dIoM;
+
+m = size(Descriptors,2);
+q=max(max(Descriptors))+1;
+lfwlables = align_lfw_name;
 
 M = containers.Map({'abc'},{[]});
 for i=1:length(lfwlables)
@@ -79,7 +109,7 @@ end
 K=[];
 K_label=[];
 for nameidx=1:length(known_unknowns_names)
-   thisuseremplate=known_unknowns(known_unknowns_names{nameidx});
+    thisuseremplate=known_unknowns(known_unknowns_names{nameidx});
     cnt=size(thisuseremplate,1);
     K = [K ;thisuseremplate(2:end,:) ];
     K_label=[K_label repmat(string(known_unknowns_names{nameidx}),1,cnt-1)];
@@ -109,12 +139,12 @@ facenet_probe_label_o3=[S_label K_label U_label];
 
 %label trans to number
 for nameidx=1:length(allnames)
-   facenet_probe_label_c(find(facenet_probe_label_c==string(allnames{nameidx})))=nameidx;
-   facenet_probe_label_o1(find(facenet_probe_label_o1==string(allnames{nameidx})))=nameidx;
-   facenet_probe_label_o2(find(facenet_probe_label_o2==string(allnames{nameidx})))=nameidx;
-   facenet_probe_label_o3(find(facenet_probe_label_o3==string(allnames{nameidx})))=nameidx;
-   facenet_train_label(find(facenet_train_label==string(allnames{nameidx})))=nameidx;
-   facenet_gallery_label(find(facenet_gallery_label==string(allnames{nameidx})))=nameidx;
+    facenet_probe_label_c(find(facenet_probe_label_c==string(allnames{nameidx})))=nameidx;
+    facenet_probe_label_o1(find(facenet_probe_label_o1==string(allnames{nameidx})))=nameidx;
+    facenet_probe_label_o2(find(facenet_probe_label_o2==string(allnames{nameidx})))=nameidx;
+    facenet_probe_label_o3(find(facenet_probe_label_o3==string(allnames{nameidx})))=nameidx;
+    facenet_train_label(find(facenet_train_label==string(allnames{nameidx})))=nameidx;
+    facenet_gallery_label(find(facenet_gallery_label==string(allnames{nameidx})))=nameidx;
 end
 % I also dont want to do so
 
@@ -126,16 +156,16 @@ facenet_train_label = double(facenet_train_label);
 facenet_gallery_label = double(facenet_gallery_label);
 
 
-% 
+%
 % facenet_probe_c
 % facenet_probe_label_c
-% 
+%
 % facenet_probe_o1
 % facenet_probe_label_o1
-% 
+%
 % facenet_probe_o2
 % facenet_probe_label_o2
-% 
+%
 % facenet_probe_o3
 % facenet_probe_label_o3
 
@@ -156,14 +186,14 @@ for i = progress(1:size(facenet_gallery_label,2))
     mixing_facenet_gallery(i,:) = bitxor(gallery_bin,identifiers(facenet_gallery_label(i),:));
 end
 
-%% 
+%%
 correct_ret=0;
 incorrect_ret = 0;
 final_dist = [];
 for i = progress(1:size(facenet_probe_label_c,2))
     query_sample = dec2bin( hash_facenet_probe_c(i,:),q)-'0';
     query_bin =reshape(query_sample',1,numel(gallery_sample));
-
+    
     dist = [];
     for j=1: size(mixing_facenet_gallery,1)
         gallery_bin =  mixing_facenet_gallery(j,:);
@@ -182,7 +212,7 @@ tar_c = correct_ret/size(facenet_probe_label_c,2);%  0.9517 96.90
 
 score_avg_mAP_iom = []; % open-set identification false accept rates of the 10 trials
 for k2=[1:10 20:10:100 200:100:1000]
-   score_avg_mAP_iom = [score_avg_mAP_iom average_precision(final_dist,facenet_gallery_label==facenet_probe_label_c',k2)];
+    score_avg_mAP_iom = [score_avg_mAP_iom average_precision(final_dist,facenet_gallery_label==facenet_probe_label_c',k2)];
 end
 
 
@@ -194,7 +224,7 @@ incorrect_ret = 0;
 for i = progress(1:size(facenet_probe_label_o1,2))
     query_sample = dec2bin( hash_facenet_probe_o1(i,:),q)-'0';
     query_bin =reshape(query_sample',1,numel(gallery_sample));
-
+    
     dist = [];
     for j=1: size(mixing_facenet_gallery,1)
         gallery_bin =  mixing_facenet_gallery(j,:);
@@ -215,7 +245,7 @@ incorrect_ret = 0;
 for i = progress(1:size(facenet_probe_label_o2,2))
     query_sample = dec2bin( hash_facenet_probe_o2(i,:),q)-'0';
     query_bin =reshape(query_sample',1,numel(gallery_sample));
-
+    
     dist = [];
     for j=1: size(mixing_facenet_gallery,1)
         gallery_bin =  mixing_facenet_gallery(j,:);
@@ -236,7 +266,7 @@ incorrect_ret = 0;
 for i = progress(1:size(facenet_probe_label_o3,2))
     query_sample = dec2bin( hash_facenet_probe_o3(i,:),q)-'0';
     query_bin =reshape(query_sample',1,numel(gallery_sample));
-
+    
     dist = [];
     for j=1: size(mixing_facenet_gallery,1)
         gallery_bin =  mixing_facenet_gallery(j,:);
@@ -249,6 +279,6 @@ for i = progress(1:size(facenet_probe_label_o3,2))
     end
 end
 tar_o3 = correct_ret/size(facenet_probe_label_o3,2);
-fprintf('tar_c/tar_o1/tar_o2/tar_o3 %8.5f %8.5f %8.5f %8.5f\n', tar_c,tar_o1,tar_o2,tar_o3) % 注意输出格式前须有%符号，
+fprintf('tar_c/mAP-c 1:5/tar_o1/tar_o2/tar_o3 %8.5f  %8.5f %8.5f %8.5f %8.5f\n', tar_c,score_avg_mAP_iom(1:5),tar_o1,tar_o2,tar_o3) % 注意输出格式前须有%符号，
 
-
+end
