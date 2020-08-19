@@ -40,7 +40,7 @@ load('data/lfw_label.mat')
 Descriptors = align_lfw_feat_dIoM;
 
 %% BLUFR
-[reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'Hamming');
+[reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure','Hamming');
 
 
 %% Voting protocol based on mixing 
