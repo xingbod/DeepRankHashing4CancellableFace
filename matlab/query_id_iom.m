@@ -18,4 +18,4 @@ for i = progress(1:size(facenet_probe_label_c,2))
     end
 end
 
-tar = correct_ret/size(facenet_probe_label_c,2)%  0.9517
+tar = correct_ret/size(facenet_probe_label_c,2)%  0.9517 96.90
