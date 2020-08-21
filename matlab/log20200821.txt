@@ -1,0 +1,3 @@
+tar_c/mAP-c 1:5/tar_o1/tar_o2/tar_o3 111.00000 
+tar_c/mAP-c 1:5/tar_o1/tar_o2/tar_o3 111.00000 
+tar_c/mAP-c 1:5/tar_o1/tar_o2/tar_o3 111.00000 1113.00000 

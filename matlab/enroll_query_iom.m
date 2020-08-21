@@ -7,7 +7,7 @@ addpath('matlab_tools')
 addpath_recurse('BLUFR')
 addpath_recurse('btp')
 
-Descriptor = importdata("../embeddings/"+hashcode_path);
+Descriptor_orig = importdata("../embeddings/"+hashcode_path);
 fid_lfw_name=importdata("../embeddings/" + filename_path);
 lfw_name=[];
 for i=1:size(fid_lfw_name,1)
@@ -27,7 +27,7 @@ for i=1:size(fid_lfw_name,1)
 end
 
 % align_lfw_feat = lfw_feat(my_index,:);
-align_lfw_feat_dIoM = Descriptor(my_index,:);
+align_lfw_feat_dIoM = Descriptor_orig(my_index,:);
 align_lfw_name = lfw_name(my_index);
 
 % save('data/align_lfw_feat.mat','align_lfw_feat')
@@ -148,7 +148,6 @@ for nameidx=1:length(allnames)
     facenet_probe_label_o1(find(facenet_probe_label_o1==string(allnames{nameidx})))=nameidx;
     facenet_probe_label_o2(find(facenet_probe_label_o2==string(allnames{nameidx})))=nameidx;
     facenet_probe_label_o3(find(facenet_probe_label_o3==string(allnames{nameidx})))=nameidx;
-    facenet_train_label(find(facenet_train_label==string(allnames{nameidx})))=nameidx;
     facenet_gallery_label(find(facenet_gallery_label==string(allnames{nameidx})))=nameidx;
 end
 % I also dont want to do so
@@ -157,7 +156,6 @@ facenet_probe_label_c = double(facenet_probe_label_c);
 facenet_probe_label_o1 = double(facenet_probe_label_o1);
 facenet_probe_label_o2 = double(facenet_probe_label_o2);
 facenet_probe_label_o3 = double(facenet_probe_label_o3);
-facenet_train_label = double(facenet_train_label);
 facenet_gallery_label = double(facenet_gallery_label);
 
 
@@ -284,6 +282,8 @@ for i = progress(1:size(facenet_probe_label_o3,2))
     end
 end
 tar_o3 = correct_ret/size(facenet_probe_label_o3,2);
-fprintf('tar_c/mAP-c 1:5/tar_o1/tar_o2/tar_o3 %8.5f  %8.5f %8.5f %8.5f %8.5f\n', tar_c,score_avg_mAP_iom(1:5),tar_o1,tar_o2,tar_o3) % 注意输出格式前须有%符号，
-
+str = fprintf('tar_c/mAP-c 1:5/tar_o1/tar_o2/tar_o3 %8.5f %8.5f %8.5f %8.5f %8.5f\n', tar_c,score_avg_mAP_iom(1:5),tar_o1,tar_o2,tar_o3) % 注意输出格式前须有%符号，
+fid=fopen('log20200821.txt','w');
+fprintf(fid,'tar_c/mAP-c 1:5/tar_o1/tar_o2/tar_o3 %8.5f %8.5f %8.5f %8.5f %8.5f\n', tar_c,score_avg_mAP_iom(1:5),tar_o1,tar_o2,tar_o3) % 注意输出格式前须有%符号，
+fclose(fid);
 end
