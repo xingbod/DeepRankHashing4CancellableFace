@@ -64,7 +64,7 @@ class MaxIndexLinearForeward(tf.keras.layers.Layer):
         # self.units = units
         # self.q = q
         self.units = tf.dtypes.cast(units, tf.int32)
-        self.q = tf.dtypes.cast(self.q, tf.int32)
+        self.q = tf.dtypes.cast(q, tf.int32)
         self.iteratenum = tf.dtypes.cast(units / q, tf.int32)
         self.helpvector = tf.cast(tf.range(0, q, 1) + 1, tf.double)
 
