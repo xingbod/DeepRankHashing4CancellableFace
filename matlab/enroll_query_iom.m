@@ -282,8 +282,8 @@ for i = progress(1:size(facenet_probe_label_o3,2))
     end
 end
 tar_o3 = correct_ret/size(facenet_probe_label_o3,2);
-str = fprintf('tar_c/mAP-c 1:5/tar_o1/tar_o2/tar_o3 %8.5f %8.5f %8.5f %8.5f %8.5f\n', tar_c,score_avg_mAP_iom(1:5),tar_o1,tar_o2,tar_o3) % 注意输出格式前须有%符号，
-fid=fopen('log20200821.txt','w');
-fprintf(fid,'tar_c/mAP-c 1:5/tar_o1/tar_o2/tar_o3 %8.5f %8.5f %8.5f %8.5f %8.5f\n', tar_c,score_avg_mAP_iom(1:5),tar_o1,tar_o2,tar_o3) % 注意输出格式前须有%符号，
+str = fprintf('tar_c/mAP-c 1:5/tar_o1/tar_o2/tar_o3 %8.5f %8.5f %8.5f %8.5f %8.5f \n', tar_c,score_avg_mAP_iom(1:5),tar_o1,tar_o2,tar_o3) % 注意输出格式前须有%符号，
+fid=fopen('log20200821.txt','a');
+fprintf(fid,'tar_c/mAP-c 1:5/tar_o1/tar_o2/tar_o3 %8.5f %8.5f %8.5f %8.5f %8.5f \n', tar_c,score_avg_mAP_iom(1:5),tar_o1,tar_o2,tar_o3) % 注意输出格式前须有%符号，
 fclose(fid);
 end
