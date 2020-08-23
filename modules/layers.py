@@ -22,6 +22,9 @@ class ArcMarginPenaltyLogists(tf.keras.layers.Layer):
         self.margin = margin
         self.logist_scale = logist_scale
 
+    def get_config(self):
+        return {'num_classes': self.num_classes, 'margin': self.margin, 'logist_scale': self.logist_scale}
+
     def build(self, input_shape):
         self.w = self.add_variable(
             "weights", shape=[int(input_shape[-1]), self.num_classes])
@@ -59,6 +62,9 @@ class MaxIndexLinearForeward(tf.keras.layers.Layer):
         self.iteratenum = tf.dtypes.cast(units / self.q, tf.int32)
         self.helpvector = tf.cast(tf.range(0, self.q, 1) + 1, tf.double)
 
+    def get_config(self):
+        return {'units': self.units, 'q': self.q, 'iteratenum': self.iteratenum, 'helpvector': self.helpvector}
+
     def call(self, inputs):
         myvar = []
         for i in range(0, self.iteratenum.numpy()):  # q=4
@@ -82,6 +88,8 @@ class MaxIndexLinearTraining(tf.keras.layers.Layer):
     self.helpvector =  tf.cast( tf.range(0, self.q , 1) ,tf.double) # + 1 removed 20200708 xingbo
     self.T = T# default is 1, while can try T<< 1, to spike the distribution
 
+  def get_config(self):
+      return {'units': self.units, 'q': self.q, 'iteratenum': self.iteratenum, 'helpvector': self.helpvector, 'T': self.T }
 
   def call(self, inputs):
     myvar=[]
@@ -111,3 +119,6 @@ class PermLayer(tf.keras.layers.Layer):
 
     def call(self, inputs):
         return tf.matmul(inputs,self.permKey)
+
+    def get_config(self):
+        return {'permKey': self.permKey}
