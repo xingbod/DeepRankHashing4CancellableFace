@@ -63,7 +63,7 @@ class MaxIndexLinearForeward(tf.keras.layers.Layer):
         super(MaxIndexLinearForeward, self).__init__()
         self.units = units
         self.q = q
-        self.iteratenum = tf.dtypes.cast(units / self.q, tf.int32)
+        self.iteratenum = int(units / self.q)
         self.helpvector = tf.cast(tf.range(0, self.q, 1) + 1, tf.double)
 
     def get_config(self):
@@ -73,7 +73,7 @@ class MaxIndexLinearForeward(tf.keras.layers.Layer):
 
     def call(self, inputs):
         myvar = []
-        for i in range(0, self.iteratenum.numpy()):  # q=4
+        for i in range(0, self.iteratenum):  # q=4
             my_variable1 = inputs[:, i * self.q:(i + 1) * self.q]
             # print('[******]',my_variable1.shape)
             # print('[******]',i,my_variable1)
