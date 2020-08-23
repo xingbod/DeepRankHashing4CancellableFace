@@ -61,10 +61,12 @@ class MaxIndexLinearForeward(tf.keras.layers.Layer):
 
     def __init__(self, units=32, q=4):
         super(MaxIndexLinearForeward, self).__init__()
-        self.units = units
-        self.q = q
-        self.iteratenum = tf.dtypes.cast(units / self.q, tf.int32)
-        self.helpvector = tf.cast(tf.range(0, self.q, 1) + 1, tf.double)
+        # self.units = units
+        # self.q = q
+        self.units = tf.dtypes.cast(units, tf.int32)
+        self.q = tf.dtypes.cast(self.q, tf.int32)
+        self.iteratenum = tf.dtypes.cast(units / q, tf.int32)
+        self.helpvector = tf.cast(tf.range(0, q, 1) + 1, tf.double)
 
     def get_config(self):
         config = super(MaxIndexLinearForeward, self).get_config()
