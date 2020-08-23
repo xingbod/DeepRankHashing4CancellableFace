@@ -12,7 +12,9 @@ class BatchNormalization(tf.keras.layers.BatchNormalization):
             training = tf.constant(False)
         training = tf.logical_and(training, self.trainable)
         return super().call(x, training)
-
+    def get_config(self):
+        config = super(BatchNormalization, self).get_config()
+        return config
 
 class ArcMarginPenaltyLogists(tf.keras.layers.Layer):
     """ArcMarginPenaltyLogists"""
@@ -23,7 +25,9 @@ class ArcMarginPenaltyLogists(tf.keras.layers.Layer):
         self.logist_scale = logist_scale
 
     def get_config(self):
-        return {'num_classes': self.num_classes, 'margin': self.margin, 'logist_scale': self.logist_scale}
+        config = super(ArcMarginPenaltyLogists, self).get_config()
+        config.update({'num_classes': self.num_classes, 'margin': self.margin, 'logist_scale': self.logist_scale})
+        return config
 
     def build(self, input_shape):
         self.w = self.add_variable(
@@ -63,7 +67,9 @@ class MaxIndexLinearForeward(tf.keras.layers.Layer):
         self.helpvector = tf.cast(tf.range(0, self.q, 1) + 1, tf.double)
 
     def get_config(self):
-        return {'units': self.units, 'q': self.q, 'iteratenum': self.iteratenum, 'helpvector': self.helpvector}
+        config = super(MaxIndexLinearForeward, self).get_config()
+        config.update({'units': self.units, 'q': self.q, 'iteratenum': self.iteratenum, 'helpvector': self.helpvector})
+        return config
 
     def call(self, inputs):
         myvar = []
@@ -89,7 +95,9 @@ class MaxIndexLinearTraining(tf.keras.layers.Layer):
     self.T = T# default is 1, while can try T<< 1, to spike the distribution
 
   def get_config(self):
-      return {'units': self.units, 'q': self.q, 'iteratenum': self.iteratenum, 'helpvector': self.helpvector, 'T': self.T }
+      config = super(MaxIndexLinearTraining, self).get_config()
+      config.update({'units': self.units, 'q': self.q, 'iteratenum': self.iteratenum, 'helpvector': self.helpvector, 'T': self.T })
+      return config
 
   def call(self, inputs):
     myvar=[]
@@ -121,4 +129,6 @@ class PermLayer(tf.keras.layers.Layer):
         return tf.matmul(inputs,self.permKey)
 
     def get_config(self):
-        return {'permKey': self.permKey}
+        config = super(PermLayer, self).get_config()
+        config.update({'permKey': self.permKey})
+        return config
