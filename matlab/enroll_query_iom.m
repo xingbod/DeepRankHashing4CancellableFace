@@ -40,7 +40,7 @@ load('data/lfw_label.mat')
 Descriptors = align_lfw_feat_dIoM;
 
 %% BLUFR
-[reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure','Hamming');
+% [reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure','Hamming');
 
 
 %% Voting protocol based on mixing
@@ -231,7 +231,7 @@ end
 tar_c = correct_ret/size(facenet_probe_label_c,2);%  0.9517 96.90
 
 % Evaluate the verification performance.
-[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(final_dist, facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
+[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-final_dist', facenet_gallery_label, facenet_probe_label_c(1:153), veriFarPoints);
 
 % CMC close set
 match_similarity =1-final_dist;
@@ -269,7 +269,7 @@ end
 tar_o1 = correct_ret/size(facenet_probe_label_o1,2);
 
 % Evaluate the open-set identification performance.
-[iom_DIR(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(1-final_dist_o1, facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
+[iom_DIR(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(1-final_dist_o1', facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
 
 
 correct_ret=0;
@@ -296,7 +296,7 @@ end
 tar_o2 = correct_ret/size(facenet_probe_label_o2,2);
 
 
-[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist_o2, facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
+[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist_o2', facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
 
 correct_ret=0;
 incorrect_ret = 0;
@@ -319,7 +319,7 @@ for i = progress(1:size(facenet_probe_label_o3,2))
     end
 end
 tar_o3 = correct_ret/size(facenet_probe_label_o3,2);
-[iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(final_dist_o3, facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
+[iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-final_dist_o3', facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
 
 
 save('data/iom_veriFAR.mat','iom_veriFAR');
