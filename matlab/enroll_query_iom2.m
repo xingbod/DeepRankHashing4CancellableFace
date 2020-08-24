@@ -40,7 +40,7 @@ load('data/lfw_label.mat')
 Descriptors = align_lfw_feat_dIoM;
 
 %% BLUFR
-% [reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure','Hamming');
+[reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure','Hamming');
 
 
 %% Voting protocol based on mixing
@@ -284,7 +284,15 @@ save('data/'+hashcode_path+'_iom_rec_rates.mat','iom_rec_rates');
 save('data/'+hashcode_path+'_iom_osiFAR.mat','iom_osiFAR');
 save('data/'+hashcode_path+'_iom_DIR.mat','iom_DIR');
 
-perf = [iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR([11 20],:,1) * 100 iom_DIR([11 20],:,2) * 100 iom_DIR([11 20],:,3) * 100 ]
+%% Display the benchmark performance and output to the log file.
+% str = sprintf('Verification:\n');
+% str = sprintf('%s\t@ FAR = %g%%: VR = %.2f%%.\n', str, reportVeriFar*100, reportVR);
+% 
+% str = sprintf('%sOpen-set Identification:\n', str);
+% str = sprintf('%s\t@ Rank = %d, FAR = %g%%: DIR = %.2f%%.\n\n', str, reportRank, reportOsiFar*100, reportDIR);
+% 
+
+perf = [reportVR reportDIR iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR([11 20],:,1) * 100 iom_DIR([11 20],:,2) * 100 iom_DIR([11 20],:,3) * 100 ]
 fid=fopen('log20200821.txt','a');
 fwrite(fid,hashcode_path+" ");
 fclose(fid)
