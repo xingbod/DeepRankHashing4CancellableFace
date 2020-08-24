@@ -231,7 +231,7 @@ end
 tar_c = correct_ret/size(facenet_probe_label_c,2);%  0.9517 96.90
 
 % Evaluate the verification performance.
-[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-final_dist', facenet_gallery_label, facenet_probe_label_c(1:153), veriFarPoints);
+[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-final_dist', facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
 
 % CMC close set
 match_similarity =1-final_dist;
