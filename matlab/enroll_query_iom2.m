@@ -277,12 +277,12 @@ end
 [iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-final_dist_o3', facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
 
 
-save('data/'+hashcode_path+'_iom_veriFAR.mat','iom_veriFAR');
-save('data/'+hashcode_path+'_iom_max_rank.mat','iom_max_rank');
-save('data/'+hashcode_path+'_iom_VR.mat','iom_VR');
-save('data/'+hashcode_path+'_iom_rec_rates.mat','iom_rec_rates');
-save('data/'+hashcode_path+'_iom_osiFAR.mat','iom_osiFAR');
-save('data/'+hashcode_path+'_iom_DIR.mat','iom_DIR');
+save("data/"+hashcode_path+"_iom_veriFAR.mat","iom_veriFAR");
+save("data/"+hashcode_path+"_iom_max_rank.mat","iom_max_rank");
+save("data/"+hashcode_path+"_iom_VR.mat","iom_VR");
+save("data/"+hashcode_path+"_iom_rec_rates.mat","iom_rec_rates");
+save("data/"+hashcode_path+"_iom_osiFAR.mat","iom_osiFAR");
+save("data/"+hashcode_path+"_iom_DIR.mat","iom_DIR");
 
 %% Display the benchmark performance and output to the log file.
 % str = sprintf('Verification:\n');
