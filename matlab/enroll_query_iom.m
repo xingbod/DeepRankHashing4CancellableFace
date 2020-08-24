@@ -43,7 +43,7 @@ Descriptors = align_lfw_feat_dIoM;
 [reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure','Hamming');
 
 
-%% Voting protocol based on mixing 
+%% Voting protocol based on mixing
 m = size(Descriptors,2);
 q=max(max(Descriptors))+1;
 
@@ -190,6 +190,24 @@ for i = progress(1:size(facenet_gallery_label,2))
 end
 
 %%
+
+veriFarPoints = [0, kron(10.^(-8:-1), 1:9), 1]; % FAR points for face verification ROC plot
+osiFarPoints = [0, kron(10.^(-4:-1), 1:9), 1]; % FAR points for open-set face identification ROC plot
+rankPoints = [1:10, 20:10:100]; % rank points for open-set face identification CMC plot
+reportVeriFar = 0.001; % the FAR point for verification performance reporting
+reportOsiFar = 0.01; % the FAR point for open-set identification performance reporting
+reportRank = 1; % the rank point for open-set identification performance reporting
+
+numTrials = 1;
+numVeriFarPoints = length(veriFarPoints);
+iom_VR = zeros(numTrials, numVeriFarPoints); % verification rates of the 10 trials
+iom_veriFAR = zeros(numTrials, numVeriFarPoints); % verification false accept rates of the 10 trials
+
+numOsiFarPoints = length(osiFarPoints);
+numRanks = length(rankPoints);
+iom_DIR = zeros(numRanks, numOsiFarPoints, numTrials); % detection and identification rates of the 10 trials
+iom_osiFAR = zeros(numTrials, numOsiFarPoints); % open-set identification false accept rates of the 10 trials
+
 correct_ret=0;
 incorrect_ret = 0;
 final_dist = [];
@@ -212,6 +230,13 @@ end
 
 tar_c = correct_ret/size(facenet_probe_label_c,2);%  0.9517 96.90
 
+% Evaluate the verification performance.
+[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(final_dist, facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
+
+% CMC close set
+match_similarity =1-final_dist;
+[iom_max_rank,iom_rec_rates] = CMC(match_similarity,facenet_probe_label_c,facenet_gallery_label);
+
 
 score_avg_mAP_iom = []; % open-set identification false accept rates of the 10 trials
 for k2=[1:10 20:10:100 200:100:1000]
@@ -223,6 +248,7 @@ fprintf('avg_mAP_iom %8.5f\n', score_avg_mAP_iom(5)) % 注意输出格式前须有%符号，
 
 correct_ret=0;
 incorrect_ret = 0;
+final_dist_o1 = [];
 
 for i = progress(1:size(facenet_probe_label_o1,2))
     query_sample = dec2bin( hash_facenet_probe_o1(i,:),q)-'0';
@@ -234,6 +260,7 @@ for i = progress(1:size(facenet_probe_label_o1,2))
         retrieved_id = bitxor(gallery_bin,query_bin);
         dist = [dist pdist2(retrieved_id,identifiers(facenet_gallery_label(j),:),'Hamming')];
     end
+    final_dist_o1 = [final_dist_o1 ; dist];
     [row column]=find(dist==min(dist(:)));
     if mode(facenet_gallery_label(column)) == facenet_probe_label_o1(i)
         correct_ret = correct_ret+1;
@@ -241,9 +268,13 @@ for i = progress(1:size(facenet_probe_label_o1,2))
 end
 tar_o1 = correct_ret/size(facenet_probe_label_o1,2);
 
+% Evaluate the open-set identification performance.
+[iom_DIR(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(1-final_dist_o1, facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
+
 
 correct_ret=0;
 incorrect_ret = 0;
+final_dist_o2 = [];
 
 for i = progress(1:size(facenet_probe_label_o2,2))
     query_sample = dec2bin( hash_facenet_probe_o2(i,:),q)-'0';
@@ -255,6 +286,8 @@ for i = progress(1:size(facenet_probe_label_o2,2))
         retrieved_id = bitxor(gallery_bin,query_bin);
         dist = [dist pdist2(retrieved_id,identifiers(facenet_gallery_label(j),:),'Hamming')];
     end
+    final_dist_o2 = [final_dist_o2 ; dist];
+    
     [row column]=find(dist==min(dist(:)));
     if mode(facenet_gallery_label(column)) == facenet_probe_label_o2(i)
         correct_ret = correct_ret+1;
@@ -263,8 +296,11 @@ end
 tar_o2 = correct_ret/size(facenet_probe_label_o2,2);
 
 
+[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist_o2, facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
+
 correct_ret=0;
 incorrect_ret = 0;
+final_dist_o3 = [];
 
 for i = progress(1:size(facenet_probe_label_o3,2))
     query_sample = dec2bin( hash_facenet_probe_o3(i,:),q)-'0';
@@ -276,12 +312,23 @@ for i = progress(1:size(facenet_probe_label_o3,2))
         retrieved_id = bitxor(gallery_bin,query_bin);
         dist = [dist pdist2(retrieved_id,identifiers(facenet_gallery_label(j),:),'Hamming')];
     end
+    final_dist_o3 = [final_dist_o3 ; dist];
     [row column]=find(dist==min(dist(:)));
     if mode(facenet_gallery_label(column)) == facenet_probe_label_o3(i)
         correct_ret = correct_ret+1;
     end
 end
 tar_o3 = correct_ret/size(facenet_probe_label_o3,2);
+[iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(final_dist_o3, facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
+
+
+save('data/iom_veriFAR.mat','iom_veriFAR');
+save('data/iom_max_rank.mat','iom_max_rank');
+save('data/iom_VR.mat','iom_VR');
+save('data/iom_rec_rates.mat','iom_rec_rates');
+save('data/iom_osiFAR.mat','iom_osiFAR');
+save('data/iom_DIR.mat','iom_DIR');
+
 str = fprintf('tar_c/mAP-c 1:5/tar_o1/tar_o2/tar_o3 %8.5f %8.5f %8.5f %8.5f %8.5f \n', tar_c,score_avg_mAP_iom(1:5),tar_o1,tar_o2,tar_o3) % 注意输出格式前须有%符号，
 fid=fopen('log20200821.txt','a');
 fprintf(fid,'tar_c/mAP-c 1:5/tar_o1/tar_o2/tar_o3 %8.5f %8.5f %8.5f %8.5f %8.5f \n', tar_c,score_avg_mAP_iom(1:5),tar_o1,tar_o2,tar_o3) % 注意输出格式前须有%符号，
