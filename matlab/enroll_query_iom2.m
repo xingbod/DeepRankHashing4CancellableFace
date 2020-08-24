@@ -233,85 +233,60 @@ end
 
 fprintf('avg_mAP_iom %8.5f\n', score_avg_mAP_iom(5)) % 注意输出格式前须有%符号，
 
-correct_ret=0;
-incorrect_ret = 0;
-final_dist_o1 = [];
-
+final_dist_o1 = zeros(size(facenet_probe_label_o1,2),size(mixing_facenet_gallery,1));
 for i = progress(1:size(facenet_probe_label_o1,2))
 
-    dist = [];
+    dist =  zeros(1,size(mixing_facenet_gallery,1));
     for j=1: size(mixing_facenet_gallery,1)
         gallery_bin =  mixing_facenet_gallery(j,:);
         retrieved_id = bitxor(gallery_bin,hash_facenet_probe_o1(i,:));
-        dist = [dist pdist2(retrieved_id,identifiers(facenet_gallery_label(j),:),'Hamming')];
+        dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
     end
-    final_dist_o1 = [final_dist_o1 ; dist];
-    [row column]=find(dist==min(dist(:)));
-    if mode(facenet_gallery_label(column)) == facenet_probe_label_o1(i)
-        correct_ret = correct_ret+1;
-    end
+    final_dist_o1(i,:) = dist;
 end
-tar_o1 = correct_ret/size(facenet_probe_label_o1,2);
 
 % Evaluate the open-set identification performance.
 [iom_DIR(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(1-final_dist_o1', facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
 
 
-correct_ret=0;
-incorrect_ret = 0;
-final_dist_o2 = [];
-
+final_dist_o2 = zeros(size(facenet_probe_label_o2,2),size(mixing_facenet_gallery,1));
 for i = progress(1:size(facenet_probe_label_o2,2))
 
-    dist = [];
+    dist =  zeros(1,size(mixing_facenet_gallery,1));
     for j=1: size(mixing_facenet_gallery,1)
         gallery_bin =  mixing_facenet_gallery(j,:);
-        retrieved_id = bitxor(gallery_bin, hash_facenet_probe_o2(i,:));
-        dist = [dist pdist2(retrieved_id,identifiers(facenet_gallery_label(j),:),'Hamming')];
+        retrieved_id = bitxor(gallery_bin,hash_facenet_probe_o2(i,:));
+        dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
     end
-    final_dist_o2 = [final_dist_o2 ; dist];
-    
-    [row column]=find(dist==min(dist(:)));
-    if mode(facenet_gallery_label(column)) == facenet_probe_label_o2(i)
-        correct_ret = correct_ret+1;
-    end
+    final_dist_o2(i,:) = dist;
 end
-tar_o2 = correct_ret/size(facenet_probe_label_o2,2);
-
 
 [iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist_o2', facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
 
-correct_ret=0;
-incorrect_ret = 0;
-final_dist_o3 = [];
-
+final_dist_o3 = zeros(size(facenet_probe_label_o3,2),size(mixing_facenet_gallery,1));
 for i = progress(1:size(facenet_probe_label_o3,2))
-
-    dist = [];
+    dist =  zeros(1,size(mixing_facenet_gallery,1));
     for j=1: size(mixing_facenet_gallery,1)
         gallery_bin =  mixing_facenet_gallery(j,:);
-        retrieved_id = bitxor(gallery_bin, hash_facenet_probe_o3(i,:));
-        dist = [dist pdist2(retrieved_id,identifiers(facenet_gallery_label(j),:),'Hamming')];
+        retrieved_id = bitxor(gallery_bin,hash_facenet_probe_o3(i,:));
+        dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
     end
-    final_dist_o3 = [final_dist_o3 ; dist];
-    [row column]=find(dist==min(dist(:)));
-    if mode(facenet_gallery_label(column)) == facenet_probe_label_o3(i)
-        correct_ret = correct_ret+1;
-    end
+    final_dist_o3(i,:) = dist;
 end
-tar_o3 = correct_ret/size(facenet_probe_label_o3,2);
+
 [iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-final_dist_o3', facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
 
 
-save('data/iom_veriFAR.mat','iom_veriFAR');
-save('data/iom_max_rank.mat','iom_max_rank');
-save('data/iom_VR.mat','iom_VR');
-save('data/iom_rec_rates.mat','iom_rec_rates');
-save('data/iom_osiFAR.mat','iom_osiFAR');
-save('data/iom_DIR.mat','iom_DIR');
+save('data/'+hashcode_path+'_iom_veriFAR.mat','iom_veriFAR');
+save('data/'+hashcode_path+'_iom_max_rank.mat','iom_max_rank');
+save('data/'+hashcode_path+'_iom_VR.mat','iom_VR');
+save('data/'+hashcode_path+'_iom_rec_rates.mat','iom_rec_rates');
+save('data/'+hashcode_path+'_iom_osiFAR.mat','iom_osiFAR');
+save('data/'+hashcode_path+'_iom_DIR.mat','iom_DIR');
 
-str = fprintf('tar_c/mAP-c 1:5/tar_o1/tar_o2/tar_o3 %8.5f %8.5f %8.5f %8.5f %8.5f \n', tar_c,score_avg_mAP_iom(1:5),tar_o1,tar_o2,tar_o3) % 注意输出格式前须有%符号，
+perf = [iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR([11 20],:,1) * 100 iom_DIR([11 20],:,2) * 100 iom_DIR([11 20],:,3) * 100 ]
 fid=fopen('log20200821.txt','a');
-fprintf(fid,'tar_c/mAP-c 1:5/tar_o1/tar_o2/tar_o3 %8.5f %8.5f %8.5f %8.5f %8.5f \n', tar_c,score_avg_mAP_iom(1:5),tar_o1,tar_o2,tar_o3) % 注意输出格式前须有%符号，
-fclose(fid);
+fwrite(fid,hashcode_path+" ");
+fclose(fid)
+dlmwrite('log20200821.txt', perf, '-append');
 end
