@@ -288,5 +288,5 @@ perf = [iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR([11 20],:,1) * 1
 fid=fopen('log20200821.txt','a');
 fwrite(fid,hashcode_path+" ");
 fclose(fid)
-dlmwrite('og20200821.txt', perf, '-append');
+dlmwrite('log20200821.txt', perf, '-append');
 end
