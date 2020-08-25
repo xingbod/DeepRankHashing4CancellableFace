@@ -127,7 +127,7 @@ for q in [2, 4, 8, 16]:
     model.summary(line_length=80)
     cfg['embd_shape'] = m * q
 
-    dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled/', BATCH_SIZE=128)
+    dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled/', BATCH_SIZE=128,img_ext='jpg')
     feats, names, n = extractFeat(dataset, model, m)
     with open('embeddings/' + cfg['backbone_type'] + '_VGG2_feat_dIoM_' + str(cfg['m']) + 'x' + str(cfg['q']) + '.csv',
               'w') as f:
