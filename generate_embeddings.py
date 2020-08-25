@@ -94,25 +94,25 @@ def extractFeat(dataset, model, feature_dim):
 
     return feats, names, n
 
-for q in [2, 4, 8, 16]:
-    m = cfg['m'] = 512
-    q = cfg['q'] = q
-    cfg['hidden_layer_remark'] = '1'
-    # here I add the extra IoM layer and head
-    if cfg['hidden_layer_remark'] == '1':
-        model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                       arcmodel=arcmodel, training=False,
-                                       permKey=permKey, cfg=cfg)
-    model.summary(line_length=80)
-    cfg['embd_shape'] = m * q
-
-    dataset = load_data_from_dir('./data/lfw_mtcnnpy_160', BATCH_SIZE=128)
-    feats, names, n = extractFeat(dataset, model, m)
-    with open('embeddings/' + cfg['backbone_type'] + '_lfw_feat_dIoM_' + str(cfg['m']) + 'x' + str(cfg['q']) + '.csv',
-              'w') as f:
-        # using csv.writer method from CSV package
-        write = csv.writer(f)
-        write.writerows(feats)
+# for q in [2, 4, 8, 16]:
+#     m = cfg['m'] = 512
+#     q = cfg['q'] = q
+#     cfg['hidden_layer_remark'] = '1'
+#     # here I add the extra IoM layer and head
+#     if cfg['hidden_layer_remark'] == '1':
+#         model = IoMFaceModelFromArFace(size=cfg['input_size'],
+#                                        arcmodel=arcmodel, training=False,
+#                                        permKey=permKey, cfg=cfg)
+#     model.summary(line_length=80)
+#     cfg['embd_shape'] = m * q
+#
+#     dataset = load_data_from_dir('./data/lfw_mtcnnpy_160', BATCH_SIZE=128)
+#     feats, names, n = extractFeat(dataset, model, m)
+#     with open('embeddings/' + cfg['backbone_type'] + '_lfw_feat_dIoM_' + str(cfg['m']) + 'x' + str(cfg['q']) + '.csv',
+#               'w') as f:
+#         # using csv.writer method from CSV package
+#         write = csv.writer(f)
+#         write.writerows(feats)
 
 for q in [2, 4, 8, 16]:
     m = cfg['m'] = 512
