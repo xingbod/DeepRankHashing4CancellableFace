@@ -97,7 +97,7 @@ def extractFeat(dataset, model, feature_dim):
 for q in [2, 4, 8, 16]:
     m = cfg['m'] = 512
     q = cfg['q'] = q
-    cfg['hidden_layer_remark'] = 1
+    cfg['hidden_layer_remark'] = '1'
     # here I add the extra IoM layer and head
     if cfg['hidden_layer_remark'] == '1':
         model = IoMFaceModelFromArFace(size=cfg['input_size'],
@@ -117,7 +117,7 @@ for q in [2, 4, 8, 16]:
 for q in [2, 4, 8, 16]:
     m = cfg['m'] = 512
     q = cfg['q'] = q
-    cfg['hidden_layer_remark'] = 1
+    cfg['hidden_layer_remark'] = '1'
     # here I add the extra IoM layer and head
     if cfg['hidden_layer_remark'] == '1':
         model = IoMFaceModelFromArFace(size=cfg['input_size'],
