@@ -1,0 +1,21 @@
+enroll_query_iom 'lresnet100e_ir_lfw_feat_dIoM_512x8.csv'  'lresnet100e_ir_lfw_name.txt'
+
+enroll_query_iom 'ResNet50_lfw_feat_dIoM_512x2.csv'  'ResNet50_lfw_name.txt'
+
+enroll_query_iom 'InceptionResNetV2_lfw_feat_dIoM_512x2.csv'  'ResNet50_lfw_name.txt'
+
+enroll_query_iom 'InceptionV3_lfw_feat_dIoM_512x2.csv'  'ResNet50_lfw_name.txt'
+
+enroll_query_iom 'Xception_lfw_feat_dIoM_512x2.csv'  'Xception_lfw_name.txt'
+
+enroll_query_iom 'learning_iom_ResNet50_lfw_feat.csv'  'learning_iom_ResNet50_lfw_name.txt'
+
+enroll_query_iom 'ResNet50_lfw_feat_dIoM_512x8.csv'  'ResNet50_lfw_name.txt'
+
+enroll_query_iom 'learning_iom_ResNet50_lfw_feat_512x2.csv'  'learning_iom_ResNet50_lfw_name.txt'
+
+enroll_query_iom 'learning_iom_ResNet50_lfw_feat_64x8.csv'  'learning_iom_ResNet50_lfw_name_64x8.txt'
+
+enroll_query_iom 'ResNet50_lfw_feat_dIoM_64x8.csv'  'ResNet50_lfw_name.txt'
+
+enroll_query_iom 'allloss_learning_iom_ResNet50_lfw_feat_512x2.csv'  'allloss_learning_iom_ResNet50_lfw_name_512x2.txt'

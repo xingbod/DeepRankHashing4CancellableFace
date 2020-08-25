@@ -115,40 +115,6 @@ def extractFeat(dataset, model, feature_dim):
 #         write.writerows(feats)
 
 
-import os
-import random
-import shutil
-import tqdm
-
-def cpfile_rand(img, outfile, num):
-    list_ = os.listdir(img)
-    if num > len(list_):
-        print('输出数量必须小于：', len(list_))
-        exit()
-    numlist = random.sample(range(0,len(list_)),num) # 生成随机数列表a
-    cnt = 0
-    for n in numlist:
-        filename = list_[n]
-        oldpath = os.path.join(img, filename)
-        newpath = os.path.join(outfile, filename)
-        shutil.copy(oldpath, newpath)
-#         print('剩余文件：', num-cnt)
-        cnt = cnt + 1
-#     print('==========task OK!==========')
-def check_folder(dir_name):
-    if not os.path.exists(dir_name):
-        os.makedirs(dir_name)
-    return dir_name
-
-root_dir='/media/Storage/facedata/vgg_mtcnnpy_160/'
-save_dir='/media/Storage/facedata/vgg_mtcnnpy_160_shuffled/'
-list_root = os.listdir(root_dir)
-for person in tqdm.tqdm(list_root):
-    dir_person = root_dir + person
-    dest_dir = save_dir + person
-    check_folder(dest_dir)
-    cpfile_rand(dir_person, dest_dir, 50)
-
 for q in [2, 4, 8, 16]:
     m = cfg['m'] = 512
     q = cfg['q'] = q
