@@ -131,6 +131,7 @@ for q in [2, 4, 8, 16]:
     with open('embeddings/' + cfg['backbone_type'] + '_VGG2_feat_dIoM_' + str(cfg['m']) + 'x' + str(cfg['q']) + '.csv',
               'w') as f:
         # using csv.writer method from CSV package
+        print('embeddings/' + cfg['backbone_type'] + '_VGG2_feat_dIoM_' + str(cfg['m']) + 'x' + str(cfg['q']) + '.csv')
         write = csv.writer(f)
         write.writerows(feats)
     with open('embeddings/' + cfg['backbone_type'] + '_VGG2_name_' + str(cfg['m']) + 'x' + str(
