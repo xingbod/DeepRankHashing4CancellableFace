@@ -1,9 +1,9 @@
-function [ final_dist ] = re_ranking( feat, M, W, query_num, k1, k2, lambda)
+function [ final_dist ] = re_ranking( feat, M, W, query_num, k1, k2, lambda,measure)
 % k-reciprocal re-ranking
 
 %% initial ranking list
 % original_dist = MahDist(M, feat' * W, feat' * W);
-original_dist = pdist2(feat' * W, feat' * W);
+original_dist = pdist2(feat' * W, feat' * W,measure);
 [~, initial_rank] = sort(original_dist, 2, 'ascend');
 gallery_num = size(original_dist,2);
 %% compute k-reciprocal feature

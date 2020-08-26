@@ -1,5 +1,9 @@
-function [ final_dist ] = re_ranking2( original_dist, query_num, k1, k2, lambda)
+function [ final_dist ] = re_ranking2( original_dist, k1, k2, lambda)
+% k-reciprocal re-ranking
 
+%% initial ranking list
+% original_dist = MahDist(M, feat' * W, feat' * W);
+% original_dist = pdist2(feat' * W, feat' * W,measure);
 [~, initial_rank] = sort(original_dist, 2, 'ascend');
 gallery_num = size(original_dist,2);
 %% compute k-reciprocal feature
@@ -47,21 +51,21 @@ for i = 1:gallery_num
     invIndex{i} = find(V(:, i) ~=0);
 end
 
-
 jaccard_dist = zeros(size(original_dist), 'single');
-
+query_num = size(original_dist,1);
 for i = 1:query_num 
     temp_min = zeros(1, gallery_num, 'single');
     indNonZero = find( V( i, : ) ~= 0 );
     indImages = invIndex( indNonZero );
     for j = 1 : length( indNonZero )
-        temp_min( 1, indImages{j} ) = temp_min( 1, indImages{j} )...
-            + single( min( V(i, indNonZero(j)), V(indImages{j}, indNonZero(j)) ) )';
+        filtered_indx = indImages{j}(indImages{j}<=1830);
+        temp_min( 1, filtered_indx) = temp_min( 1, filtered_indx)...
+            + single( min( V(i, indNonZero(j)), V(filtered_indx, indNonZero(j)) ) )';
     end
     jaccard_dist(i, :) = bsxfun(@minus, 1, temp_min./(2 - temp_min)); 
 end
 
 final_dist = jaccard_dist*(1-lambda) + original_dist*lambda;
-final_dist = final_dist(1:query_num,query_num+1:end)';
+% final_dist = final_dist(1:query_num,query_num+1:end)';
 
 end

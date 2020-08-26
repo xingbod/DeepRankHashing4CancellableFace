@@ -1,4 +1,4 @@
-function enroll_query_iom2(hashcode_path,filename_path)
+function enroll_query_orig(feat_path,filename_path)
 % hashcode_path e.g. res50_lfw_feat_dIoM_512x2.csv
 % filename_path e.g. lresnet100e_ir_lfw_name.txt
 % e.g. enroll_query_iom lresnet100e_ir_lfw_feat_dIoM_512x2.csv  lresnet100e_ir_lfw_name.txt
@@ -12,10 +12,10 @@ addpath('k_reciprocal_re_ranking')
 k1 = 20;
 k2 = 6;
 lambda = 0.3;
-measure = 'Hamming';
+measure = 'Euclidean';
 %%
 
-Descriptor_orig = importdata("../embeddings/"+hashcode_path);
+Descriptor_orig = importdata("../embeddings/"+feat_path);
 fid_lfw_name=importdata("../embeddings/" + filename_path);
 lfw_name=[];
 for i=1:size(fid_lfw_name,1)
@@ -186,14 +186,6 @@ hash_facenet_probe_o1=facenet_probe_o1;
 hash_facenet_probe_o2=facenet_probe_o2;
 hash_facenet_probe_o3=facenet_probe_o3;
 hash_facenet_gallery=facenet_gallery;
-%%%% generate identifier, dimension same to hash code
-[identifiers ] = generate_identifier2(m,q,6000);
-%%% mixing gallery
-mixing_facenet_gallery = [];
-for i = progress(1:size(facenet_gallery_label,2))
-    mixing_facenet_gallery(i,:) = bitxor(hash_facenet_gallery(i,:),identifiers(facenet_gallery_label(i),:));
-end
-
 %%
 
 veriFarPoints = [0, kron(10.^(-8:-1), 1:9), 1]; % FAR points for face verification ROC plot
@@ -213,23 +205,7 @@ numRanks = length(rankPoints);
 iom_DIR = zeros(numRanks, numOsiFarPoints, numTrials); % detection and identification rates of the 10 trials
 iom_osiFAR = zeros(numTrials, numOsiFarPoints); % open-set identification false accept rates of the 10 trials
 
-final_dist = zeros(size(facenet_probe_label_c,2),size(mixing_facenet_gallery,1));
-for i = progress(1:size(facenet_probe_label_c,2))
-    dist = zeros(1,size(mixing_facenet_gallery,1));
-    for j=1: size(mixing_facenet_gallery,1)
-        gallery_bin =  mixing_facenet_gallery(j,:);
-        retrieved_id = bitxor(gallery_bin,hash_facenet_probe_c(i,:));
-        dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
-    end
-    final_dist(i,:) = dist;
-
-end
-
-% Evaluate the verification performance.
-[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-final_dist', facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
-
 % CMC close set
-
 probFea = hash_facenet_probe_c';
 galFea = hash_facenet_gallery';
 cam_gallery = [];
@@ -237,12 +213,19 @@ cam_query = [];
 label_gallery = facenet_gallery_label;
 label_query = facenet_probe_label_c;
 %% Euclidean
+
+% Compute the cosine similarity score between the test samples.
+facenet_score_c =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_c,  measure));
+facenet_score_o1 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o1,  measure));
+facenet_score_o2 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o2,  measure));
+facenet_score_o3 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o3,  measure));
+
+
 %dist_eu = pdist2(galFea', probFea');
 % my_pdist2 = @(A, B) sqrt( bsxfun(@plus, sum(A.^2, 2), sum(B.^2, 2)') - 2*(A*B'));
 % dist_eu = my_pdist2(galFea', probFea');
-dist_eu = pdist2(galFea', probFea','Hamming');
+dist_eu = pdist2(galFea', probFea',measure);
 [CMC_eu, map_eu, ~, ~] = evaluation(dist_eu, label_gallery, label_query, cam_gallery, cam_query);
-
 
 fprintf(['The Euclidean performance:\n']);
 fprintf(' Rank1,  mAP\n');
@@ -269,48 +252,14 @@ fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu_re(1) * 100, map_eu_re(1)*100);
 % 
 % fprintf('avg_mAP_iom %8.5f\n', score_avg_mAP_iom(5)) % 注意输出格式前须有%符号，
 
-final_dist_o1 = zeros(size(facenet_probe_label_o1,2),size(mixing_facenet_gallery,1));
-for i = progress(1:size(facenet_probe_label_o1,2))
-
-    dist =  zeros(1,size(mixing_facenet_gallery,1));
-    for j=1: size(mixing_facenet_gallery,1)
-        gallery_bin =  mixing_facenet_gallery(j,:);
-        retrieved_id = bitxor(gallery_bin,hash_facenet_probe_o1(i,:));
-        dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
-    end
-    final_dist_o1(i,:) = dist;
-end
-
 % Evaluate the open-set identification performance.
-[iom_DIR(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(1-final_dist_o1', facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
 
+% Evaluate the verification performance.
+[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-facenet_score_c', facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
 
-final_dist_o2 = zeros(size(facenet_probe_label_o2,2),size(mixing_facenet_gallery,1));
-for i = progress(1:size(facenet_probe_label_o2,2))
-
-    dist =  zeros(1,size(mixing_facenet_gallery,1));
-    for j=1: size(mixing_facenet_gallery,1)
-        gallery_bin =  mixing_facenet_gallery(j,:);
-        retrieved_id = bitxor(gallery_bin,hash_facenet_probe_o2(i,:));
-        dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
-    end
-    final_dist_o2(i,:) = dist;
-end
-
-[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist_o2', facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
-
-final_dist_o3 = zeros(size(facenet_probe_label_o3,2),size(mixing_facenet_gallery,1));
-for i = progress(1:size(facenet_probe_label_o3,2))
-    dist =  zeros(1,size(mixing_facenet_gallery,1));
-    for j=1: size(mixing_facenet_gallery,1)
-        gallery_bin =  mixing_facenet_gallery(j,:);
-        retrieved_id = bitxor(gallery_bin,hash_facenet_probe_o3(i,:));
-        dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
-    end
-    final_dist_o3(i,:) = dist;
-end
-
-[iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-final_dist_o3', facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
+[iom_DIR(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(1-facenet_score_o1', facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
+[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-facenet_score_o2', facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
+[iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-facenet_score_o3', facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
 
 
 save("data/"+hashcode_path+"_iom_veriFAR.mat","iom_veriFAR");
@@ -328,9 +277,9 @@ save("data/"+hashcode_path+"_iom_DIR.mat","iom_DIR");
 % str = sprintf('%s\t@ Rank = %d, FAR = %g%%: DIR = %.2f%%.\n\n', str, reportRank, reportOsiFar*100, reportDIR);
 % 
 
-perf = [reportVR reportDIR iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 score_avg_mAP_iom(1:5)]
-fid=fopen('log20200821.txt','a');
+perf = [CMC_eu(1) * 100  map_eu(1)*100 CMC_eu_re(1) * 100 map_eu_re(1)*100 reportVR reportDIR iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 score_avg_mAP_iom(1:5)]
+fid=fopen('logs/log_orig.txt','a');
 fwrite(fid,hashcode_path+" ");
 fclose(fid)
-dlmwrite('log20200821.txt', perf, '-append');
+dlmwrite('logs/log_orig.txt', perf, '-append');
 end
