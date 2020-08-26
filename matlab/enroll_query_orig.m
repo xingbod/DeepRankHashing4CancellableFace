@@ -250,7 +250,7 @@ fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu_re(1) * 100, map_eu_re(1)*100);
 [iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-facenet_score_o3, facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
 
 % 
-match_similarity =1-facenet_score_c;
+match_similarity =1-facenet_score_c';
 [iom_max_rank,iom_rec_rates] = CMC(match_similarity,facenet_probe_label_c,facenet_gallery_label);
 % 
 % 
