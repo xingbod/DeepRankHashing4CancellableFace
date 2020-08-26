@@ -239,9 +239,19 @@ dist_eu_re = re_ranking( [probFea galFea], 1, 1, query_num, k1, k2, lambda,measu
 fprintf(['The Euclidean + re-ranking performance:\n']);
 fprintf(' Rank1,  mAP\n');
 fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu_re(1) * 100, map_eu_re(1)*100);
+
+% Evaluate the open-set identification performance.
+
+% Evaluate the verification performance.
+[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-facenet_score_c, facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
+
+[iom_DIR(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(1-facenet_score_o1, facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
+[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-facenet_score_o2, facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
+[iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-facenet_score_o3, facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
+
 % 
-% match_similarity =1-final_dist;
-% [iom_max_rank,iom_rec_rates] = CMC(match_similarity,facenet_probe_label_c,facenet_gallery_label);
+match_similarity =1-facenet_score_c;
+[iom_max_rank,iom_rec_rates] = CMC(match_similarity,facenet_probe_label_c,facenet_gallery_label);
 % 
 % 
 % score_avg_mAP_iom = []; % open-set identification false accept rates of the 10 trials
@@ -252,14 +262,6 @@ fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu_re(1) * 100, map_eu_re(1)*100);
 % 
 % fprintf('avg_mAP_iom %8.5f\n', score_avg_mAP_iom(5)) % 注意输出格式前须有%符号，
 
-% Evaluate the open-set identification performance.
-
-% Evaluate the verification performance.
-[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-facenet_score_c, facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
-
-[iom_DIR(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(1-facenet_score_o1, facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
-[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-facenet_score_o2, facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
-[iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-facenet_score_o3, facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
 
 % 
 % save("data/"+hashcode_path+"_iom_veriFAR.mat","iom_veriFAR");
