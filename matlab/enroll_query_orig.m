@@ -215,10 +215,10 @@ label_query = facenet_probe_label_c;
 %% Euclidean
 
 % Compute the cosine similarity score between the test samples.
-facenet_score_c =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_c,  measure));
-facenet_score_o1 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o1,  measure));
-facenet_score_o2 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o2,  measure));
-facenet_score_o3 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o3,  measure));
+facenet_score_c =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_c,  measure))/100;
+facenet_score_o1 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o1,  measure))/100;
+facenet_score_o2 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o2,  measure))/100;
+facenet_score_o3 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o3,  measure))/100;
 
 
 %dist_eu = pdist2(galFea', probFea');
@@ -281,7 +281,7 @@ match_similarity =1-facenet_score_c';
 
 perf = [CMC_eu(1) * 100  map_eu(1)*100 CMC_eu_re(1) * 100 map_eu_re(1)*100 reportVR reportDIR iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 ]%score_avg_mAP_iom(1:5)
 fid=fopen('logs/log_orig.txt','a');
-fwrite(fid,hashcode_path+" ");
+fwrite(fid,feat_path+" ");
 fclose(fid)
 dlmwrite('logs/log_orig.txt', perf, '-append');
 end
