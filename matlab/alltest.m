@@ -18,3 +18,6 @@ enroll_query_iom2('ResNet50_lfw_feat_dIoM_128x2.csv',  'ResNet50_lfw_name.txt')
 enroll_query_iom2('ResNet50_lfw_feat_dIoM_256x2.csv',  'ResNet50_lfw_name.txt')
 enroll_query_iom2('ResNet50_lfw_feat_dIoM_512x2.csv',  'ResNet50_lfw_name.txt')
 
+
+enroll_query_orig('ResNet50_lfw_feat.csv',  'ResNet50_lfw_name.txt')
+enroll_query_orig('InceptionResNetV2_lfw_feat.csv',  'InceptionResNetV2_lfw_name.txt')

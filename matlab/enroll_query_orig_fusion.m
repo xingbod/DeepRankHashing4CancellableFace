@@ -1,4 +1,4 @@
-function enroll_query_orig(feat_path,filename_path)
+function enroll_query_orig_fusion(feat_path,feat_path2,filename_path)
 % hashcode_path e.g. res50_lfw_feat_dIoM_512x2.csv
 % filename_path e.g. lresnet100e_ir_lfw_name.txt
 % e.g. enroll_query_iom lresnet100e_ir_lfw_feat_dIoM_512x2.csv  lresnet100e_ir_lfw_name.txt
@@ -15,7 +15,10 @@ lambda = 0.3;
 measure = 'Euclidean';
 %%
 
-Descriptor_orig = importdata("../embeddings/"+feat_path);
+Descriptor_orig1 = importdata("../embeddings/"+feat_path);
+Descriptor_orig2 = importdata("../embeddings/"+feat_path2);
+Descriptor_orig = [Descriptor_orig1 Descriptor_orig2]; % fusion 
+
 fid_lfw_name=importdata("../embeddings/" + filename_path);
 lfw_name=[];
 for i=1:size(fid_lfw_name,1)
@@ -48,7 +51,7 @@ load('data/lfw_label.mat')
 Descriptors = align_lfw_feat_dIoM;
 
 %% BLUFR
-[reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure',measure);
+[reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure','Hamming');
 
 %% Voting protocol based on mixing
 m = size(Descriptors,2);
@@ -262,12 +265,12 @@ fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu_re(1) * 100, map_eu_re(1)*100);
 [iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-facenet_score_o3', facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
 
 
-save("data/"+hashcode_path+"_iom_veriFAR.mat","iom_veriFAR");
-save("data/"+hashcode_path+"_iom_max_rank.mat","iom_max_rank");
-save("data/"+hashcode_path+"_iom_VR.mat","iom_VR");
-save("data/"+hashcode_path+"_iom_rec_rates.mat","iom_rec_rates");
-save("data/"+hashcode_path+"_iom_osiFAR.mat","iom_osiFAR");
-save("data/"+hashcode_path+"_iom_DIR.mat","iom_DIR");
+% save("data/orig_fusion_"+hashcode_path+"_iom_veriFAR.mat","iom_veriFAR");
+% save("data/orig_fusion_"+hashcode_path+"_iom_max_rank.mat","iom_max_rank");
+% save("data/orig_fusion_"+hashcode_path+"_iom_VR.mat","iom_VR");
+% save("data/orig_fusion_"+hashcode_path+"_iom_rec_rates.mat","iom_rec_rates");
+% save("data/orig_fusion_"+hashcode_path+"_iom_osiFAR.mat","iom_osiFAR");
+% save("data/orig_fusion_"+hashcode_path+"_iom_DIR.mat","iom_DIR");
 
 %% Display the benchmark performance and output to the log file.
 % str = sprintf('Verification:\n');
@@ -278,8 +281,8 @@ save("data/"+hashcode_path+"_iom_DIR.mat","iom_DIR");
 % 
 
 perf = [CMC_eu(1) * 100  map_eu(1)*100 CMC_eu_re(1) * 100 map_eu_re(1)*100 reportVR reportDIR iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 score_avg_mAP_iom(1:5)]
-fid=fopen('logs/log_orig.txt','a');
-fwrite(fid,hashcode_path+" ");
+fid=fopen('logs/log_orig_fusion.txt','a');
+fwrite(fid,hashcode_path+"_"+hashcode_path2+" ");
 fclose(fid)
-dlmwrite('logs/log_orig.txt', perf, '-append');
+dlmwrite('logs/log_orig_fusion.txt', perf, '-append');
 end
