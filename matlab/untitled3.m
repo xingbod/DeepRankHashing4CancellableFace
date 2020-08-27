@@ -14,6 +14,9 @@ feat_path = 'ResNet50_lfw_feat.csv';
 filename_path = "ResNet50_lfw_name.txt";
 Descriptor_orig = importdata("../embeddings/"+feat_path);
 fid_lfw_name=importdata("../embeddings/" + filename_path);
+
+
+
 lfw_name=[];
 for i=1:size(fid_lfw_name,1)
     lfw_name = [lfw_name; string(cell2mat(fid_lfw_name(i)))+".jpg"];
@@ -45,7 +48,7 @@ load('data/lfw_label.mat')
 Descriptors = align_lfw_feat_dIoM;
 
 %% BLUFR
-[reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure',measure);
+% [reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure',measure);
 
 %% Voting protocol based on mixing
 m = size(Descriptors,2);
@@ -240,15 +243,14 @@ fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu_re(1) * 100, map_eu_re(1)*100);
 % Evaluate the open-set identification performance.
 
 % Evaluate the verification performance.
-[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-facenet_score_c, facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
+[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(facenet_score_c, facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
 
-[iom_DIR(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(1-facenet_score_o1, facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
-[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-facenet_score_o2, facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
-[iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-facenet_score_o3, facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
+[iom_DIR(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(facenet_score_o1, facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
+[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(facenet_score_o2, facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
+[iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(facenet_score_o3, facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
 
 % 
-match_similarity =1-facenet_score_c';
-[iom_max_rank,iom_rec_rates] = CMC(match_similarity,facenet_probe_label_c,facenet_gallery_label);
+[iom_max_rank,iom_rec_rates] = CMC(facenet_score_c',facenet_probe_label_c,facenet_gallery_label);
 % 
 % 
 % score_avg_mAP_iom = []; % open-set identification false accept rates of the 10 trials
@@ -259,14 +261,6 @@ match_similarity =1-facenet_score_c';
 % 
 % fprintf('avg_mAP_iom %8.5f\n', score_avg_mAP_iom(5)) % 注意输出格式前须有%符号，
 
-
-% 
-% save("data/"+hashcode_path+"_iom_veriFAR.mat","iom_veriFAR");
-% save("data/"+hashcode_path+"_iom_max_rank.mat","iom_max_rank");
-% save("data/"+hashcode_path+"_iom_VR.mat","iom_VR");
-% save("data/"+hashcode_path+"_iom_rec_rates.mat","iom_rec_rates");
-% save("data/"+hashcode_path+"_iom_osiFAR.mat","iom_osiFAR");
-% save("data/"+hashcode_path+"_iom_DIR.mat","iom_DIR");
 
 %% Display the benchmark performance and output to the log file.
 % str = sprintf('Verification:\n');
