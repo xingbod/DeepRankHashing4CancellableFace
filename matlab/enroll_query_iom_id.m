@@ -257,14 +257,15 @@ fprintf(['The Euclidean + re-ranking performance:\n']);
 fprintf(' Rank1,  mAP\n');
 fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu_re(1) * 100, map_eu_re(1)*100);
 % 
-% match_similarity =1-final_dist;
-[iom_max_rank,iom_rec_rates] = CMC(facenet_score_c',facenet_probe_label_c,facenet_gallery_label);
 % 
+match_similarity =1-final_dist;
+[iom_max_rank,iom_rec_rates] = CMC(match_similarity,facenet_probe_label_c,facenet_gallery_label);
+
 % 
-% score_avg_mAP_iom = []; % open-set identification false accept rates of the 10 trials
-% for k2=[1:10 20:10:100 200:100:1000]
-%     score_avg_mAP_iom = [score_avg_mAP_iom average_precision(final_dist,facenet_gallery_label==facenet_probe_label_c',k2)];
-% end
+score_avg_mAP_iom = []; % open-set identification false accept rates of the 10 trials
+for k2=[1:10 20:10:100 200:100:1000]
+    score_avg_mAP_iom = [score_avg_mAP_iom average_precision(final_dist,facenet_gallery_label==facenet_probe_label_c',k2)];
+end
 % 
 % 
 % fprintf('avg_mAP_iom %8.5f\n', score_avg_mAP_iom(5)) % 注意输出格式前须有%符号，
