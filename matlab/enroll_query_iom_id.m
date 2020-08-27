@@ -1,4 +1,4 @@
-function enroll_query_iom_fusion(hashcode_path,hashcode_path2,filename_path)
+function enroll_query_iom_id(hashcode_path,filename_path)
 % hashcode_path e.g. res50_lfw_feat_dIoM_512x2.csv
 % filename_path e.g. lresnet100e_ir_lfw_name.txt
 % e.g. enroll_query_iom lresnet100e_ir_lfw_feat_dIoM_512x2.csv  lresnet100e_ir_lfw_name.txt
@@ -15,10 +15,7 @@ lambda = 0.3;
 measure = 'Hamming';
 %%
 
-Descriptor_orig1 = importdata("../embeddings/"+feat_path);
-Descriptor_orig2 = importdata("../embeddings/"+feat_path2);
-Descriptor_orig = [Descriptor_orig1 Descriptor_orig2]; % fusion 
-
+Descriptor_orig = importdata("../embeddings/"+hashcode_path);
 fid_lfw_name=importdata("../embeddings/" + filename_path);
 lfw_name=[];
 for i=1:size(fid_lfw_name,1)
@@ -331,9 +328,9 @@ end
 % str = sprintf('%s\t@ Rank = %d, FAR = %g%%: DIR = %.2f%%.\n\n', str, reportRank, reportOsiFar*100, reportDIR);
 % 
 
-perf = [reportVR reportDIR iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 ]%score_avg_mAP_iom(1:5)
-fid=fopen('logs/log_iom_fusion.txt','a');
-fwrite(fid,hashcode_path+"_"+hashcode_path2+" ");
+perf = [CMC_eu(1) * 100  map_eu(1)*100 CMC_eu_re(1) * 100 map_eu_re(1)*100 reportVR reportDIR iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 score_avg_mAP_iom(1:5)]
+fid=fopen('logs/log_hashing_identification.txt','a');
+fwrite(fid,hashcode_path+" ");
 fclose(fid)
-dlmwrite('logs/log_iom_fusion.txt', perf, '-append');
+dlmwrite('logs/log_hashing_identification.txt', perf, '-append');
 end

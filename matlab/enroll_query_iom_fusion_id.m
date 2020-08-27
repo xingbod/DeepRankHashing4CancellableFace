@@ -1,4 +1,4 @@
-function enroll_query_iom2(hashcode_path,filename_path)
+function enroll_query_iom_fusion_id(hashcode_path,hashcode_path2,filename_path)
 % hashcode_path e.g. res50_lfw_feat_dIoM_512x2.csv
 % filename_path e.g. lresnet100e_ir_lfw_name.txt
 % e.g. enroll_query_iom lresnet100e_ir_lfw_feat_dIoM_512x2.csv  lresnet100e_ir_lfw_name.txt
@@ -15,7 +15,10 @@ lambda = 0.3;
 measure = 'Hamming';
 %%
 
-Descriptor_orig = importdata("../embeddings/"+hashcode_path);
+Descriptor_orig1 = importdata("../embeddings/"+feat_path);
+Descriptor_orig2 = importdata("../embeddings/"+feat_path2);
+Descriptor_orig = [Descriptor_orig1 Descriptor_orig2]; % fusion 
+
 fid_lfw_name=importdata("../embeddings/" + filename_path);
 lfw_name=[];
 for i=1:size(fid_lfw_name,1)
@@ -313,12 +316,12 @@ end
 [iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-final_dist_o3', facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
 
 
-save("data/"+hashcode_path+"_iom_veriFAR.mat","iom_veriFAR");
-save("data/"+hashcode_path+"_iom_max_rank.mat","iom_max_rank");
-save("data/"+hashcode_path+"_iom_VR.mat","iom_VR");
-save("data/"+hashcode_path+"_iom_rec_rates.mat","iom_rec_rates");
-save("data/"+hashcode_path+"_iom_osiFAR.mat","iom_osiFAR");
-save("data/"+hashcode_path+"_iom_DIR.mat","iom_DIR");
+% save("data/"+hashcode_path+"_iom_veriFAR.mat","iom_veriFAR");
+% save("data/"+hashcode_path+"_iom_max_rank.mat","iom_max_rank");
+% save("data/"+hashcode_path+"_iom_VR.mat","iom_VR");
+% save("data/"+hashcode_path+"_iom_rec_rates.mat","iom_rec_rates");
+% save("data/"+hashcode_path+"_iom_osiFAR.mat","iom_osiFAR");
+% save("data/"+hashcode_path+"_iom_DIR.mat","iom_DIR");
 
 %% Display the benchmark performance and output to the log file.
 % str = sprintf('Verification:\n');
@@ -328,9 +331,9 @@ save("data/"+hashcode_path+"_iom_DIR.mat","iom_DIR");
 % str = sprintf('%s\t@ Rank = %d, FAR = %g%%: DIR = %.2f%%.\n\n', str, reportRank, reportOsiFar*100, reportDIR);
 % 
 
-perf = [reportVR reportDIR iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 score_avg_mAP_iom(1:5)]
-fid=fopen('log20200821.txt','a');
-fwrite(fid,hashcode_path+" ");
+perf = [reportVR reportDIR iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 ]%score_avg_mAP_iom(1:5)
+fid=fopen('logs/log_iom_fusion.txt','a');
+fwrite(fid,hashcode_path+"_"+hashcode_path2+" ");
 fclose(fid)
-dlmwrite('log20200821.txt', perf, '-append');
+dlmwrite('logs/log_iom_fusion.txt', perf, '-append');
 end
