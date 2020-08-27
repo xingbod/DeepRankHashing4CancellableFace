@@ -258,7 +258,7 @@ fprintf(' Rank1,  mAP\n');
 fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu_re(1) * 100, map_eu_re(1)*100);
 % 
 % match_similarity =1-final_dist;
-% [iom_max_rank,iom_rec_rates] = CMC(match_similarity,facenet_probe_label_c,facenet_gallery_label);
+[iom_max_rank,iom_rec_rates] = CMC(facenet_score_c',facenet_probe_label_c,facenet_gallery_label);
 % 
 % 
 % score_avg_mAP_iom = []; % open-set identification false accept rates of the 10 trials
