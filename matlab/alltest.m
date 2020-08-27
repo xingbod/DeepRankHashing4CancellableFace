@@ -25,3 +25,8 @@ enroll_query_orig('lresnet100e_ir_lfw_feat.csv',  'lresnet100e_ir_lfw_name.txt')
 
 
 enroll_query_orig_fusion('ResNet50_lfw_feat.csv','InceptionResNetV2_lfw_feat.csv','ResNet50_lfw_name.txt')
+enroll_query_orig_fusion('ResNet50_lfw_feat.csv','lresnet100e_ir_lfw_feat.csv','ResNet50_lfw_name.txt')
+enroll_query_orig_fusion('lresnet100e_ir_lfw_feat.csv','InceptionResNetV2_lfw_feat.csv','ResNet50_lfw_name.txt')
+
+
+enroll_query_iom_fusion(hashcode_path,hashcode_path2,filename_path)
