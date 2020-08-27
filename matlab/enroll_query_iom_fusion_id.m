@@ -15,8 +15,8 @@ lambda = 0.3;
 measure = 'Hamming';
 %%
 
-Descriptor_orig1 = importdata("../embeddings/"+feat_path);
-Descriptor_orig2 = importdata("../embeddings/"+feat_path2);
+Descriptor_orig1 = importdata("../embeddings/"+hashcode_path);
+Descriptor_orig2 = importdata("../embeddings/"+hashcode_path2);
 Descriptor_orig = [Descriptor_orig1 Descriptor_orig2]; % fusion 
 
 fid_lfw_name=importdata("../embeddings/" + filename_path);
@@ -244,7 +244,7 @@ for k2=[1:10 20:10:100 200:100:1000]
 end
 
 % 
-% fprintf('avg_mAP_iom %8.5f\n', score_avg_mAP_iom(5)) % ע�������ʽǰ����%���ţ�
+% fprintf('avg_mAP_iom %8.5f\n', score_avg_mAP_iom(5)) % ע�������ʽǰ����?%���ţ�
 
 final_dist_o1 = zeros(size(facenet_probe_label_o1,2),size(mixing_facenet_gallery,1));
 for i = progress(1:size(facenet_probe_label_o1,2))
