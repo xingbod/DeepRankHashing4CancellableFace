@@ -10,6 +10,7 @@ if tf.__version__.startswith('1'):# important is you want to run with tf1.x,
 import modules
 import csv
 import math
+import tqdm
 
 from modules.evaluations import get_val_data, perform_val, perform_val_yts
 from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
