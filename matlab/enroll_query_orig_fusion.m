@@ -218,11 +218,10 @@ label_query = facenet_probe_label_c;
 %% Euclidean
 
 % Compute the cosine similarity score between the test samples.
-facenet_score_c =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_c,  measure));
-facenet_score_o1 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o1,  measure));
-facenet_score_o2 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o2,  measure));
-facenet_score_o3 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o3,  measure));
-
+facenet_score_c =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_c,  measure))/100;
+facenet_score_o1 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o1,  measure))/100;
+facenet_score_o2 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o2,  measure))/100;
+facenet_score_o3 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o3,  measure))/100;
 
 %dist_eu = pdist2(galFea', probFea');
 % my_pdist2 = @(A, B) sqrt( bsxfun(@plus, sum(A.^2, 2), sum(B.^2, 2)') - 2*(A*B'));
@@ -258,11 +257,14 @@ fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu_re(1) * 100, map_eu_re(1)*100);
 % Evaluate the open-set identification performance.
 
 % Evaluate the verification performance.
-[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-facenet_score_c', facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
+[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(facenet_score_c, facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
 
-[iom_DIR(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(1-facenet_score_o1', facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
-[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-facenet_score_o2', facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
-[iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-facenet_score_o3', facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
+[iom_DIR(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(facenet_score_o1, facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
+[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(facenet_score_o2, facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
+[iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(facenet_score_o3, facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
+
+% 
+[iom_max_rank,iom_rec_rates] = CMC(facenet_score_c',facenet_probe_label_c,facenet_gallery_label);
 
 
 % save("data/orig_fusion_"+hashcode_path+"_iom_veriFAR.mat","iom_veriFAR");
@@ -280,9 +282,9 @@ fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu_re(1) * 100, map_eu_re(1)*100);
 % str = sprintf('%s\t@ Rank = %d, FAR = %g%%: DIR = %.2f%%.\n\n', str, reportRank, reportOsiFar*100, reportDIR);
 % 
 
-perf = [CMC_eu(1) * 100  map_eu(1)*100 CMC_eu_re(1) * 100 map_eu_re(1)*100 reportVR reportDIR iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 score_avg_mAP_iom(1:5)]
+perf = [CMC_eu(1) * 100  map_eu(1)*100 CMC_eu_re(1) * 100 map_eu_re(1)*100 reportVR reportDIR iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 ]%score_avg_mAP_iom(1:5)
 fid=fopen('logs/log_orig_fusion.txt','a');
-fwrite(fid,hashcode_path+"_"+hashcode_path2+" ");
+fwrite(fid,feat_path+"_"+feat_path2+" ");
 fclose(fid)
 dlmwrite('logs/log_orig_fusion.txt', perf, '-append');
 end
