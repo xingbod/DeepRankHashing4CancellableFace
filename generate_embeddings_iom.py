@@ -27,9 +27,9 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 logger = tf.get_logger()
 logger.disabled = True
 logger.setLevel(logging.FATAL)
-# set_memory_growth()
+set_memory_growth()
 
-cfg = load_yaml('./config_arc/arc_res50.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
+cfg = load_yaml('./config_arc/arc_lres100ir.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
 permKey = None
 if cfg['head_type'] == 'IoMHead':  #
     # permKey = generatePermKey(cfg['embd_shape'])
