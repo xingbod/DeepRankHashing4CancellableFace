@@ -51,8 +51,9 @@ load('data/lfw_label.mat')
 Descriptors = align_lfw_feat_dIoM;
 
 %% BLUFR
-[reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure','Hamming');
-
+% [reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure','Hamming');
+reportVR = 0;
+reportDIR = 0;
 %% Voting protocol based on mixing
 m = size(Descriptors,2);
 q=max(max(Descriptors))+1;
@@ -233,33 +234,6 @@ end
 
 % CMC close set
 
-probFea = hash_facenet_probe_c';
-galFea = hash_facenet_gallery';
-cam_gallery = [];
-cam_query = [];
-label_gallery = facenet_gallery_label;
-label_query = facenet_probe_label_c;
-%% Euclidean
-%dist_eu = pdist2(galFea', probFea');
-% my_pdist2 = @(A, B) sqrt( bsxfun(@plus, sum(A.^2, 2), sum(B.^2, 2)') - 2*(A*B'));
-% dist_eu = my_pdist2(galFea', probFea');
-dist_eu = pdist2(galFea', probFea','Hamming');
-[CMC_eu, map_eu, ~, ~] = evaluation(dist_eu, label_gallery, label_query, cam_gallery, cam_query);
-
-
-fprintf(['The Euclidean performance:\n']);
-fprintf(' Rank1,  mAP\n');
-fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu(1) * 100, map_eu(1)*100);
-
-%% Euclidean + re-ranking
-query_num = size(probFea, 2);
-dist_eu_re = re_ranking( [probFea galFea], 1, 1, query_num, k1, k2, lambda,measure);
-[CMC_eu_re, map_eu_re, ~, ~] = evaluation(dist_eu_re, label_gallery, label_query, cam_gallery, cam_query);
-
-fprintf(['The Euclidean + re-ranking performance:\n']);
-fprintf(' Rank1,  mAP\n');
-fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu_re(1) * 100, map_eu_re(1)*100);
-% 
 match_similarity =1-final_dist;
 [iom_max_rank,iom_rec_rates] = CMC(match_similarity,facenet_probe_label_c,facenet_gallery_label);
 
@@ -270,7 +244,7 @@ for k2=[1:10 20:10:100 200:100:1000]
 end
 
 % 
-% fprintf('avg_mAP_iom %8.5f\n', score_avg_mAP_iom(5)) % ×¢ÒâÊä³ö¸ñÊ½Ç°ÐëÓÐ%·ûºÅ£¬
+% fprintf('avg_mAP_iom %8.5f\n', score_avg_mAP_iom(5)) % ×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½Ç°ï¿½ï¿½ï¿½ï¿½%ï¿½ï¿½ï¿½Å£ï¿½
 
 final_dist_o1 = zeros(size(facenet_probe_label_o1,2),size(mixing_facenet_gallery,1));
 for i = progress(1:size(facenet_probe_label_o1,2))
@@ -316,22 +290,7 @@ end
 [iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-final_dist_o3', facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
 
 
-% save("data/"+hashcode_path+"_iom_veriFAR.mat","iom_veriFAR");
-% save("data/"+hashcode_path+"_iom_max_rank.mat","iom_max_rank");
-% save("data/"+hashcode_path+"_iom_VR.mat","iom_VR");
-% save("data/"+hashcode_path+"_iom_rec_rates.mat","iom_rec_rates");
-% save("data/"+hashcode_path+"_iom_osiFAR.mat","iom_osiFAR");
-% save("data/"+hashcode_path+"_iom_DIR.mat","iom_DIR");
-
-%% Display the benchmark performance and output to the log file.
-% str = sprintf('Verification:\n');
-% str = sprintf('%s\t@ FAR = %g%%: VR = %.2f%%.\n', str, reportVeriFar*100, reportVR);
-% 
-% str = sprintf('%sOpen-set Identification:\n', str);
-% str = sprintf('%s\t@ Rank = %d, FAR = %g%%: DIR = %.2f%%.\n\n', str, reportRank, reportOsiFar*100, reportDIR);
-% 
-
-perf = [reportVR reportDIR iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 ]%score_avg_mAP_iom(1:5)
+perf = [0 0 0 0 reportVR reportDIR iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 ]%score_avg_mAP_iom(1:5)
 fid=fopen('logs/log_iom_fusion.txt','a');
 fwrite(fid,hashcode_path+"_"+hashcode_path2+" ");
 fclose(fid)
