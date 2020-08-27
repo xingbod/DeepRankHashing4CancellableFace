@@ -118,30 +118,30 @@ for q in [2, 4, 8, 16]:
 
 
 
-for q in [2, 4, 8, 16]:
-    for m in [64, 128, 256, 512]:
-        m = cfg['m'] = m
-        q = cfg['q'] = q
-        cfg['hidden_layer_remark'] = '1'
-        # here I add the extra IoM layer and head
-        if cfg['hidden_layer_remark'] == '1':
-            model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                           arcmodel=arcmodel, training=False,
-                                           permKey=permKey, cfg=cfg)
-        model.summary(line_length=80)
-        cfg['embd_shape'] = m * q
-
-        dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=128, img_ext='png')
-        feats, names, n = extractFeat(dataset, model, m)
-        with open('embeddings/' + cfg['backbone_type'] + '_VGG2_feat_drIoM_' + str(cfg['m']) + 'x' + str(
-                cfg['q']) + '.csv',
-                  'w') as f:
-            # using csv.writer method from CSV package
-            print('embeddings/' + cfg['backbone_type'] + '_VGG2_feat_drIoM_' + str(cfg['m']) + 'x' + str(
-                cfg['q']) + '.csv')
-            write = csv.writer(f)
-            write.writerows(feats)
-        with open('embeddings/' + cfg['backbone_type'] + '_VGG2_name_' + str(cfg['m']) + 'x' + str(
-                cfg['q']) + '.txt', 'w') as outfile:
-            for i in names:
-                outfile.write(i + "\n")
+# for q in [2, 4, 8, 16]:
+#     for m in [64, 128, 256, 512]:
+#         m = cfg['m'] = m
+#         q = cfg['q'] = q
+#         cfg['hidden_layer_remark'] = '1'
+#         # here I add the extra IoM layer and head
+#         if cfg['hidden_layer_remark'] == '1':
+#             model = IoMFaceModelFromArFace(size=cfg['input_size'],
+#                                            arcmodel=arcmodel, training=False,
+#                                            permKey=permKey, cfg=cfg)
+#         model.summary(line_length=80)
+#         cfg['embd_shape'] = m * q
+#
+#         dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=128, img_ext='png')
+#         feats, names, n = extractFeat(dataset, model, m)
+#         with open('embeddings/' + cfg['backbone_type'] + '_VGG2_feat_drIoM_' + str(cfg['m']) + 'x' + str(
+#                 cfg['q']) + '.csv',
+#                   'w') as f:
+#             # using csv.writer method from CSV package
+#             print('embeddings/' + cfg['backbone_type'] + '_VGG2_feat_drIoM_' + str(cfg['m']) + 'x' + str(
+#                 cfg['q']) + '.csv')
+#             write = csv.writer(f)
+#             write.writerows(feats)
+#         with open('embeddings/' + cfg['backbone_type'] + '_VGG2_name_' + str(cfg['m']) + 'x' + str(
+#                 cfg['q']) + '.txt', 'w') as outfile:
+#             for i in names:
+#                 outfile.write(i + "\n")
