@@ -245,21 +245,8 @@ numRanks = length(rankPoints);
 iom_DIR = zeros(numRanks, numOsiFarPoints, numTrials); % detection and identification rates of the 10 trials
 iom_osiFAR = zeros(numTrials, numOsiFarPoints); % open-set identification false accept rates of the 10 trials
 
-% tic
-% final_dist = zeros(size(facenet_probe_label_c,2),size(mixing_facenet_gallery,1));
-% for i = progress(1:size(facenet_probe_label_c,2))
-%     dist = zeros(1,size(mixing_facenet_gallery,1));
-%     for j=1: size(mixing_facenet_gallery,1)
-%         gallery_bin =  mixing_facenet_gallery(j,:);
-%         retrieved_id = bitxor(gallery_bin,hash_facenet_probe_c(i,:));
-%         dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
-%     end
-%     final_dist(i,:) = dist;
-% 
-% end
-% toc
 
-parpool(6)
+% parpool(6)
 tic
 parfor i=1:size(facenet_probe_label_c,2)
  dist = zeros(1,size(mixing_facenet_gallery,1));
@@ -271,17 +258,8 @@ parfor i=1:size(facenet_probe_label_c,2)
     final_dist(i,:) = dist;
 end
 toc
-% final_dist = zeros(size(facenet_probe_label_c,2),size(mixing_facenet_gallery,1));
-% for i = progress(1:size(facenet_probe_label_c,2))
-%     dist = zeros(1,size(mixing_facenet_gallery,1));
-%     for j=1: size(mixing_facenet_gallery,1)
-%         gallery_bin =  mixing_facenet_gallery(j,:);
-%         retrieved_id = bitxor(gallery_bin,hash_facenet_probe_c(i,:));
-%         dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
-%     end
-%     final_dist(i,:) = dist;
-% 
-% end
+
+
 
 
 final_dist2 = pdist2(mixing_facenet_gallery,mixing_facenet_gallery,'Hamming');
@@ -298,19 +276,23 @@ fprintf(['The Euclidean performance:\n']);
 fprintf(' Rank1,  mAP\n');
 fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu(1) * 100, map_eu(1)*100);
 
-totallength =1830+4903;
-new_dist = ones(totallength, totallength);
-% new_dist(1:1830,1831:totallength) = dist_eu(1:1830,:);
-% new_dist(1831:totallength,1:1830) = dist_eu(1:1830,:)';
-new_dist(1:4903,4904:totallength) = final_dist;
-new_dist(4904:totallength,1:4903) = final_dist';
-new_dist(4904:totallength,4904:totallength) = final_dist2;
-
-% new_dist = new_dist - diag(diag(new_dist));
-new_dist(1:4903,1:4903) = pdist2(hash_facenet_probe_c,hash_facenet_probe_c,'Hamming');
-
-
-dist_eu_re = re_ranking3( new_dist, 4903, k1, k2, lambda);
+% The distance among probes, gallerys can help to improve the accurancy
+% -|-
+% -|-
+% A|B
+% C|D
+% num_probe = size(final_dist,1);
+% num_gallery = size(final_dist,2);
+% totallength =num_gallery+num_probe;
+% new_dist = ones(totallength, totallength);
+% new_dist(1:num_probe,num_probe+1:totallength) = final_dist;% B
+% new_dist(num_probe+1:totallength,1:num_probe) = final_dist';% C
+% 
+% new_dist(num_probe+1:totallength,num_probe+1:totallength) = final_dist2;% D
+% % new_dist = new_dist - diag(diag(new_dist));
+% new_dist(1:num_probe,1:num_probe) = pdist2(hash_facenet_probe_c,hash_facenet_probe_c,'Hamming'); % A probe vs probe distance
+% dist_eu_re = re_ranking3( new_dist, num_probe, k1, k2, lambda);
+dist_re = re_ranking_score(final_dist,facenet_probe_label_c,facenet_probe_label_c,mixing_facenet_gallery,hash_facenet_probe_c, k1, k2, lambda,measure);
 [CMC_eu_re, map_eu_re, ~, ~] = evaluation(dist_eu_re, label_gallery, label_query, cam_gallery, cam_query);
 fprintf(['The Euclidean + re-ranking performance:\n']);
 fprintf(' Rank1,  mAP\n');
