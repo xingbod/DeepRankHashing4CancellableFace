@@ -177,7 +177,7 @@ hash_facenet_gallery=facenet_gallery;
 [identifiers ] = generate_identifier2(m,q,6000);
 %%% mixing gallery
 mixing_facenet_gallery = [];
-parfor i =1:size(facenet_gallery_label,2)
+for i = progress(1:size(facenet_gallery_label,2))
     mixing_facenet_gallery(i,:) = bitxor(hash_facenet_gallery(i,:),identifiers(facenet_gallery_label(i),:));
 end
 
@@ -203,7 +203,7 @@ iom_DIR_re = zeros(numRanks, numOsiFarPoints, numTrials); % detection and identi
 iom_osiFAR = zeros(numTrials, numOsiFarPoints); % open-set identification false accept rates of the 10 trials
 
 final_dist = zeros(size(facenet_probe_label_c,2),size(mixing_facenet_gallery,1));
-parfor i = 1:size(facenet_probe_label_c,2)
+parfor i = progress(1:size(facenet_probe_label_c,2))
     dist = zeros(1,size(mixing_facenet_gallery,1));
     for j=1: size(mixing_facenet_gallery,1)
         gallery_bin =  mixing_facenet_gallery(j,:);
@@ -214,9 +214,9 @@ parfor i = 1:size(facenet_probe_label_c,2)
 
 end
 
-tic
+
 final_dist_o1 = zeros(size(facenet_probe_label_o1,2),size(mixing_facenet_gallery,1));
-parfor i = 1:size(facenet_probe_label_o1,2)
+parfor i = progress(1:size(facenet_probe_label_o1,2))
     dist =  zeros(1,size(mixing_facenet_gallery,1));
     for j=1: size(mixing_facenet_gallery,1)
         gallery_bin =  mixing_facenet_gallery(j,:);
@@ -225,10 +225,10 @@ parfor i = 1:size(facenet_probe_label_o1,2)
     end
     final_dist_o1(i,:) = dist;
 end
-toc
+
 
 final_dist_o2 = zeros(size(facenet_probe_label_o2,2),size(mixing_facenet_gallery,1));
-parfor i = 1:size(facenet_probe_label_o2,2)
+parfor i = progress(1:size(facenet_probe_label_o2,2))
 
     dist =  zeros(1,size(mixing_facenet_gallery,1));
     for j=1: size(mixing_facenet_gallery,1)
@@ -239,9 +239,9 @@ parfor i = 1:size(facenet_probe_label_o2,2)
     final_dist_o2(i,:) = dist;
 end
 
-tic
+
 final_dist_o3 = zeros(size(facenet_probe_label_o3,2),size(mixing_facenet_gallery,1));
-parfor i = 1:size(facenet_probe_label_o3,2)
+parfor i = progress(1:size(facenet_probe_label_o3,2))
     dist =  zeros(1,size(mixing_facenet_gallery,1));
     for j=1: size(mixing_facenet_gallery,1)
         gallery_bin =  mixing_facenet_gallery(j,:);
@@ -250,7 +250,7 @@ parfor i = 1:size(facenet_probe_label_o3,2)
     end
     final_dist_o3(i,:) = dist;
 end
-toc
+
 % Evaluate the open-set identification performance.
 % Evaluate the verification performance.
 % CMC close set
