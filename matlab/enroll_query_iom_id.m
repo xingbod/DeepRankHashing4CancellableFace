@@ -214,9 +214,9 @@ parfor i = 1:size(facenet_probe_label_c,2)
 
 end
 
-
+tic
 final_dist_o1 = zeros(size(facenet_probe_label_o1,2),size(mixing_facenet_gallery,1));
-parfor i = progress(1:size(facenet_probe_label_o1,2))
+parfor i = 1:size(facenet_probe_label_o1,2)
     dist =  zeros(1,size(mixing_facenet_gallery,1));
     for j=1: size(mixing_facenet_gallery,1)
         gallery_bin =  mixing_facenet_gallery(j,:);
@@ -225,7 +225,7 @@ parfor i = progress(1:size(facenet_probe_label_o1,2))
     end
     final_dist_o1(i,:) = dist;
 end
-
+toc
 
 final_dist_o2 = zeros(size(facenet_probe_label_o2,2),size(mixing_facenet_gallery,1));
 parfor i = 1:size(facenet_probe_label_o2,2)
