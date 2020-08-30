@@ -59,22 +59,6 @@ facenet_probe_o3=[S;K;U];
 facenet_probe_label_o3=[S_label K_label U_label];
 
 
-%label trans to number
-for nameidx=1:length(allnames)
-    facenet_probe_label_c(find(facenet_probe_label_c==string(allnames{nameidx})))=nameidx;
-    facenet_probe_label_o1(find(facenet_probe_label_o1==string(allnames{nameidx})))=nameidx;
-    facenet_probe_label_o2(find(facenet_probe_label_o2==string(allnames{nameidx})))=nameidx;
-    facenet_probe_label_o3(find(facenet_probe_label_o3==string(allnames{nameidx})))=nameidx;
-    facenet_gallery_label(find(facenet_gallery_label==string(allnames{nameidx})))=nameidx;
-end
-% I also dont want to do so
-
-facenet_probe_label_c = double(facenet_probe_label_c);
-facenet_probe_label_o1 = double(facenet_probe_label_o1);
-facenet_probe_label_o2 = double(facenet_probe_label_o2);
-facenet_probe_label_o3 = double(facenet_probe_label_o3);
-facenet_gallery_label = double(facenet_gallery_label);
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 hash_facenet_probe_c=facenet_probe_c;
