@@ -1,4 +1,4 @@
-function enroll_query_iom_fusion_id(hashcode_path,hashcode_path2,filename_path)
+function enroll_query_iom_id_fusion(hashcode_path,hashcode_path2,filename_path)
 % hashcode_path e.g. res50_lfw_feat_dIoM_512x2.csv
 % filename_path e.g. lresnet100e_ir_lfw_name.txt
 % e.g. enroll_query_iom lresnet100e_ir_lfw_feat_dIoM_512x2.csv  lresnet100e_ir_lfw_name.txt
@@ -169,20 +169,6 @@ facenet_probe_label_o2 = double(facenet_probe_label_o2);
 facenet_probe_label_o3 = double(facenet_probe_label_o3);
 facenet_gallery_label = double(facenet_gallery_label);
 
-
-%
-% facenet_probe_c
-% facenet_probe_label_c
-%
-% facenet_probe_o1
-% facenet_probe_label_o1
-%
-% facenet_probe_o2
-% facenet_probe_label_o2
-%
-% facenet_probe_o3
-% facenet_probe_label_o3
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 hash_facenet_probe_c=facenet_probe_c;
@@ -210,11 +196,13 @@ reportRank = 1; % the rank point for open-set identification performance reporti
 numTrials = 1;
 numVeriFarPoints = length(veriFarPoints);
 iom_VR = zeros(numTrials, numVeriFarPoints); % verification rates of the 10 trials
+iom_VR_re = zeros(numTrials, numVeriFarPoints); % verification rates of the 10 trials
 iom_veriFAR = zeros(numTrials, numVeriFarPoints); % verification false accept rates of the 10 trials
 
 numOsiFarPoints = length(osiFarPoints);
 numRanks = length(rankPoints);
 iom_DIR = zeros(numRanks, numOsiFarPoints, numTrials); % detection and identification rates of the 10 trials
+iom_DIR_re = zeros(numRanks, numOsiFarPoints, numTrials); % detection and identification rates of the 10 trials
 iom_osiFAR = zeros(numTrials, numOsiFarPoints); % open-set identification false accept rates of the 10 trials
 
 final_dist = zeros(size(facenet_probe_label_c,2),size(mixing_facenet_gallery,1));
@@ -230,21 +218,6 @@ for i = progress(1:size(facenet_probe_label_c,2))
 end
 
 % Evaluate the verification performance.
-[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-final_dist', facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
-
-% CMC close set
-
-match_similarity =1-final_dist;
-[iom_max_rank,iom_rec_rates] = CMC(match_similarity,facenet_probe_label_c,facenet_gallery_label);
-
-
-score_avg_mAP_iom = []; % open-set identification false accept rates of the 10 trials
-for k2=[1:10 20:10:100 200:100:1000]
-    score_avg_mAP_iom = [score_avg_mAP_iom average_precision(final_dist,facenet_gallery_label==facenet_probe_label_c',k2)];
-end
-
-% 
-% fprintf('avg_mAP_iom %8.5f\n', score_avg_mAP_iom(5)) % ע�������ʽǰ����?%���ţ�
 
 final_dist_o1 = zeros(size(facenet_probe_label_o1,2),size(mixing_facenet_gallery,1));
 for i = progress(1:size(facenet_probe_label_o1,2))
@@ -259,7 +232,6 @@ for i = progress(1:size(facenet_probe_label_o1,2))
 end
 
 % Evaluate the open-set identification performance.
-[iom_DIR(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(1-final_dist_o1', facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
 
 
 final_dist_o2 = zeros(size(facenet_probe_label_o2,2),size(mixing_facenet_gallery,1));
@@ -274,7 +246,6 @@ for i = progress(1:size(facenet_probe_label_o2,2))
     final_dist_o2(i,:) = dist;
 end
 
-[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist_o2', facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
 
 final_dist_o3 = zeros(size(facenet_probe_label_o3,2),size(mixing_facenet_gallery,1));
 for i = progress(1:size(facenet_probe_label_o3,2))
@@ -287,12 +258,28 @@ for i = progress(1:size(facenet_probe_label_o3,2))
     final_dist_o3(i,:) = dist;
 end
 
+final_dist_re = re_ranking_score(final_dist,facenet_gallery_label,facenet_probe_label_c,mixing_facenet_gallery,hash_facenet_probe_c, k1, k2, lambda,measure);
+final_dist_o1_re = re_ranking_score(final_dist_o1,facenet_gallery_label,facenet_probe_label_o1,mixing_facenet_gallery,hash_facenet_probe_o1, k1, k2, lambda,measure);
+final_dist_o2_re = re_ranking_score(final_dist_o2,facenet_gallery_label,facenet_probe_label_o2,mixing_facenet_gallery,hash_facenet_probe_o2, k1, k2, lambda,measure);
+final_dist_o3_re = re_ranking_score(final_dist_o3,facenet_gallery_label,facenet_probe_label_o3,mixing_facenet_gallery,hash_facenet_probe_o3, k1, k2, lambda,measure);
+[CMC_eu_re, map_eu_re, ~, ~] = evaluation(dist_eu_re, facenet_gallery_label, facenet_probe_label_c, [], []);
+[CMC_eu, map_eu, ~, ~] = evaluation(dist_eu, facenet_gallery_label, facenet_probe_label_c, [], []);
+
+[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-final_dist', facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
+[iom_DIR(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(1-final_dist_o1', facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
+[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist_o2', facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
 [iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-final_dist_o3', facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
 
+[iom_VR_re(1,:), iom_veriFAR(1,:)] = EvalROC(1-final_dist_re', facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
+[iom_DIR_re(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(1-final_dist_o1_re', facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
+[iom_DIR_re(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist_o2_re', facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
+[iom_DIR_re(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-final_dist_o3_re', facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
 
-perf = [0 0 0 0 reportVR reportDIR iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 ]%score_avg_mAP_iom(1:5)
-fid=fopen('logs/log_iom_fusion.txt','a');
+
+perf = [CMC_eu(1) * 100  map_eu(1)*100 CMC_eu_re(1) * 100 map_eu_re(1)*100 reportVR reportDIR iom_VR(1,[29 38 56])* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100
+    iom_VR_re(1,[29 38 56])* 100 iom_DIR_re(1,[11 20],1) * 100 iom_DIR_re(1,[11 20],2) * 100 iom_DIR_re(1,[11 20],3) * 100]
+fid=fopen('logs/log_iom_id_fusion.txt','a');
 fwrite(fid,hashcode_path+"_"+hashcode_path2+" ");
 fclose(fid)
-dlmwrite('logs/log_iom_fusion.txt', perf, '-append');
+dlmwrite('logs/log_iom_id_fusion.txt', perf, '-append');
 end
