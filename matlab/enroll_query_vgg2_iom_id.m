@@ -15,22 +15,8 @@ lambda = 0.3;
 measure = 'Hamming';
 %%
 
-Descriptor_orig = importdata("../embeddings/"+hashcode_path);
-fid_lfw_name=importdata("../embeddings/" + filename_path);
+Descriptors = importdata("../embeddings/"+hashcode_path);
 
-
-% align_lfw_feat = lfw_feat(my_index,:);
-align_lfw_feat_dIoM = Descriptor_orig(my_index,:);
-align_lfw_name = lfw_name(my_index);
-
-% save('data/align_lfw_feat.mat','align_lfw_feat')
-% save('data/align_lfw_feat_dIoM.mat','align_lfw_feat_dIoM')
-
-% close all; clear; clc;
-load('data/lfw_label.mat')
-% load('data/align_lfw_feat_dIoM_512x2.mat')
-
-Descriptors = align_lfw_feat_dIoM;
 
 %% BLUFR
 reportVR = 0;
