@@ -5,6 +5,7 @@ logs/*
 **/*.tfrecord
 .idea
 .embeddings
+.embeddings/*
 .trash
 data/*
 matlab/BLUFR/data/*
