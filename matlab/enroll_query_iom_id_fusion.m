@@ -16,6 +16,7 @@ measure = 'Hamming';
 %%
 Descriptor_orig1 = importdata("../embeddings/"+hashcode_path);
 Descriptor_orig2 = importdata("../embeddings/"+hashcode_path2);
+
 Descriptor_orig = [Descriptor_orig1 Descriptor_orig2]; % fusion 
 
 fid_lfw_name=importdata("../embeddings/" + filename_path);
@@ -284,13 +285,11 @@ end
 [iom_DIR_re(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist_o2_re, facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
 [iom_DIR_re(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-final_dist_o3_re, facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
 
+perf = [reportVR reportDIR iom_rec_rates(1)* 100 iom_VR(1,[29 38 56])* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 score_avg_mAP_iom(1:5) iom_rec_rates_re(1)* 100 iom_VR_re(1,[29 38 56])* 100 iom_DIR_re(1,[11 20],1) * 100 iom_DIR_re(1,[11 20],2) * 100 iom_DIR_re(1,[11 20],3) * 100 score_avg_mAP_iom_re(1:5)];
 
-perf = [reportVR reportDIR iom_rec_rates(1)* 100 iom_VR(1,[29 38 56])* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 score_avg_mAP_iom(1:5)
-    iom_rec_rates_re(1)* 100 iom_VR_re(1,[29 38 56])* 100 iom_DIR_re(1,[11 20],1) * 100 iom_DIR_re(1,[11 20],2) * 100 iom_DIR_re(1,[11 20],3) * 100 score_avg_mAP_iom_re(1:5)]
-
-fid=fopen('logs/log_iom_id_fusion.txt','a');
+fid=fopen('logs/log_lfw_iom_id_fusion.txt','a');
 fwrite(fid,hashcode_path+"_"+hashcode_path2+" ");
 fclose(fid)
-dlmwrite('logs/log_iom_id_fusion.txt', perf, '-append');
+dlmwrite('logs/log_lfw_iom_id_fusion.txt', perf, '-append');
 
 end

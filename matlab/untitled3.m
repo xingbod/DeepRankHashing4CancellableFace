@@ -1,3 +1,7 @@
+function enroll_query_iom(feat_path,filename_path)
+% hashcode_path e.g. res50_lfw_feat_dIoM_512x2.csv
+% filename_path e.g. lresnet100e_ir_lfw_name.txt
+% e.g. enroll_query_iom lresnet100e_ir_lfw_feat_dIoM_512x2.csv  lresnet100e_ir_lfw_name.txt
 addpath('../');
 addpath('matlab_tools')
 addpath_recurse('BLUFR')
@@ -8,15 +12,11 @@ addpath('k_reciprocal_re_ranking')
 k1 = 20;
 k2 = 6;
 lambda = 0.3;
-measure = 'Euclidean';
+measure = 'Hamming';
 %%
-feat_path = 'ResNet50_lfw_feat.csv';
-filename_path = "ResNet50_lfw_name.txt";
+
 Descriptor_orig = importdata("../embeddings/"+feat_path);
 fid_lfw_name=importdata("../embeddings/" + filename_path);
-
-
-
 lfw_name=[];
 for i=1:size(fid_lfw_name,1)
     lfw_name = [lfw_name; string(cell2mat(fid_lfw_name(i)))+".jpg"];
@@ -48,7 +48,7 @@ load('data/lfw_label.mat')
 Descriptors = align_lfw_feat_dIoM;
 
 %% BLUFR
-% [reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure',measure);
+[reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure',measure);
 
 %% Voting protocol based on mixing
 m = size(Descriptors,2);
@@ -215,10 +215,10 @@ label_query = facenet_probe_label_c;
 %% Euclidean
 
 % Compute the cosine similarity score between the test samples.
-facenet_score_c =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_c,  measure))/100;
-facenet_score_o1 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o1,  measure))/100;
-facenet_score_o2 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o2,  measure))/100;
-facenet_score_o3 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o3,  measure))/100;
+facenet_score_c =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_c,  measure));
+facenet_score_o1 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o1,  measure));
+facenet_score_o2 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o2,  measure));
+facenet_score_o3 =1-(pdist2( hash_facenet_gallery,hash_facenet_probe_o3,  measure));
 
 
 %dist_eu = pdist2(galFea', probFea');
@@ -241,7 +241,6 @@ fprintf(' Rank1,  mAP\n');
 fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu_re(1) * 100, map_eu_re(1)*100);
 
 % Evaluate the open-set identification performance.
-
 % Evaluate the verification performance.
 [iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(facenet_score_c, facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
 
@@ -251,7 +250,8 @@ fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu_re(1) * 100, map_eu_re(1)*100);
 
 % 
 [iom_max_rank,iom_rec_rates] = CMC(facenet_score_c',facenet_probe_label_c,facenet_gallery_label);
-% 
+
+
 % 
 % score_avg_mAP_iom = []; % open-set identification false accept rates of the 10 trials
 % for k2=[1:10 20:10:100 200:100:1000]
@@ -262,6 +262,14 @@ fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu_re(1) * 100, map_eu_re(1)*100);
 % fprintf('avg_mAP_iom %8.5f\n', score_avg_mAP_iom(5)) % 注意输出格式前须有%符号，
 
 
+% 
+% save("data/"+hashcode_path+"_iom_veriFAR.mat","iom_veriFAR");
+% save("data/"+hashcode_path+"_iom_max_rank.mat","iom_max_rank");
+% save("data/"+hashcode_path+"_iom_VR.mat","iom_VR");
+% save("data/"+hashcode_path+"_iom_rec_rates.mat","iom_rec_rates");
+% save("data/"+hashcode_path+"_iom_osiFAR.mat","iom_osiFAR");
+% save("data/"+hashcode_path+"_iom_DIR.mat","iom_DIR");
+
 %% Display the benchmark performance and output to the log file.
 % str = sprintf('Verification:\n');
 % str = sprintf('%s\t@ FAR = %g%%: VR = %.2f%%.\n', str, reportVeriFar*100, reportVR);
@@ -271,7 +279,8 @@ fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu_re(1) * 100, map_eu_re(1)*100);
 % 
 
 perf = [CMC_eu(1) * 100  map_eu(1)*100 CMC_eu_re(1) * 100 map_eu_re(1)*100 reportVR reportDIR iom_VR(1,[29 38 56])* 100 iom_rec_rates(1)* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 ]%score_avg_mAP_iom(1:5)
-fid=fopen('logs/log_orig.txt','a');
+fid=fopen('logs/log_orig_hashing.txt','a');
 fwrite(fid,feat_path+" ");
 fclose(fid)
-dlmwrite('logs/log_orig.txt', perf, '-append');
+dlmwrite('logs/log_orig_hashing.txt', perf, '-append');
+end
