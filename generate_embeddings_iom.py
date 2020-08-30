@@ -57,7 +57,7 @@ def main(_argv):
         print("[*] Cannot find ckpt from {}.".format(ckpt_path))
         exit()
 
-    def load_data_from_dir(save_path, BATCH_SIZE=128, img_ext='png'):
+    def load_data_from_dir(save_path, BATCH_SIZE=128, img_ext='png',ds='LFW'):
         def transform_test_images(img):
             img = tf.image.resize(img, (112, 112))
             img = img / 255
@@ -68,9 +68,13 @@ def main(_argv):
             parts = tf.strings.split(file_path, os.path.sep)
             # The second to last is the class-directory
             #         wh = tf.strings.split(parts[-1], ".")[0]
-            wh = tf.strings.split(parts[-1], ".")[0]
+            if ds=='LFW':
+                wh = tf.strings.split(parts[-1], ".")[0]
+            elif ds=='VGG2':
+                wh = parts[-2]
+            else:
+                wh = tf.strings.split(parts[-1], ".")[0]
             return wh
-
         def process_path_withname(file_path):
             label = get_label_withname(file_path)
             img = tf.io.read_file(file_path)
@@ -135,7 +139,7 @@ def main(_argv):
             model.summary(line_length=80)
             cfg['embd_shape'] = m * q
 
-            dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=128, img_ext='png')
+            dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=128, img_ext='png',ds='VGG2')
             feats, names, n = extractFeat(dataset, model, m)
             with open('embeddings/' + cfg['backbone_type'] + '_VGG2_feat_drIoM_' + str(cfg['m']) + 'x' + str(
                     cfg['q']) + '.csv',
