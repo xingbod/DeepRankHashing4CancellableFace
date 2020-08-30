@@ -61,7 +61,15 @@ def main(_):
     m = cfg['m']
     q = cfg['q']
 
-    arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50/')
+    if cfg['backbone_type'] == 'ResNet50':
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50/')
+    elif cfg['backbone_type'] == 'InceptionResNetV2':
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_InceptionResNetV2/')
+    elif cfg['backbone_type'] == 'lresnet100e_ir':
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_lresnet100e_ir/')
+    else:
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50/')
+
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
     if (not ckpt_path) & (arc_ckpt_path is not None):
         print("[*] load ckpt from {}".format(arc_ckpt_path))
