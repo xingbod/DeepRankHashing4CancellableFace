@@ -177,7 +177,7 @@ hash_facenet_gallery=facenet_gallery;
 [identifiers ] = generate_identifier2(m,q,6000);
 %%% mixing gallery
 mixing_facenet_gallery = [];
-for i = progress(1:size(facenet_gallery_label,2))
+parfor i = progress(1:size(facenet_gallery_label,2))
     mixing_facenet_gallery(i,:) = bitxor(hash_facenet_gallery(i,:),identifiers(facenet_gallery_label(i),:));
 end
 
@@ -217,7 +217,6 @@ end
 
 final_dist_o1 = zeros(size(facenet_probe_label_o1,2),size(mixing_facenet_gallery,1));
 parfor i = progress(1:size(facenet_probe_label_o1,2))
-
     dist =  zeros(1,size(mixing_facenet_gallery,1));
     for j=1: size(mixing_facenet_gallery,1)
         gallery_bin =  mixing_facenet_gallery(j,:);
