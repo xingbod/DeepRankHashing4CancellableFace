@@ -140,7 +140,7 @@ def main(_argv):
             model.summary(line_length=80)
             cfg['embd_shape'] = m * q
 
-            dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=128, img_ext='png',ds='VGG2')
+            dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=256, img_ext='png',ds='VGG2')
             feats, names, n = extractFeat(dataset, model, m)
             with open('embeddings/' + cfg['backbone_type'] + '_VGG2_feat_drIoM_' + str(cfg['m']) + 'x' + str(
                     cfg['q']) + '.csv',
