@@ -45,7 +45,14 @@ def load_data_from_dir(save_path, BATCH_SIZE=128, img_ext='png', ds='LFW'):
         img = transform_test_images(img)
         return img, label
 
-    list_gallery_ds = tf.data.Dataset.list_files(save_path + '/*/*.' + img_ext, shuffle=False)
+    if ds == 'LFW':
+        list_gallery_ds = tf.data.Dataset.list_files(save_path + '/*/*.' + img_ext, shuffle=False)
+    elif ds == 'VGG2':
+        list_gallery_ds = tf.data.Dataset.list_files(save_path + '/*/*.' + img_ext, shuffle=False)
+    elif ds == 'IJBC':
+        list_gallery_ds = tf.data.Dataset.list_files(save_path + '/*.' + img_ext, shuffle=False)
+    else:
+        list_gallery_ds = tf.data.Dataset.list_files(save_path + '/*/*.' + img_ext, shuffle=False)
     labeled_gallery_ds = list_gallery_ds.map(lambda x: process_path_withname(x))
     dataset = labeled_gallery_ds.batch(BATCH_SIZE)
     return dataset
