@@ -12,37 +12,25 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 '''
 from absl import app, flags, logging
-import tensorflow as tf
-import keras
 import cv2
 import numpy as np
-import sys, pandas as pd
 from PIL import Image
 np.random.seed(123)  # for reproducibility
-from mtcnn import MTCNN
-
-mtcnn = MTCNN()
-mtcnn.share_memory()
-
-
+import concurrent.futures
+import os
+root_path = '/media/Storage/facedata/ijbc/'
+# root_path = '/media/charles/Storage/CropAlignFace/data/IJB-C/'
+path_to_frames = root_path + 'images/'
+metadata_path = root_path + 'protocols/ijbc_1N_probe_mixed.csv'
+# metadata_path = root_path + 'protocols/ijbc_1N_gallery_G1.csv'
+# metadata_path = root_path + 'protocols/ijbc_1N_gallery_G2.csv'
+save_path = root_path + 'images_cropped/'
+nn =0
 def to_image(arr):
     if type(arr).__module__ == 'PIL.Image':
         return arr
     if type(arr).__module__ == 'numpy':
         return Image.fromarray(arr)
-
-def alignface(img1, ):
-    img1 = Image.fromarray(img1)
-    try:
-        face1 = mtcnn.align_best(img1, limit=10, min_face_size=16, )
-        face1 = np.asarray(face1)
-        return face1, True
-
-    except:
-        logging.info(f'fail !! {img1}')
-        face1 = to_image(img1).resize((112, 112), Image.BILINEAR)
-        face1 = np.asarray(face1)
-        return face1, False
 
 def get_groundtruth(dataset):
     "{frame_id: [template_id, x, y, w, h]"
@@ -59,36 +47,51 @@ def get_groundtruth(dataset):
             # if 'frames' in frame_name:
             if frame_name not in frame_map:
                 frame_map[frame_name] = []
-            frame_data = [x, y, w, h]
+            frame_data = [x, y, w, h,subject_id]
             frame_map[frame_name] = frame_data
 
     return frame_map
-
-def extract_facial_features_vggface_frames():
-
-    path_to_frames = '/home/datasets/images/IJB/IJB-C/images/'
-    metadata_path = '/home/datasets/images/IJB/IJB-C/protocols/ijbc_1N_probe_mixed.csv'
-    save_path = '/home/datasets/images/IJB/IJB-C/images_cropped/'
-
-    frames_data = get_groundtruth(metadata_path)
-
-    for frame_id, frame_data in frames_data.items():
-        print(frame_id)
-        x, y, w, h = frame_data
-
-        try:
-            draw = cv2.imread(path_to_frames + frame_id)
-        except Exception as e:
-            print(e)
-            continue
-
+def create_dir(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+def process_crop(input):
+    (frame_id, frame_data) = input
+    print(frame_id)
+    x, y, w, h,subject_id = frame_data
+    try:
+        draw = cv2.cvtColor(cv2.imread(path_to_frames + frame_id), cv2.COLOR_BGR2RGB)
         y = int(y)
         x = int(x)
         w = int(w)
         h = int(h)
 
         face = draw[y:y + h, x:x + w]
-        alignface,isSuccess = alignface(face)
-        cv2.imwrite(save_path+frame_id, alignface)
+        create_dir(save_path + subject_id+'/')
+        cv2.imwrite(save_path + subject_id+'/'+frame_id.split('/')[-2]+frame_id.split('/')[-1], face)
+    except Exception as e:
+        print(e)
+
+
+
+
+def process_ijbc_frames():
+
+    frames_data = get_groundtruth(metadata_path)
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        frames_data = get_groundtruth(metadata_path)
+        executor.map(process_crop, frames_data.items())
+
 
     print("SUCCESS!!!!!")
+
+def main(_):
+
+    process_ijbc_frames()
+    # metadata_path = root_path + 'protocols/ijbc_1N_gallery_G1.csv'
+    # process_ijbc_frames(path_to_frames,metadata_path,save_path)
+    # metadata_path = root_path + 'protocols/ijbc_1N_gallery_G2.csv'
+    # process_ijbc_frames(path_to_frames,metadata_path,save_path)
+
+
+if __name__ == '__main__':
+    app.run(main)
