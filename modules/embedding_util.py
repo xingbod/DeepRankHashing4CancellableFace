@@ -18,6 +18,7 @@ import numpy as np
 
 
 def load_data_from_dir(save_path, BATCH_SIZE=128, img_ext='png', ds='LFW'):
+    print("now loading " + ds)
     def transform_test_images(img):
         img = tf.image.resize(img, (112, 112))
         img = img / 255
