@@ -252,7 +252,7 @@ fprintf('%5.2f%%, %5.2f%%\n\n', CMC_eu_re(1) * 100, map_eu_re(1)*100);
 % end
 % 
 % 
-% fprintf('avg_mAP_iom %8.5f\n', score_avg_mAP_iom(5)) % ×¢ÒâÊä³ö¸ñÊ½Ç°ÐëÓÐ%·ûºÅ£¬
+% fprintf('avg_mAP_iom %8.5f\n', score_avg_mAP_iom(5)) % ×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½Ç°ï¿½ï¿½ï¿½ï¿½%ï¿½ï¿½ï¿½Å£ï¿½
 
 % Evaluate the open-set identification performance.
 

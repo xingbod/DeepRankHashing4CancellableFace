@@ -1,4 +1,4 @@
-function enroll_query_iom_fusion(feat_path,feat_path2,filename_path)
+function enroll_query_ijbc_orig_fusion(feat_path,feat_path2,filename_path)
 % hashcode_path e.g. res50_lfw_feat_dIoM_512x2.csv
 % filename_path e.g. lresnet100e_ir_lfw_name.txt
 % e.g. enroll_query_iom lresnet100e_ir_lfw_feat_dIoM_512x2.csv  lresnet100e_ir_lfw_name.txt
@@ -12,57 +12,25 @@ addpath('k_reciprocal_re_ranking')
 k1 = 20;
 k2 = 6;
 lambda = 0.3;
-measure = 'Hamming';
+measure = 'Euclidean';
 %%
 
-Descriptor_orig1 = importdata("../embeddings/"+feat_path);
-Descriptor_orig2 = importdata("../embeddings/"+feat_path2);
-Descriptor_orig = [Descriptor_orig1 Descriptor_orig2]; % fusion 
-
-fid_lfw_name=importdata("../embeddings/" + filename_path);
-lfw_name=[];
-for i=1:size(fid_lfw_name,1)
-    lfw_name = [lfw_name; string(cell2mat(fid_lfw_name(i)))+".jpg"];
-end
-
-fid2=importdata('BLUFR/list/lfw/image_list.txt');
-lfw_name2=[];
-for i=1:size(fid_lfw_name,1)
-    lfw_name2 = [lfw_name2; string(cell2mat(fid2(i)))];
-end
-
-my_index=[];
-for i=1:size(fid_lfw_name,1)
-    indx = find(lfw_name2(i)==lfw_name);
-    my_index = [my_index, indx];
-end
-
-% align_lfw_feat = lfw_feat(my_index,:);
-align_lfw_feat_dIoM = Descriptor_orig(my_index,:);
-align_lfw_name = lfw_name(my_index);
-
-% save('data/align_lfw_feat.mat','align_lfw_feat')
-% save('data/align_lfw_feat_dIoM.mat','align_lfw_feat_dIoM')
-
-% close all; clear; clc;
-load('data/lfw_label.mat')
-% load('data/align_lfw_feat_dIoM_512x2.mat')
-
-Descriptors = align_lfw_feat_dIoM;
+Descriptors = importdata("../embeddings/"+hashcode_path);
+ijbclables
 
 %% BLUFR
-[reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure',measure);
-
+reportVR = 0;
+reportDIR = 0;
 %% Voting protocol based on mixing
 m = size(Descriptors,2);
 q=max(max(Descriptors))+1;
 
 M = containers.Map({'abc'},{[]});
-for i=1:length(lfwlables)
-    if isKey(M,char(lfwlables(i)))
-        M(char(lfwlables(i))) = [M(char(lfwlables(i))); Descriptors(i,:)];
+for i=1:length(ijbclables)
+    if isKey(M,char(ijbclables(i)))
+        M(char(ijbclables(i))) = [M(char(ijbclables(i))); Descriptors1(i,:)];
     else
-        M(char(lfwlables(i)))=Descriptors(i,:);
+        M(char(ijbclables(i)))=Descriptors1(i,:);
     end
 end
 remove(M,'abc');
@@ -75,9 +43,9 @@ unknown_unknowns= containers.Map({'abc'},{[]});
 for nameidx=1:length(allnames)
     thisuseremplate=M(allnames{nameidx});
     cnt=size(thisuseremplate,1);
-    if cnt>=4
+    if cnt>=30
         known(allnames{nameidx})=  M(allnames{nameidx});
-    elseif cnt>1
+    elseif cnt>15
         known_unknowns(allnames{nameidx})=  M(allnames{nameidx});
     else
         unknown_unknowns(allnames{nameidx})=  M(allnames{nameidx});
@@ -97,8 +65,8 @@ facenet_gallery_label=[];
 known_names=known.keys;
 for nameidx=1:length(known_names)
     thisuseremplate=known(known_names{nameidx});
-    facenet_train_set = [facenet_train_set ;thisuseremplate(1:3,:) ];
-    facenet_train_label=[facenet_train_label repmat(string(known_names{nameidx}),1,3)];
+    facenet_train_set = [facenet_train_set ;thisuseremplate(1:2,:) ];
+    facenet_train_label=[facenet_train_label repmat(string(known_names{nameidx}),1,2)];
 end
 
 facenet_gallery = facenet_train_set;
@@ -116,18 +84,18 @@ S_label=[];
 for nameidx=1:length(known_names)
     thisuseremplate=known(known_names{nameidx});
     cnt=size(thisuseremplate,1);
-    S = [S ;thisuseremplate(4:end,:) ];
-    S_label=[S_label repmat(string(known_names{nameidx}),1,cnt-3)];
+    S = [S ;thisuseremplate(4:6,:) ];
+    S_label=[S_label repmat(string(known_names{nameidx}),1,3)];
 end
 % S union K  o1
 
 K=[];
 K_label=[];
 for nameidx=1:length(known_unknowns_names)
-    thisuseremplate=known_unknowns(known_unknowns_names{nameidx});
+   thisuseremplate=known_unknowns(known_unknowns_names{nameidx});
     cnt=size(thisuseremplate,1);
-    K = [K ;thisuseremplate(2:end,:) ];
-    K_label=[K_label repmat(string(known_unknowns_names{nameidx}),1,cnt-1)];
+    K = [K ;thisuseremplate(2:4,:) ];
+    K_label=[K_label repmat(string(known_unknowns_names{nameidx}),1,3)];
 end
 
 % S union U  o2
@@ -136,10 +104,14 @@ U_label=[];
 unknown_unknowns_names=unknown_unknowns.keys;
 for nameidx=1:length(unknown_unknowns_names)
     thisuseremplate=unknown_unknowns(unknown_unknowns_names{nameidx});
-    U = [U ;thisuseremplate(1,:) ];
-    U_label=[U_label string(unknown_unknowns_names{nameidx})];
-end
+    cnt=size(thisuseremplate,1);
+    if(cnt>2)
+        cnt=3;
+    end
+    U = [U ;thisuseremplate(1:cnt,:) ];
+    U_label=[U_label repmat(string(unknown_unknowns_names{nameidx}),1,cnt)];
 
+end
 
 facenet_probe_c=S;
 facenet_probe_label_c=S_label;
@@ -155,11 +127,11 @@ facenet_probe_label_o3=[S_label K_label U_label];
 
 %label trans to number
 for nameidx=1:length(allnames)
-    facenet_probe_label_c(find(facenet_probe_label_c==string(allnames{nameidx})))=nameidx;
-    facenet_probe_label_o1(find(facenet_probe_label_o1==string(allnames{nameidx})))=nameidx;
-    facenet_probe_label_o2(find(facenet_probe_label_o2==string(allnames{nameidx})))=nameidx;
-    facenet_probe_label_o3(find(facenet_probe_label_o3==string(allnames{nameidx})))=nameidx;
-    facenet_gallery_label(find(facenet_gallery_label==string(allnames{nameidx})))=nameidx;
+   facenet_probe_label_c(find(facenet_probe_label_c==string(allnames{nameidx})))=nameidx;
+   facenet_probe_label_o1(find(facenet_probe_label_o1==string(allnames{nameidx})))=nameidx;
+   facenet_probe_label_o2(find(facenet_probe_label_o2==string(allnames{nameidx})))=nameidx;
+   facenet_probe_label_o3(find(facenet_probe_label_o3==string(allnames{nameidx})))=nameidx;
+   facenet_gallery_label(find(facenet_gallery_label==string(allnames{nameidx})))=nameidx;
 end
 % I also dont want to do so
 
@@ -168,6 +140,7 @@ facenet_probe_label_o1 = double(facenet_probe_label_o1);
 facenet_probe_label_o2 = double(facenet_probe_label_o2);
 facenet_probe_label_o3 = double(facenet_probe_label_o3);
 facenet_gallery_label = double(facenet_gallery_label);
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -197,6 +170,11 @@ numRanks = length(rankPoints);
 iom_DIR = zeros(numRanks, numOsiFarPoints, numTrials); % detection and identification rates of the 10 trials
 iom_DIR_re = zeros(numRanks, numOsiFarPoints, numTrials); % detection and identification rates of the 10 trials
 iom_osiFAR = zeros(numTrials, numOsiFarPoints); % open-set identification false accept rates of the 10 trials
+
+
+% Evaluate the open-set identification performance.
+% Evaluate the verification performance.
+% CMC close set
 
 %% Compute the cosine similarity score between the test samples.
 final_dist =(pdist2( hash_facenet_gallery,hash_facenet_probe_c,  measure));
@@ -238,8 +216,8 @@ end
 
 
 perf = [reportVR reportDIR iom_rec_rates(1)* 100 iom_VR(1,[29 38 56])* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 score_avg_mAP_iom(1:5) iom_rec_rates_re(1)* 100 iom_VR_re(1,[29 38 56])* 100 iom_DIR_re(1,[11 20],1) * 100 iom_DIR_re(1,[11 20],2) * 100 iom_DIR_re(1,[11 20],3) * 100 score_avg_mAP_iom_re(1:5)];
-fid=fopen('logs/log_lfw_iom_fusion.txt','a');
+fid=fopen('logs/log_ijbc_fusion.txt','a');
 fwrite(fid,feat_path+"_"+feat_path2+" ");
 fclose(fid)
-dlmwrite('logs/log_lfw_iom_fusion.txt', perf, '-append');
+dlmwrite('logs/log_ijbc_fusion.txt', perf, '-append');
 end
