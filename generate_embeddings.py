@@ -20,6 +20,7 @@ from modules.utils import set_memory_growth, load_yaml, l2_norm
 from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
 import tqdm
 import csv
+from modules.embedding_util import load_data_from_dir
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
@@ -51,33 +52,6 @@ else:
     exit()
 
 
-def load_data_from_dir(save_path, BATCH_SIZE=128, img_ext='png'):
-    def transform_test_images(img):
-        img = tf.image.resize(img, (112, 112))
-        img = img / 255
-        return img
-
-    def get_label_withname(file_path):
-        # convert the path to a list of path components
-        parts = tf.strings.split(file_path, os.path.sep)
-        # The second to last is the class-directory
-        #         wh = tf.strings.split(parts[-1], ".")[0]
-        wh = tf.strings.split(parts[-1], ".")[0]
-        return wh
-
-    def process_path_withname(file_path):
-        label = get_label_withname(file_path)
-        img = tf.io.read_file(file_path)
-        img = tf.image.decode_jpeg(img, channels=3)
-        img = transform_test_images(img)
-        return img, label
-
-    list_gallery_ds = tf.data.Dataset.list_files(save_path + '/*/*.' + img_ext, shuffle=False)
-    labeled_gallery_ds = list_gallery_ds.map(lambda x: process_path_withname(x))
-    dataset = labeled_gallery_ds.batch(BATCH_SIZE)
-    return dataset
-
-
 def extractFeat(dataset, model, feature_dim):
     final_feature = np.zeros(feature_dim)
     feats = []
@@ -97,7 +71,7 @@ def extractFeat(dataset, model, feature_dim):
 
 arcmodel.summary(line_length=80)
 
-dataset = load_data_from_dir('./data/lfw_mtcnnpy_160', BATCH_SIZE=128)
+dataset = load_data_from_dir('./data/lfw_mtcnnpy_160', BATCH_SIZE=cfg['batch_size'],ds='LFW')
 feats, names, n = extractFeat(dataset, arcmodel, 512)
 with open('embeddings/' + cfg['backbone_type'] + '_lfw_feat.csv',
           'w') as f:
@@ -111,7 +85,7 @@ For VGG2, we should select and pre-process the vgg dataset first, as the dataset
 
 '''
 
-dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=128, img_ext='png')
+dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=cfg['batch_size'], img_ext='png',ds='VGG2')
 feats, names, n = extractFeat(dataset, arcmodel, 512)
 with open('embeddings/' + cfg['backbone_type'] + '_VGG2_feat.csv',
           'w') as f:
@@ -123,3 +97,44 @@ with open('embeddings/' + cfg['backbone_type'] + '_VGG2_name.txt', 'w') as outfi
     for i in names:
         outfile.write(i + "\n")
 
+'''
+
+For IJBC
+
+'''
+
+dataset = load_data_from_dir('/media/Storage/facedata/ijbc_probe_mtcnnpy_160', BATCH_SIZE=cfg['batch_size'], img_ext='png',ds='IJBC')
+feats, names, n = extractFeat(dataset, arcmodel, 512)
+with open('embeddings/' + cfg['backbone_type'] + '_ijbc_feat.csv',
+          'w') as f:
+    # using csv.writer method from CSV package
+    print('embeddings/' + cfg['backbone_type'] + '_ijbc_feat.csv')
+    write = csv.writer(f)
+    write.writerows(feats)
+with open('embeddings/' + cfg['backbone_type'] + '_ijbc_name.txt', 'w') as outfile:
+    for i in names:
+        outfile.write(i + "\n")
+
+dataset = load_data_from_dir('/media/Storage/facedata/ijbc_g1_mtcnnpy_160', BATCH_SIZE=cfg['batch_size'], img_ext='png',ds='IJBC')
+feats, names, n = extractFeat(dataset, arcmodel, 512)
+with open('embeddings/' + cfg['backbone_type'] + '_ijbcg1_feat.csv',
+          'w') as f:
+    # using csv.writer method from CSV package
+    print('embeddings/' + cfg['backbone_type'] + '_ijbcg1_feat.csv')
+    write = csv.writer(f)
+    write.writerows(feats)
+with open('embeddings/' + cfg['backbone_type'] + '_ijbcg1_name.txt', 'w') as outfile:
+    for i in names:
+        outfile.write(i + "\n")
+
+dataset = load_data_from_dir('/media/Storage/facedata/ijbc_g2_mtcnnpy_160', BATCH_SIZE=cfg['batch_size'], img_ext='png',ds='IJBC')
+feats, names, n = extractFeat(dataset, arcmodel, 512)
+with open('embeddings/' + cfg['backbone_type'] + '_ijbcg2_feat.csv',
+          'w') as f:
+    # using csv.writer method from CSV package
+    print('embeddings/' + cfg['backbone_type'] + '_ijbcg2_feat.csv')
+    write = csv.writer(f)
+    write.writerows(feats)
+with open('embeddings/' + cfg['backbone_type'] + '_ijbcg2_name.txt', 'w') as outfile:
+    for i in names:
+        outfile.write(i + "\n")

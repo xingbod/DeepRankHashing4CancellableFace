@@ -15,6 +15,8 @@ import tqdm
 from modules.evaluations import get_val_data, perform_val, perform_val_yts
 from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
 from modules.utils import set_memory_growth, load_yaml, l2_norm
+from modules.embedding_util import load_data_from_dir,extractFeat
+
 
 # modules.utils.set_memory_growth()
 flags.DEFINE_string('cfg_path', './configs/iom_res50.yaml', 'config file path')
@@ -89,47 +91,8 @@ def main(_argv):
     model.summary(line_length=80)
     cfg['embd_shape'] = m * q
 
-    def load_data_from_dir(save_path, BATCH_SIZE=128, img_ext='png'):
-        def transform_test_images(img):
-            img = tf.image.resize(img, (112, 112))
-            img = img / 255
-            return img
 
-        def get_label_withname(file_path):
-            # convert the path to a list of path components
-            parts = tf.strings.split(file_path, os.path.sep)
-            # The second to last is the class-directory
-            #         wh = tf.strings.split(parts[-1], ".")[0]
-            wh = tf.strings.split(parts[-1], ".")[0]
-            return wh
 
-        def process_path_withname(file_path):
-            label = get_label_withname(file_path)
-            img = tf.io.read_file(file_path)
-            img = tf.image.decode_jpeg(img, channels=3)
-            img = transform_test_images(img)
-            return img, label
-
-        list_gallery_ds = tf.data.Dataset.list_files(save_path + '/*/*.' + img_ext, shuffle=False)
-        labeled_gallery_ds = list_gallery_ds.map(lambda x: process_path_withname(x))
-        dataset = labeled_gallery_ds.batch(BATCH_SIZE)
-        return dataset
-
-    def extractFeat(dataset, model, feature_dim):
-        final_feature = np.zeros(feature_dim)
-        feats = []
-        names = []
-        n = 0
-        for image_batch, label_batch in tqdm.tqdm(dataset):
-            feature = model(image_batch)
-            for i in range(feature.shape[0]):
-                n = n + 1
-                feats.append(feature[i].numpy())
-                mylabel = str(label_batch[i].numpy().decode("utf-8") + "")
-                #             print(mylabel)
-                names.append(mylabel)
-
-        return feats, names, n
 
     dataset = load_data_from_dir('./data/lfw_mtcnnpy_160', BATCH_SIZE=128)
     feats, names, n = extractFeat(dataset, model, m)
