@@ -73,5 +73,5 @@ def extractFeat(dataset, model, feature_dim):
             mylabel = str(label_batch[i].numpy().decode("utf-8") + "")
             #             print(mylabel)
             names.append(mylabel)
-
+    print("total images "+ str(n))
     return feats, names, n
