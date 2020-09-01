@@ -65,7 +65,7 @@ def extractFeat(dataset, model, feature_dim):
     names = []
     n = 0
     for image_batch, label_batch in tqdm.tqdm(dataset):
-        print("now is " + str(n))
+        # print("now is " + str(n))
         feature = model(image_batch)
         for i in range(feature.shape[0]):
             n = n + 1
