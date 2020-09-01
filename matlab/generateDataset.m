@@ -159,9 +159,9 @@ if ds=="LFW"
     
 elseif ds == "VGG2"
     
-    known = Descriptors(1:2000*50,:);
-    known_unknowns = Descriptors(2000*50+1:4000*50,:);
-    unknown_unknowns =Descriptors(4000*50+1:6000*50,:);
+    known = Descriptor_orig(1:2000*50,:);
+    known_unknowns = Descriptor_orig(2000*50+1:4000*50,:);
+    unknown_unknowns =Descriptor_orig(4000*50+1:6000*50,:);
     
     %% train set and  gallery probe set
     facenet_train_set = [known(1:50:2000*50,:); known(2:50:2000*50,:); known_unknowns(1:50:2000*50,:)];
@@ -206,9 +206,9 @@ elseif ds == "IJBC"
     M = containers.Map({'abc'},{[]});
     for i=1:length(ijbclables)
         if isKey(M,char(ijbclables(i)))
-            M(char(ijbclables(i))) = [M(char(ijbclables(i))); Descriptors1(i,:)];
+            M(char(ijbclables(i))) = [M(char(ijbclables(i))); Descriptor_orig(i,:)];
         else
-            M(char(ijbclables(i)))=Descriptors1(i,:);
+            M(char(ijbclables(i)))=Descriptor_orig(i,:);
         end
     end
     remove(M,'abc');
