@@ -19,8 +19,8 @@ lambda = 0.3;
 log_path = "logs/log_"+ds+"_"+remark+".log";
 %%
 
-Descriptor_orig1 = importdata("../embeddings/"+feat_path);
-Descriptor_orig2 = importdata("../embeddings/"+feat_path2);
+Descriptor_orig1 = importdata("../"+feat_path);
+Descriptor_orig2 = importdata("../"+feat_path2);
 Descriptor_orig = [Descriptor_orig1 Descriptor_orig2]; % fusion 
 
 fid_lfw_name=importdata("../embeddings/" + filename_path);

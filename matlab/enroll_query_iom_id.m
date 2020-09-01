@@ -18,8 +18,8 @@ log_path = "logs/log_"+ds+"_"+remark+".log";
 
 %%
 
-Descriptor_orig = importdata("../embeddings/"+hashcode_path);
-fid_lfw_name=importdata("../embeddings/" + filename_path);
+Descriptor_orig = importdata("../"+hashcode_path);
+fid_lfw_name=importdata("../" + filename_path);
 
 
 

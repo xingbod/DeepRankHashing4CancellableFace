@@ -19,8 +19,8 @@ lambda = 0.3;
 log_path = "logs/log_"+ds+"_"+remark+".log";
 %%
 
-Descriptor_orig = importdata("../embeddings/"+feat_path);
-fid_lfw_name=importdata("../embeddings/" + filename_path);
+Descriptor_orig = importdata("../"+feat_path);
+fid_lfw_name=importdata("../" + filename_path);
 if ds == "LFW"
     [Descriptors,lfw_label] = generate_lfw_align(Descriptor_orig,fid_lfw_name);
     %% BLUFR

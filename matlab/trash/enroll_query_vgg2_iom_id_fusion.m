@@ -1,4 +1,4 @@
-function enroll_query_vgg2_iom_id_fusion(feat_path,feat_path2,filename_path)
+function enroll_query_vgg2_iom_id_fusion(hashcode_path,hashcode_path2,filename_path)
 % hashcode_path e.g. res50_lfw_feat_dIoM_512x2.csv
 % filename_path e.g. lresnet100e_ir_lfw_name.txt
 % e.g. enroll_query_iom lresnet100e_ir_lfw_feat_dIoM_512x2.csv  lresnet100e_ir_lfw_name.txt
@@ -15,8 +15,9 @@ lambda = 0.3;
 measure = 'Hamming';
 %%
 
-Descriptor_orig1 = importdata("../embeddings/"+feat_path);
-Descriptor_orig2 = importdata("../embeddings/"+feat_path2);
+Descriptor_orig1 = importdata("../embeddings/"+hashcode_path);
+Descriptor_orig2 = importdata("../embeddings/"+hashcode_path2);
+
 Descriptor_orig = [Descriptor_orig1 Descriptor_orig2]; % fusion 
 
 %% BLUFR
@@ -178,8 +179,8 @@ end
 
 
 perf = [reportVR reportDIR iom_rec_rates(1)* 100 iom_VR(1,[29 38 56])* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 score_avg_mAP_iom(1:5) iom_rec_rates_re(1)* 100 iom_VR_re(1,[29 38 56])* 100 iom_DIR_re(1,[11 20],1) * 100 iom_DIR_re(1,[11 20],2) * 100 iom_DIR_re(1,[11 20],3) * 100 score_avg_mAP_iom_re(1:5)];
-fid=fopen('logs/log_vgg2_iom_id_fusion.txt','a');
-fwrite(fid,hashcode_path+"_"+hashcode_path2+" ");
+fid=fopen('logs/log_vgg2_iom_id.txt','a');
+fwrite(fid,hashcode_path+" ");
 fclose(fid)
-dlmwrite('logs/log_vgg2_iom_id_fusion.txt', perf, '-append');
+dlmwrite('logs/log_vgg2_iom_id.txt', perf, '-append');
 end
