@@ -21,21 +21,22 @@ from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFro
 import tqdm
 import csv
 from modules.embedding_util import load_data_from_dir,extractFeat
+from modules.LUT import genLUT
 
 # modules.utils.set_memory_growth()
 flags.DEFINE_string('cfg_path', './configs/iom_res50.yaml', 'config file path')
 flags.DEFINE_string('ckpt_epoch', '', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
+flags.DEFINE_integer('isLUT', 0, 'isLUT length of the look up table entry, 0 mean not use')
 
 def main(_argv):
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     os.environ['CUDA_VISIBLE_DEVICES'] = FLAGS.gpu
-
+    isLUT = FLAGS.isLUT
     logger = tf.get_logger()
     logger.disabled = True
     logger.setLevel(logging.FATAL)
     set_memory_growth()
-
     # cfg = load_yaml('./config_arc/arc_lres100ir.yaml')  #
     cfg = load_yaml(FLAGS.cfg_path)
     permKey = None

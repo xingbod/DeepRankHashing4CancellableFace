@@ -15,6 +15,7 @@ import tensorflow as tf
 import os
 import tqdm
 import numpy as np
+from modules.LUT import genLUT
 
 
 def load_data_from_dir(save_path, BATCH_SIZE=128, img_ext='png', ds='LFW'):
@@ -59,7 +60,7 @@ def load_data_from_dir(save_path, BATCH_SIZE=128, img_ext='png', ds='LFW'):
     return dataset
 
 
-def extractFeat(dataset, model, feature_dim):
+def extractFeat(dataset, model, feature_dim,isLUT=0,LUT=None):
     final_feature = np.zeros(feature_dim)
     feats = []
     names = []
@@ -74,4 +75,11 @@ def extractFeat(dataset, model, feature_dim):
             #             print(mylabel)
             names.append(mylabel)
     print("total images "+ str(n))
+    if isLUT:  # length of bin
+        # here do the binary convert
+        # # here convert the embedding to binary
+        # LUT = genLUT(q=16, bin_dim=isLUT, isPerm=False)
+        feats = tf.cast(feats, tf.int32)
+        LUV = tf.gather(LUT, feats)
+        feats = tf.reshape(LUV, (feats.shape[0], isLUT * feats.shape[1]))
     return feats, names, n

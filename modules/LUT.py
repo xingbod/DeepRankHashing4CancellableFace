@@ -14,6 +14,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 import random
+import math
 '''
 look up table generator
 Xingbo Dong@ Monash university
@@ -22,13 +23,25 @@ xingbod@gmail.com
 '''
 def genLUT(q=8,bin_dim=8,isPerm=False):
   LUT = []
-  a = list(range(q))
-  if isPerm:
-    random.shuffle(a)
-  for digit in range(q):
-    LUT.append([int(d) for d in bin(a[digit])[2:].zfill(bin_dim)])
+  if bin_dim< math.log(q)/math.log(2):# short dimension
+    for digit in range(q):
+      LUT.append([random.randint(0, 1) for i in range(bin_dim)])
+  else:
+    a = list(range(q))
+    if isPerm:
+      random.shuffle(a)
+    for digit in range(q):
+      LUT.append([int(d) for d in bin(a[digit])[2:].zfill(bin_dim)])
+
   # for digit in range(q):
   #   rint = random.randint(0, pow(2,bin_dim)-1)
   #   # rint = digit
   #   LUT.append([int(d) for d in bin(rint)[2:].zfill(bin_dim)])
   return LUT
+
+if __name__ == '__main__':
+    try:
+       LUT = genLUT(q=8,bin_dim=2,isPerm=False)
+       print(LUT,len(LUT))
+    except SystemExit:
+        pass
