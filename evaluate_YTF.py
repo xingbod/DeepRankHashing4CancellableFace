@@ -252,3 +252,4 @@ def main(_argv):
         cfg['backbone_type'],eer_orig, auc_orig,eer_r_iom, auc_r_iom,eer_dl_iom, auc_dl_iom)
     with open('./logs/YTF_' + cfg['sub_name'] + "_Output.md", "a") as text_file:
         text_file.write(log_str2)
+    print(log_str2)
