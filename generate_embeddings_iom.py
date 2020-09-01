@@ -147,7 +147,7 @@ def main(_argv):
             model.summary(line_length=80)
             cfg['embd_shape'] = m * q
             ##########################################
-            dataset = load_data_from_dir('./data/lfw_mtcnnpy_160', BATCH_SIZE=cfg['eval_batch_size'])
+            dataset = load_data_from_dir('./data/lfw_mtcnnpy_160', BATCH_SIZE=cfg['eval_batch_size'], ds='LFW')
             feats, names, n = extractFeat(dataset, model, m)
             with open(
                     'embeddings_0831/' + cfg['backbone_type'] + '_lfw_feat_drIoM_' + str(cfg['m']) + 'x' + str(
@@ -176,7 +176,7 @@ def main(_argv):
 
             ##########################################
             dataset = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/img',
-                                         BATCH_SIZE=cfg['eval_batch_size'], img_ext='png', ds='VGG2')
+                                         BATCH_SIZE=cfg['eval_batch_size'], img_ext='png', ds='IJBC')
             feats, names, n = extractFeat(dataset, model, m)
             with open('embeddings_0831/' + cfg['backbone_type'] + '_ijbc_feat_drIoM_' + str(cfg['m']) + 'x' + str(
                     cfg['q']) + '.csv',
@@ -233,7 +233,7 @@ def main(_argv):
 
             ##########################################
             dataset = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/img',
-                                         BATCH_SIZE=cfg['eval_batch_size'], img_ext='png', ds='VGG2')
+                                         BATCH_SIZE=cfg['eval_batch_size'], img_ext='png', ds='IJBC')
             feats, names, n = extractFeat(dataset, model, m)
             with open('embeddings_0831/' + cfg['backbone_type'] + '_ijbc_feat_drIoM_' + str(cfg['m']) + 'x' + str(
                     cfg['q']) + '.csv',
