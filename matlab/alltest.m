@@ -49,9 +49,9 @@
 measure = "Euclidean";
 ds = "LFW";
 remark = "deep_orig_feat";
-enroll_query_search("embeddings_0831/ResNet50_lfw_feat.csv", 'embeddings/ResNet50_lfw_name.txt',measure,"LFW",remark)
-enroll_query_search("embeddings_0831/ResNet50_VGG2_feat.csv", 'embeddings_0831/ResNet50_VGG2_name.txt',measure,"VGG2",remark)
-% enroll_query_search("embeddings_0831/ResNet50_ijbc_feat.csv", 'embeddings_0831/ResNet50_ijbc_name.txt',measure,"IJBC",remark)
+% enroll_query_search("embeddings_0831/ResNet50_lfw_feat.csv", 'embeddings/ResNet50_lfw_name.txt',measure,"LFW",remark)
+% enroll_query_search("embeddings_0831/ResNet50_VGG2_feat.csv", 'embeddings_0831/ResNet50_VGG2_name.txt',measure,"VGG2",remark)
+enroll_query_search("embeddings_0831/ResNet50_ijbc_feat.csv", 'embeddings_0831/ResNet50_ijbc_name.txt',measure,"IJBC",remark)
 
 remark = "random_iom";
 measure = "Hamming";

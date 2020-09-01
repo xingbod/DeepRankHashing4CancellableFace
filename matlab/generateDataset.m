@@ -203,35 +203,35 @@ elseif ds == "VGG2"
     
 elseif ds == "IJBC"
     ijbclables = fid_lfw_name;
-    M = containers.Map({'abc'},{[]});
+    M = containers.Map("0",{[]});
     for i=1:length(ijbclables)
-        if isKey(M,char(ijbclables(i)))
-            M(char(ijbclables(i))) = [M(char(ijbclables(i))); Descriptor_orig(i,:)];
+        if isKey(M,string(ijbclables(i)))
+            M(string(ijbclables(i))) = [M(string(ijbclables(i))); Descriptor_orig(i,:)];
         else
-            M(char(ijbclables(i)))=Descriptor_orig(i,:);
+            M(string(ijbclables(i)))=Descriptor_orig(i,:);
         end
     end
-    remove(M,'abc');
+    remove(M,"0");
     
     %% three group
     allnames=M.keys;
-    known= containers.Map({'abc'},{[]});
-    known_unknowns= containers.Map({'abc'},{[]});
-    unknown_unknowns= containers.Map({'abc'},{[]});
+    known= containers.Map("abc",{[]});
+    known_unknowns= containers.Map("abc",{[]});
+    unknown_unknowns= containers.Map("abc",{[]});
     for nameidx=1:length(allnames)
         thisuseremplate=M(allnames{nameidx});
         cnt=size(thisuseremplate,1);
-        if cnt>=30
+        if cnt>=10
             known(allnames{nameidx})=  M(allnames{nameidx});
-        elseif cnt>15
+        elseif cnt>5
             known_unknowns(allnames{nameidx})=  M(allnames{nameidx});
         else
             unknown_unknowns(allnames{nameidx})=  M(allnames{nameidx});
         end
     end
-    remove(known,'abc');
-    remove(known_unknowns,'abc');
-    remove(unknown_unknowns,'abc');
+    remove(known,"abc");
+    remove(known_unknowns,"abc");
+    remove(unknown_unknowns,"abc");
     
     %% train set and  facenet_gallery probe set
     facenet_train_set=[];
