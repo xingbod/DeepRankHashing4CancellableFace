@@ -92,30 +92,44 @@ def main(_argv):
     cfg['embd_shape'] = m * q
 
 
-
-
-    dataset = load_data_from_dir('./data/lfw_mtcnnpy_160', BATCH_SIZE=128)
+    dataset = load_data_from_dir('./data/lfw_mtcnnpy_160', BATCH_SIZE=cfg['eval_batch_size'])
     feats, names, n = extractFeat(dataset, model, m)
     with open(
-            'embeddings/' + cfg['backbone_type'] + '_lfw_feat_dlIoM_' + str(cfg['m']) + 'x' + str(
+            'embeddings_dl/' + cfg['backbone_type'] + '_lfw_feat_dlIoM_' + str(cfg['m']) + 'x' + str(
                 cfg['q']) + '.csv',
             'w') as f:
         # using csv.writer method from CSV package
         write = csv.writer(f)
         write.writerows(feats)
 
-    dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=128,
-                                 img_ext='png')
+    dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=cfg['eval_batch_size'],
+                                 img_ext='png', ds='VGG2')
     feats, names, n = extractFeat(dataset, model, m)
-    with open('embeddings/' + cfg['backbone_type'] + '_VGG2_feat_dlIoM_' + str(cfg['m']) + 'x' + str(
+    with open('embeddings_dl/' + cfg['backbone_type'] + '_VGG2_feat_dlIoM_' + str(cfg['m']) + 'x' + str(
             cfg['q']) + '.csv',
               'w') as f:
         # using csv.writer method from CSV package
-        print('embeddings/' + cfg['backbone_type'] + '_VGG2_feat_dlIoM_' + str(cfg['m']) + 'x' + str(
+        print('embeddings_dl/' + cfg['backbone_type'] + '_VGG2_feat_dlIoM_' + str(cfg['m']) + 'x' + str(
             cfg['q']) + '.csv')
         write = csv.writer(f)
         write.writerows(feats)
-    with open('embeddings/' + cfg['backbone_type'] + '_VGG2_name_dl_' + str(cfg['m']) + 'x' + str(
+    with open('embeddings_dl/' + cfg['backbone_type'] + '_VGG2_name_dl_' + str(cfg['m']) + 'x' + str(
+            cfg['q']) + '.txt', 'w') as outfile:
+        for i in names:
+            outfile.write(i + "\n")
+
+    dataset = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/img',
+                                 BATCH_SIZE=cfg['eval_batch_size'], img_ext='png', ds='IJBC')
+    feats, names, n = extractFeat(dataset, model, m)
+    with open('embeddings_0831/' + cfg['backbone_type'] + '_ijbc_feat_drIoM_' + str(cfg['m']) + 'x' + str(
+            cfg['q']) + '.csv',
+              'w') as f:
+        # using csv.writer method from CSV package
+        print('embeddings_0831/' + cfg['backbone_type'] + '_ijbc_feat_drIoM_' + str(cfg['m']) + 'x' + str(
+            cfg['q']) + '.csv')
+        write = csv.writer(f)
+        write.writerows(feats)
+    with open('embeddings_0831/' + cfg['backbone_type'] + '_ijbc_name_' + str(cfg['m']) + 'x' + str(
             cfg['q']) + '.txt', 'w') as outfile:
         for i in names:
             outfile.write(i + "\n")
