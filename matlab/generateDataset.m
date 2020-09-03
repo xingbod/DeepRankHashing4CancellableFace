@@ -160,24 +160,25 @@ if ds=="LFW"
     
 elseif ds == "VGG2"
     samples = 2000;
-    known = Descriptor_orig(1:samples*50,:);
+    samples_per_user = 6;
+    known = Descriptor_orig(1:samples*samples_per_user,:);
 %     known_unknowns = Descriptor_orig(2000*50+1:4000*50,:);
-    unknown_unknowns =Descriptor_orig(samples*50+1:samples*2*50,:);
+    unknown_unknowns =Descriptor_orig(samples*samples_per_user+1:samples*2*samples_per_user,:);
     
     %% train set and  gallery probe set
 %     facenet_train_set = [known(1:50:2000*50,:); known(2:50:2000*50,:); known_unknowns(1:50:2000*50,:)];
 %     facenet_train_label=[1:2000 1:2000 2001:4000];
     
-    facenet_gallery=[known(1:50:samples*50,:);known(2:50:samples*50,:);known(3:50:samples*50,:)];
+    facenet_gallery=[known(1:samples_per_user:samples*samples_per_user,:);known(2:samples_per_user:samples*samples_per_user,:);known(3:samples_per_user:samples*samples_per_user,:)];
     facenet_gallery_label=[1:samples 1:samples 1:samples];
     
-    S=[known(4:50:samples*50,:);known(5:50:samples*50,:);known(6:50:samples*50,:)];
+    S=[known(4:samples_per_user:samples*samples_per_user,:);known(5:samples_per_user:samples*samples_per_user,:);known(6:samples_per_user:samples*samples_per_user,:)];
     S_label=[1:samples 1:samples 1:samples];
     
 %     K=[ known_unknowns(2:50:2000*50,:); known_unknowns(3:50:2000*50,:); known_unknowns(4:50:2000*50,:)];
 %     K_label=[2001:4000 2001:4000 2001:4000];
     
-    U=[unknown_unknowns(1:50:samples*50,:)];
+    U=[unknown_unknowns(1:samples_per_user:samples*samples_per_user,:)];
     U_label=[samples+1:samples*2];
     
     
