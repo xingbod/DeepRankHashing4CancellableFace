@@ -11,7 +11,7 @@ else DS == "LFW"
 end
 measure = "Euclidean";
 remark = "deep_orig_feat";
-enroll_query_search("embeddings_0831/"+backbone+"_"+embed+"_feat.csv", 'embeddings/'+backbone+'_'+embed+'_name.txt',measure,DS,remark);
+enroll_query_search("embeddings_0831/"+backbone+"_"+embed+"_feat.csv", 'embeddings_0831/'+backbone+'_'+embed+'_name.txt',measure,DS,remark);
 
 remark = "random_iom";
 measure = "Hamming";
