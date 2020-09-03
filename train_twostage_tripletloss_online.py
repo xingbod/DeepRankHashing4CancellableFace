@@ -67,6 +67,10 @@ def main(_):
         arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_InceptionResNetV2/')
     elif cfg['backbone_type'] == 'lresnet100e_ir':
         arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_lresnet100e_ir/')
+    elif cfg['backbone_type'] == 'Xception':
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_Xception/')
+    elif cfg['backbone_type'] == 'VGG19':
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_vgg19/')
     else:
         arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50/')
 
