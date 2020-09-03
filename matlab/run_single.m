@@ -1,7 +1,7 @@
 function run_single(backbone,DS)
 
-backbone = "ResNet50";%InceptionResNetV2
-DS = "IJBC";
+% backbone = "ResNet50";%InceptionResNetV2
+% DS = "IJBC";
 
 
 if DS == "IJBC"
