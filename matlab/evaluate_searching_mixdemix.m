@@ -52,15 +52,15 @@ end
 
 
 final_dist_o1 = zeros(size(facenet_probe_label_o1,2),size(mixing_facenet_gallery,1));
-for i = progress(1:size(facenet_probe_label_o1,2))
-    dist =  zeros(1,size(mixing_facenet_gallery,1));
-    for j=1: size(mixing_facenet_gallery,1)
-        gallery_bin =  mixing_facenet_gallery(j,:);
-        retrieved_id = bitxor(gallery_bin,hash_facenet_probe_o1(i,:));
-        dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
-    end
-    final_dist_o1(i,:) = dist;
-end
+% for i = progress(1:size(facenet_probe_label_o1,2))
+%     dist =  zeros(1,size(mixing_facenet_gallery,1));
+%     for j=1: size(mixing_facenet_gallery,1)
+%         gallery_bin =  mixing_facenet_gallery(j,:);
+%         retrieved_id = bitxor(gallery_bin,hash_facenet_probe_o1(i,:));
+%         dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
+%     end
+%     final_dist_o1(i,:) = dist;
+% end
 
 
 final_dist_o2 = zeros(size(facenet_probe_label_o2,2),size(mixing_facenet_gallery,1));
@@ -77,24 +77,24 @@ end
 
 
 final_dist_o3 = zeros(size(facenet_probe_label_o3,2),size(mixing_facenet_gallery,1));
-for i = progress(1:size(facenet_probe_label_o3,2))
-    dist =  zeros(1,size(mixing_facenet_gallery,1));
-    for j=1: size(mixing_facenet_gallery,1)
-        gallery_bin =  mixing_facenet_gallery(j,:);
-        retrieved_id = bitxor(gallery_bin,hash_facenet_probe_o3(i,:));
-        dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
-    end
-    final_dist_o3(i,:) = dist;
-end
+% for i = progress(1:size(facenet_probe_label_o3,2))
+%     dist =  zeros(1,size(mixing_facenet_gallery,1));
+%     for j=1: size(mixing_facenet_gallery,1)
+%         gallery_bin =  mixing_facenet_gallery(j,:);
+%         retrieved_id = bitxor(gallery_bin,hash_facenet_probe_o3(i,:));
+%         dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
+%     end
+%     final_dist_o3(i,:) = dist;
+% end
 
 % Evaluate the open-set identification performance.
 % Evaluate the verification performance.
 % CMC close set
 
 final_dist_re = re_ranking_score(final_dist,facenet_gallery_label,facenet_probe_label_c,mixing_facenet_gallery,hash_facenet_probe_c, k1, k2, lambda,measure);
-final_dist_o1_re = re_ranking_score(final_dist_o1,facenet_gallery_label,facenet_probe_label_o1,mixing_facenet_gallery,hash_facenet_probe_o1, k1, k2, lambda,measure);
+% final_dist_o1_re = re_ranking_score(final_dist_o1,facenet_gallery_label,facenet_probe_label_o1,mixing_facenet_gallery,hash_facenet_probe_o1, k1, k2, lambda,measure);
 final_dist_o2_re = re_ranking_score(final_dist_o2,facenet_gallery_label,facenet_probe_label_o2,mixing_facenet_gallery,hash_facenet_probe_o2, k1, k2, lambda,measure);
-final_dist_o3_re = re_ranking_score(final_dist_o3,facenet_gallery_label,facenet_probe_label_o3,mixing_facenet_gallery,hash_facenet_probe_o3, k1, k2, lambda,measure);
+% final_dist_o3_re = re_ranking_score(final_dist_o3,facenet_gallery_label,facenet_probe_label_o3,mixing_facenet_gallery,hash_facenet_probe_o3, k1, k2, lambda,measure);
 
 % [CMC_eu_re, map_eu_re, ~, ~] = evaluation(final_dist_re, facenet_gallery_label, facenet_probe_label_c, [], []);
 % [CMC_eu, map_eu, ~, ~] = evaluation(final_dist', facenet_gallery_label, facenet_probe_label_c, [], []);
@@ -109,17 +109,17 @@ for k2=[1:10 20:10:100 200:100:1000]
 end
 
 [iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-final_dist', facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
-[iom_DIR(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(1-final_dist_o1', facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
+% [iom_DIR(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(1-final_dist_o1', facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
 [iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist_o2', facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
-[iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-final_dist_o3', facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
+% [iom_DIR(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-final_dist_o3', facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
 
 [iom_VR_re(1,:), iom_veriFAR(1,:)] = EvalROC(1-final_dist_re, facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
-[iom_DIR_re(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(1-final_dist_o1_re, facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
+% [iom_DIR_re(:,:,1), iom_osiFAR(1,:)] = OpenSetROC(1-final_dist_o1_re, facenet_gallery_label, facenet_probe_label_o1, osiFarPoints );
 [iom_DIR_re(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist_o2_re, facenet_gallery_label, facenet_probe_label_o2, osiFarPoints );
-[iom_DIR_re(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-final_dist_o3_re, facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
+% [iom_DIR_re(:,:,3), iom_osiFAR(3,:)] = OpenSetROC(1-final_dist_o3_re, facenet_gallery_label, facenet_probe_label_o3, osiFarPoints );
 
 
-perf = [iom_rec_rates(1)* 100 iom_VR(1,[29 38 56])* 100 iom_DIR(1,[11 20],1) * 100 iom_DIR(1,[11 20],2) * 100 iom_DIR(1,[11 20],3) * 100 score_avg_mAP_iom(1:5) iom_rec_rates_re(1)* 100 iom_VR_re(1,[29 38 56])* 100 iom_DIR_re(1,[11 20],1) * 100 iom_DIR_re(1,[11 20],2) * 100 iom_DIR_re(1,[11 20],3) * 100 score_avg_mAP_iom_re(1:5)];
+perf = [iom_rec_rates(1)* 100 iom_VR(1,[29 38 56])* 100 iom_DIR(1,[11 20],2) * 100 score_avg_mAP_iom(1:5) iom_rec_rates_re(1)* 100 iom_VR_re(1,[29 38 56])* 100 iom_DIR_re(1,[11 20],2) * 100 score_avg_mAP_iom_re(1:5)];
 
 end
 
