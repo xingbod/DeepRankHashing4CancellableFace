@@ -68,6 +68,9 @@ def main(_argv):
         print('embeddings_0831/' + cfg['backbone_type'] + '_lfw_feat.csv')
         write = csv.writer(f)
         write.writerows(feats)
+    with open('embeddings_0831/' + cfg['backbone_type'] + '_lfw_name.txt', 'w') as outfile:
+        for i in names:
+            outfile.write(i + "\n")
 
     '''
 
@@ -163,7 +166,10 @@ def main(_argv):
                 # using csv.writer method from CSV package
                 write = csv.writer(f)
                 write.writerows(feats)
-
+            with open('embeddings_0831/' + cfg['backbone_type'] + '_lfw_name_' + str(cfg['m']) + 'x' + str(
+                        cfg['q']) + 'txt', 'w') as outfile:
+                for i in names:
+                    outfile.write(i + "\n")
             ##########################################
             dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled',
                                          BATCH_SIZE=cfg['eval_batch_size'], img_ext='png', ds='VGG2')
@@ -228,7 +234,10 @@ def main(_argv):
                 # using csv.writer method from CSV package
                 write = csv.writer(f)
                 write.writerows(feats)
-
+            with open('embeddings_0831/' + cfg['backbone_type'] + '_lfw_name_' + str(cfg['m']) + 'x' + str(
+                        cfg['q']) + 'txt', 'w') as outfile:
+                for i in names:
+                    outfile.write(i + "\n")
             ##########################################
             dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled',
                                          BATCH_SIZE=cfg['eval_batch_size'], img_ext='png', ds='VGG2')
