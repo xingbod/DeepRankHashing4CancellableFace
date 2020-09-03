@@ -1,3 +1,5 @@
+function run_single(backbone,DS)
+
 backbone = "ResNet50";%InceptionResNetV2
 DS = "IJBC";
 
@@ -50,3 +52,6 @@ for m = [512]
     end
 end
 
+
+
+end

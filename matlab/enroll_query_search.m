@@ -37,7 +37,7 @@ end
 perf = [perf reportVR reportDIR];
 fid=fopen(log_path,'a');
 fwrite(fid,feat_path+" ");
-fclose(fid)
+fclose(fid);
 dlmwrite(log_path, perf, '-append');
 
 
