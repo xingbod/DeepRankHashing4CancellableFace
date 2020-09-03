@@ -10,6 +10,7 @@ from tensorflow.keras.layers import (
 from tensorflow.keras.applications import (
     MobileNetV2,
     ResNet50,
+    ResNet101,
     InceptionResNetV2,
     InceptionV3,
     Xception,
@@ -39,6 +40,9 @@ def Backbone(backbone_type='ResNet50', use_pretrain=True):
     def backbone(x_in):
         if backbone_type == 'ResNet50':
             return ResNet50(input_shape=x_in.shape[1:], include_top=False,
+                            weights=weights)(x_in)
+        elif backbone_type == 'ResNet101':
+            return ResNet101(input_shape=x_in.shape[1:], include_top=False,
                             weights=weights)(x_in)
         elif backbone_type == 'MobileNetV2':
             return MobileNetV2(input_shape=x_in.shape[1:], include_top=False,
