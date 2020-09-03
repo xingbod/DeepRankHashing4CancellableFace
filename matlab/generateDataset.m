@@ -159,7 +159,7 @@ if ds=="LFW"
     
     
 elseif ds == "VGG2"
-    samples = 3000;
+    samples = 2000;
     known = Descriptor_orig(1:samples*50,:);
 %     known_unknowns = Descriptor_orig(2000*50+1:4000*50,:);
     unknown_unknowns =Descriptor_orig(samples*50+1:samples*2*50,:);
