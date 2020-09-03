@@ -1,4 +1,4 @@
-backbone = "InceptionResNetV2";%InceptionResNetV2
+backbone = "ResNet50";%InceptionResNetV2
 DS = "IJBC";
 
 
