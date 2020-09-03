@@ -152,9 +152,9 @@ if ds=="LFW"
     
     
     hash_facenet_probe_c=facenet_probe_c;
-%     hash_facenet_probe_o1=facenet_probe_o1;
+    hash_facenet_probe_o1=[];
     hash_facenet_probe_o2=facenet_probe_o2;
-%     hash_facenet_probe_o3=facenet_probe_o3;
+    hash_facenet_probe_o3=[];
     hash_facenet_gallery=facenet_gallery;
     
     
@@ -202,9 +202,9 @@ elseif ds == "VGG2"
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     hash_facenet_probe_c=facenet_probe_c;
-%     hash_facenet_probe_o1=facenet_probe_o1;
+    hash_facenet_probe_o1=[];
     hash_facenet_probe_o2=facenet_probe_o2;
-%     hash_facenet_probe_o3=facenet_probe_o3;
+    hash_facenet_probe_o3=[];
     hash_facenet_gallery=facenet_gallery;
     
 elseif ds == "IJBC"
@@ -329,9 +329,9 @@ elseif ds == "IJBC"
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     hash_facenet_probe_c=facenet_probe_c;
-%     hash_facenet_probe_o1=facenet_probe_o1;
+    hash_facenet_probe_o1=[];
     hash_facenet_probe_o2=facenet_probe_o2;
-%     hash_facenet_probe_o3=facenet_probe_o3;
+    hash_facenet_probe_o3=[];
     hash_facenet_gallery=facenet_gallery;
 end
 
