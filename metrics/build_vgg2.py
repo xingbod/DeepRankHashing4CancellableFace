@@ -45,4 +45,4 @@ for person in tqdm.tqdm(list_root):
     dir_person = root_dir + person
     dest_dir = save_dir + person
     check_folder(dest_dir)
-    cpfile_rand(dir_person, dest_dir, 50)
+    cpfile_rand(dir_person, dest_dir, 6)
