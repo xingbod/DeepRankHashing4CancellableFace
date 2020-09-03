@@ -111,7 +111,7 @@ def main(_argv):
     ###########################
     dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=cfg['eval_batch_size'],
                                  img_ext='png', ds='VGG2')
-    feats, names, n = extractFeat(dataset, model, m)
+    feats, names, n = extractFeat(dataset, model)
     with open('embeddings_dl/' + cfg['backbone_type'] + '_VGG2_feat_dlIoM_' + str(cfg['m']) + 'x' + str(
             cfg['q']) + '.csv',
               'w') as f:
@@ -127,7 +127,7 @@ def main(_argv):
 
     dataset = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/img',
                                  BATCH_SIZE=cfg['eval_batch_size'], img_ext='png', ds='IJBC')
-    feats, names, n = extractFeat(dataset, model, m)
+    feats, names, n = extractFeat(dataset, model)
     with open('embeddings_0831/' + cfg['backbone_type'] + '_ijbc_feat_drIoM_' + str(cfg['m']) + 'x' + str(
             cfg['q']) + '.csv',
               'w') as f:
