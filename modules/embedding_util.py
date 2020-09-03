@@ -60,10 +60,30 @@ def load_data_from_dir(save_path, BATCH_SIZE=128, img_ext='png', ds='LFW'):
     return dataset
 
 
-def extractFeat(dataset, model, feature_dim,isLUT=0,LUT=None):
-    final_feature = np.zeros(feature_dim)
+def extractFeat(dataset, model,isLUT=0,LUT=None):
     feats = []
     names = []
+    n = 0
+    for image_batch, label_batch in tqdm.tqdm(dataset):
+        # print("now is " + str(n))
+        feature = model(image_batch)
+        for i in range(feature.shape[0]):
+            n = n + 1
+            feats.append(feature[i].numpy())
+            mylabel = str(label_batch[i].numpy().decode("utf-8") + "")
+            #             print(mylabel)
+            names.append(mylabel)
+    print("total images "+ str(n))
+    if isLUT:  # length of bin
+        # here do the binary convert
+        # # here convert the embedding to binary
+        # LUT = genLUT(q=16, bin_dim=isLUT, isPerm=False)
+        feats = tf.cast(feats, tf.int32)
+        LUV = tf.gather(LUT, feats)
+        feats = tf.reshape(LUV, (feats.shape[0], isLUT * feats.shape[1]))
+    return feats, names, n
+
+def extractFeatAppend(dataset, model,feats,names,isLUT=0,LUT=None):
     n = 0
     for image_batch, label_batch in tqdm.tqdm(dataset):
         # print("now is " + str(n))
