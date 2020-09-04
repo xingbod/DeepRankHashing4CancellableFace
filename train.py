@@ -24,12 +24,14 @@ modules.utils.set_memory_growth()
 
 def main(_):
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ['CUDA_VISIBLE_DEVICES'] = FLAGS.gpu
 
     logger = tf.get_logger()
     logger.disabled = True
     logger.setLevel(logging.FATAL)
     set_memory_growth()
+    logging.info("os.environ['CUDA_VISIBLE_DEVICES']: "+ os.environ['CUDA_VISIBLE_DEVICES'])
 
     cfg = load_yaml(FLAGS.cfg_path)
     model = ArcFaceModel(size=cfg['input_size'],
