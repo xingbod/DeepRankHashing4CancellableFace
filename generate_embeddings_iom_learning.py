@@ -105,7 +105,7 @@ def main(_argv):
         write = csv.writer(f)
         write.writerows(feats)
     with open('embeddings_dl/' + cfg['backbone_type'] + '_lfw_name_' + str(cfg['m']) + 'x' + str(
-            cfg['q']) + 'txt', 'w') as outfile:
+            cfg['q']) + '.txt', 'w') as outfile:
         for i in names:
             outfile.write(i + "\n")
     ###########################
