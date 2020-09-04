@@ -30,7 +30,7 @@ def main(_):
     logger = tf.get_logger()
     logger.disabled = True
     logger.setLevel(logging.FATAL)
-    set_memory_growth()
+    # set_memory_growth()
     logging.info("os.environ['CUDA_VISIBLE_DEVICES']: "+ os.environ['CUDA_VISIBLE_DEVICES'])
 
     cfg = load_yaml(FLAGS.cfg_path)
