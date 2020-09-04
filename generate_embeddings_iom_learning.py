@@ -96,7 +96,7 @@ def main(_argv):
 
 
     dataset = load_data_from_dir('./data/lfw_mtcnnpy_160', BATCH_SIZE=cfg['eval_batch_size'])
-    feats, names, n = extractFeat(dataset, model, m)
+    feats, names, n = extractFeat(dataset, model,)
     with open(
             'embeddings_dl/' + cfg['backbone_type'] + '_lfw_feat_dlIoM_' + str(cfg['m']) + 'x' + str(
                 cfg['q']) + '.csv',
