@@ -62,7 +62,7 @@ def main(_argv):
 
 
     dataset = load_data_from_dir('./data/lfw_mtcnnpy_160', BATCH_SIZE=cfg['eval_batch_size'], ds='LFW')
-    feats, names, n = extractFeat(dataset, arcmodel, 512)
+    feats, names, n = extractFeat(dataset, arcmodel)
     with open('embeddings_0831/' + cfg['backbone_type'] + '_lfw_feat.csv',
               'w') as f:
         print('embeddings_0831/' + cfg['backbone_type'] + '_lfw_feat.csv')
