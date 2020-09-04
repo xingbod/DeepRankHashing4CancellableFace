@@ -19,7 +19,7 @@ flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_enum('mode', 'fit', ['fit', 'eager_tf'],
                   'fit: model.fit, eager_tf: custom GradientTape')
 
-modules.utils.set_memory_growth()
+# modules.utils.set_memory_growth()
 
 
 def main(_):
