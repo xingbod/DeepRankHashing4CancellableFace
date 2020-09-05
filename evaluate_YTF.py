@@ -253,3 +253,9 @@ def main(_argv):
     with open('./logs/YTF_' + cfg['sub_name'] + "_Output.md", "a") as text_file:
         text_file.write(log_str2)
     print(log_str2)
+
+if __name__ == '__main__':
+    try:
+        app.run(main)
+    except SystemExit:
+        pass
