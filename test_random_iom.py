@@ -56,7 +56,7 @@ def main(_argv):
                                        permKey=permKey, cfg=cfg)
 
         model.summary(line_length=80)
-        cfg['embd_shape'] = m * q
+        cfg['embd_shape'] = m
         return model,cfg
 
     def evl(isLUT,m,q, measure,model,cfg):
@@ -111,12 +111,12 @@ def main(_argv):
         for q in [8]:
             print(m, q, '****')
             model, cfg = getModel(m, q)
-            evl(0, m, q, 'Hamming', model, cfg)
+            evl(int(math.log2(q)), m, q, 'Hamming', model, cfg)
     for m in [512]:
         for q in [2, 4, 8, 16, 32, 64]:
             print(m, q, '****')
             model, cfg = getModel(m, q)
-            evl(0, m, q, 'Hamming', model, cfg)
+            evl(int(math.log2(q)), m, q, 'Hamming', model, cfg)
 
 
 if __name__ == '__main__':
