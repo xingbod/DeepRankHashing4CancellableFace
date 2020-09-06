@@ -32,7 +32,8 @@ def callMe():
     logger.setLevel(logging.FATAL)
     set_memory_growth()
 
-    cfg = load_yaml('./configs/iom_res50_random.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
+    # cfg = load_yaml('./configs/iom_res50_random.yaml')  #
+    cfg = load_yaml(FLAGS.cfg_path)
     permKey = None
     if cfg['head_type'] == 'IoMHead':  #
         # permKey = generatePermKey(cfg['embd_shape'])
@@ -45,7 +46,7 @@ def callMe():
                             training=False,
                             cfg=cfg)
 
-    ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50')
+    ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'] )
     if ckpt_path is not None:
         print("[*] load ckpt from {}".format(ckpt_path))
         arcmodel.load_weights(ckpt_path)
