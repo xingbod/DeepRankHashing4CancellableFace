@@ -57,6 +57,7 @@ def main(_argv):
 
     def evl(m,q,isLUT, measure):
         # here I add the extra IoM layer and head
+        cfg['hidden_layer_remark'] = 1
         if cfg['hidden_layer_remark'] == '1':
             model = IoMFaceModelFromArFace(size=cfg['input_size'],
                                            arcmodel=arcmodel, training=False,
