@@ -46,8 +46,8 @@ def callMe():
                             training=False,
                             cfg=cfg)
 
-    # ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_InceptionResNetV2')
-    ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_Xception')
+    ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_InceptionResNetV2')
+    # ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_Xception')
     if ckpt_path is not None:
         print("[*] load ckpt from {}".format(ckpt_path))
         arcmodel.load_weights(ckpt_path)
