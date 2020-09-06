@@ -168,7 +168,7 @@ def main(_argv):
             text_file.write(log_str2)
 
 
-        evl(m,q,0,measure='Hamming')  # no LUT
+        # evl(m,q,0,measure='Hamming')  # no LUT
 
     for m in [32, 64, 128, 256, 512]:
         for q in [8]:
