@@ -61,9 +61,9 @@ def main(_argv):
         cfg['m'] = m
         cfg['q'] = q
         if isLUT:
-            cfg['embd_shape'] = m * q
-        else:
             cfg['embd_shape'] = m
+        else:
+            cfg['embd_shape'] = m * q
         model = IoMFaceModelFromArFace(size=cfg['input_size'],
                                        arcmodel=arcmodel, training=False,
                                        permKey=permKey, cfg=cfg)
