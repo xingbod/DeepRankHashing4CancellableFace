@@ -60,7 +60,10 @@ def main(_argv):
         cfg['hidden_layer_remark'] = 1
         cfg['m'] = m
         cfg['q'] = q
-        cfg['embd_shape'] = m * q
+        if isLUT:
+            cfg['embd_shape'] = m * q
+        else:
+            cfg['embd_shape'] = m
         if cfg['hidden_layer_remark'] == '1':
             model = IoMFaceModelFromArFace(size=cfg['input_size'],
                                            arcmodel=arcmodel, training=False,
