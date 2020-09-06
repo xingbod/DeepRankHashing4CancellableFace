@@ -32,7 +32,7 @@ def callMe():
     logger.setLevel(logging.FATAL)
     set_memory_growth()
 
-    cfg = load_yaml('./configs/iom_res50_random.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
+    cfg = load_yaml('./configs/iom_res50_random_xception.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
     permKey = None
     if cfg['head_type'] == 'IoMHead':  #
         # permKey = generatePermKey(cfg['embd_shape'])
@@ -45,7 +45,7 @@ def callMe():
                             training=False,
                             cfg=cfg)
 
-    ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50')
+    ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_Xception')
     if ckpt_path is not None:
         print("[*] load ckpt from {}".format(ckpt_path))
         arcmodel.load_weights(ckpt_path)
@@ -183,60 +183,17 @@ def callMe():
         # evl(8)
         # evl(16)
 
-    # def main(_argv):
-    #     for m in [32, 64, 128, 256, 512]:
-    #         for q in [2, 4, 8, 16]:
-    #             print(m,q,'****')
-    #             mycfg['m'] = m
-    #             mycfg['q'] = q
-    #             app.run(callMe2())
 
-    # if __name__ == '__main__':
-    #     try:
-    #         app.run(main)
-    #     except SystemExit:
-    #         pass
-    # 32,64,128,
-
-    #
-    # for trail in [1,2,3]:
-    #     for m in [1024,2048]:
-    #         for q in [2, 4]:
-    #             print(m, q, '****')
-    #             mycfg['m'] = m
-    #             mycfg['q'] = q
-    #             callMe()
-# mycfg['m'] = 512
-# mycfg['q'] = 8
-# callMe()
-# for m in [32, 64, 128, 256, 512,1024,2048]:
-#     for q in [2]:
-#         print(m, q, '****')
-#         mycfg['m'] = m
-#         mycfg['q'] = q
-#         callMe()
-# for i in range(3):
-#     for m in [32, 64, 128, 256, 512]:
-#         for q in [2, 4, 8, 16, 32, 64]:
-#             print(m, q, '****')
-#             mycfg['m'] = m
-#             mycfg['q'] = q
-#             callMe()
 for m in [32, 64, 128, 256, 512]:
     for q in [8]:
         print(m, q, '****')
         mycfg['m'] = m
         mycfg['q'] = q
         callMe()
-# for m in [1024, 2048]:
-#     for q in [2,3, 4,5,6,7, 8,9,10,11,12,13,14,15,16]:
-#         print(m, q, '****')
-#         mycfg['m'] = m
-#         mycfg['q'] = q
-#         callMe()
-# for m in [2048]:
-#     for q in [2]:
-#         print(m,q,'****')
-#         mycfg['m'] = m
-#         mycfg['q'] = q
-#         callMe()
+
+for m in [ 512]:
+    for q in [2,4,8,16,32,64]:
+        print(m, q, '****')
+        mycfg['m'] = m
+        mycfg['q'] = q
+        callMe()

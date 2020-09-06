@@ -1,7 +1,11 @@
 function run_single(embpath,backbone,DS)
 
 % backbone = "ResNet50";%InceptionResNetV2
-% DS = "IJBC";run_single("ResNet50","LFW") run_single("embeddings_dl","ResNet50","LFW")
+% DS = "IJBC";run_single("ResNet50","LFW")
+% run_single("embeddings_0831","InceptionResNetV2","LFW")
+% run_single("embeddings_0831","ResNet50","LFW")
+% run_single("embeddings_0831","ResNet50","IJBC")  
+% run_single("embeddings_0831","ResNet50","IJBC")
 
 
 if DS == "IJBC"
