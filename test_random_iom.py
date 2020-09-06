@@ -107,11 +107,11 @@ def main(_argv):
             text_file.write(log_str2)
 
         print(log_str2)
-    for m in [32, 64, 128, 256, 512]:
-        for q in [8]:
-            print(m, q, '****')
-            model, cfg = getModel(m, q)
-            evl(0, m, q, 'Hamming', model, cfg)
+    # for m in [32, 64, 128, 256, 512]:
+    #     for q in [8]:
+    #         print(m, q, '****')
+    #         model, cfg = getModel(m, q)
+    #         evl(0, m, q, 'Hamming', model, cfg)
     for m in [512]:
         for q in [2, 4, 8, 16, 32, 64]:
             print(m, q, '****')
