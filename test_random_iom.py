@@ -111,12 +111,12 @@ def main(_argv):
         for q in [8]:
             print(m, q, '****')
             model, cfg = getModel(m, q)
-            evl(int(math.log2(q)), m, q, 'Hamming', model, cfg)
+            evl(0, m, q, 'Hamming', model, cfg)
     for m in [512]:
         for q in [2, 4, 8, 16, 32, 64]:
             print(m, q, '****')
             model, cfg = getModel(m, q)
-            evl(int(math.log2(q)), m, q, 'Hamming', model, cfg)
+            evl(0, m, q, 'Hamming', model, cfg)
 
 
 if __name__ == '__main__':
