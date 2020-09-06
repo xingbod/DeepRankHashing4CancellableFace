@@ -39,23 +39,23 @@ def main(_argv):
         # permKey = generatePermKey(cfg['embd_shape'])
         permKey = tf.eye(cfg['embd_shape'])  # for training, we don't permutate, won't influence the performance
 
-    arcmodel = ArcFaceModel(size=cfg['input_size'],
-                            embd_shape=cfg['embd_shape'],
-                            backbone_type=cfg['backbone_type'],
-                            head_type='ArcHead',
-                            training=False,
-                            cfg=cfg)
-
-    ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'] )
-    if ckpt_path is not None:
-        print("[*] load ckpt from {}".format(ckpt_path))
-        arcmodel.load_weights(ckpt_path)
-    else:
-        print("[*] Cannot find ckpt from {}.".format(ckpt_path))
-        exit()
-
 
     def evl(m,q,isLUT, measure):
+        arcmodel = ArcFaceModel(size=cfg['input_size'],
+                                embd_shape=cfg['embd_shape'],
+                                backbone_type=cfg['backbone_type'],
+                                head_type='ArcHead',
+                                training=False,
+                                cfg=cfg)
+
+        ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
+        if ckpt_path is not None:
+            print("[*] load ckpt from {}".format(ckpt_path))
+            arcmodel.load_weights(ckpt_path)
+        else:
+            print("[*] Cannot find ckpt from {}.".format(ckpt_path))
+            exit()
+
         # here I add the extra IoM layer and head
         cfg['hidden_layer_remark'] = '1'
         cfg['m'] = m
@@ -64,30 +64,9 @@ def main(_argv):
             cfg['embd_shape'] = m * q
         else:
             cfg['embd_shape'] = m
-        if cfg['hidden_layer_remark'] == '1':
-            model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                           arcmodel=arcmodel, training=False,
-                                           permKey=permKey, cfg=cfg)
-        elif cfg['hidden_layer_remark'] == '2':
-            model = IoMFaceModelFromArFace2(size=cfg['input_size'],
-                                            arcmodel=arcmodel, training=False,
-                                            permKey=permKey, cfg=cfg)
-        elif cfg['hidden_layer_remark'] == '3':
-            model = IoMFaceModelFromArFace3(size=cfg['input_size'],
-                                            arcmodel=arcmodel, training=False,
-                                            permKey=permKey, cfg=cfg)
-        elif cfg['hidden_layer_remark'] == 'T':  # 2 layers
-            model = IoMFaceModelFromArFace_T(size=cfg['input_size'],
-                                             arcmodel=arcmodel, training=False,
-                                             permKey=permKey, cfg=cfg)
-        elif cfg['hidden_layer_remark'] == 'T1':
-            model = IoMFaceModelFromArFace_T1(size=cfg['input_size'],
-                                              arcmodel=arcmodel, training=False,
-                                              permKey=permKey, cfg=cfg)
-        else:
-            model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                           arcmodel=arcmodel, training=False,
-                                           permKey=permKey, cfg=cfg)
+        model = IoMFaceModelFromArFace(size=cfg['input_size'],
+                                       arcmodel=arcmodel, training=False,
+                                       permKey=permKey, cfg=cfg)
         model.summary(line_length=80)
         model.layers[0].trainable = False
         # for layer in model.layers:
