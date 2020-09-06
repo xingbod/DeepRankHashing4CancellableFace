@@ -173,11 +173,11 @@ def main(_argv):
     for m in [32, 64, 128, 256, 512]:
         for q in [8]:
             print(m, q, '****')
-            evl(m,q,0, 'Hamming')
+            evl(m,q,int(math.log2(q)), 'Hamming')
     for m in [512]:
         for q in [2, 4, 8, 16, 32, 64]:
             print(m, q, '****')
-            evl(m,q,0, 'Hamming')
+            evl(m,q,int(math.log2(q)), 'Hamming')
 
 
 
