@@ -198,9 +198,9 @@ def IoMFaceModelFromArFace(size=None, channels=3, arcmodel=None, name='IoMface_m
         x = PermLayer(permKey)(x)  # permutation before project to IoM hash code
     # here I add one extra hidden layer
     # x = Dense(1024, kernel_regularizer=_regularizer(w_decay))(x)
-    x = IoMProjectionLayer(cfg)(x)
-    # x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
-    #           name="IoMProjection")(x)  # extra connection layer
+    # x = IoMProjectionLayer(cfg)(x)
+    x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
+              name="IoMProjection")(x)  # extra connection layer
     logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x)  # loss need to change
     return Model(inputs, logist, name=name)
 
