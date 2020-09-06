@@ -57,7 +57,7 @@ def main(_argv):
 
     def evl(m,q,isLUT, measure):
         # here I add the extra IoM layer and head
-        cfg['hidden_layer_remark'] = 1
+        cfg['hidden_layer_remark'] = '1'
         cfg['m'] = m
         cfg['q'] = q
         if isLUT:
