@@ -53,7 +53,7 @@ def callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_
         ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
         if ckpt_path is not None:
             print("[*] load ckpt from {}".format(ckpt_path))
-            arcmodel.load_weights(ckpt_path)
+            model.load_weights(ckpt_path)
         else:
             print("[*] Cannot find ckpt from {}.".format(ckpt_path))
             exit()
