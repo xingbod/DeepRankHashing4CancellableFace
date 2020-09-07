@@ -143,10 +143,10 @@ def main(_argv):
                                                                                  best_th_cfp_fp,
                                                                                  mAp_ytf, rr_ytf[0],
                                                                                  mAp_fs, rr_fs[0])
-        with open('./logs/' + cfg['sub_name'] + "_Output.md", "a") as text_file:
-            text_file.write(log_str)
+        # with open('./logs/' + cfg['sub_name'] + "_Output.md", "a") as text_file:
+        #     text_file.write(log_str)
         print(log_str)
-        log_str2 = '''| q = {:.2f}, m = {:.2f},LUT={},dist={} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f}\n\n '''.format(
+        log_str2 = '''| q = {:.2f}, m = {:.2f},LUT={},dist={} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f}\n '''.format(
             q, m, isLUT, measure, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, acc_lfw,
             acc_agedb30, acc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
         with open('./logs/' + cfg['sub_name'] + "_Output.md", "a") as text_file:
