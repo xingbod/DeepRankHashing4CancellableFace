@@ -84,7 +84,7 @@ def main(_argv):
         print("[*] Loading LFW, AgeDB30 and CFP-FP...")
         lfw, agedb_30, cfp_fp, lfw_issame, agedb_30_issame, cfp_fp_issame = \
             get_val_data(cfg['test_dataset'])
-
+        cfg['eval_batch_size'] = 100
         print("[*] Perform Evaluation on LFW...")
         acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = perform_val_fusion(
             cfg['embd_shape'], cfg['eval_batch_size'], model,model2, lfw, lfw_issame,
