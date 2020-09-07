@@ -129,11 +129,11 @@ def main(_argv):
     dataset = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/img',
                                  BATCH_SIZE=cfg['eval_batch_size'],
                                  img_ext='png', ds='IJBC')
-    feats1, names1, n = extractFeat(dataset, arcmodel)
+    feats1, names1, n = extractFeat(dataset, model)
     dataset2 = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/frames',
                                   BATCH_SIZE=cfg['eval_batch_size'],
                                   img_ext='png', ds='IJBC')
-    feats, names, n = extractFeatAppend(dataset2, arcmodel, feats1, names1)
+    feats, names, n = extractFeatAppend(dataset2, model, feats1, names1)
 
     with open('embeddings_dl/' + cfg['backbone_type'] + '_ijbc_feat_dlIoM_' + str(cfg['m']) + 'x' + str(
             cfg['q']) + '.csv',
