@@ -144,4 +144,6 @@ for m in [32, 64, 128, 256, 512]:
         print(m, q, '****')
         mycfg['m'] = m
         mycfg['q'] = q
-        callMe()
+        callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_random/iom_res50_random_inceptionresnet.yaml')
+        callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_random/iom_res50_random_xception.yaml')
+        callMe(cfg_path = 'config_random/iom_res50_random_inceptionresnet.yaml',cfg_path2 = 'config_random/iom_res50_random_xception.yaml')
