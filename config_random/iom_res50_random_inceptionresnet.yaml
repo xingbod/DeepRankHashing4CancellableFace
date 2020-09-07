@@ -4,8 +4,8 @@ input_size: 112
 eval_batch_size: 200
 # embd_shape is for the Resnet, backbone
 embd_shape: 512
-sub_name: 'iom_Xception_random'
-backbone_type: 'Xception' # 'ResNet50', 'MobileNetV2'
+sub_name: 'arc_InceptionResNetV2'
+backbone_type: 'InceptionResNetV2' # 'ResNet50', 'MobileNetV2'
 head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
 isLUT: False

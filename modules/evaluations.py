@@ -309,6 +309,60 @@ def perform_val(embedding_size, batch_size, model,
     return accuracy.mean(), best_thresholds.mean(), auc, eer, embeddings
 
 
+def perform_val_fusion(embedding_size, batch_size, model,model2,
+                carray, issame, nrof_folds=10, is_ccrop=False, is_flip=False, cfg=None, isLUT=0,measure='Hamming'):
+    """perform val"""
+    if cfg['head_type'] == 'IoMHead':
+        embedding_size = int(embedding_size / cfg['q'])
+    embeddings = np.zeros([len(carray), embedding_size])
+    embeddings2 = np.zeros([len(carray), embedding_size])
+
+    for idx in tqdm.tqdm(range(0, len(carray), batch_size), ascii=True):
+        batch = carray[idx:idx + batch_size]
+        batch = np.transpose(batch, [0, 2, 3, 1]) * 0.5 + 0.5
+        if is_ccrop:
+            batch = ccrop_batch(batch)
+
+        if is_flip:
+            fliped = hflip_batch(batch)
+            emb_batch = model(batch) + model(fliped)
+            # embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
+        else:
+            batch = ccrop_batch(batch)
+            emb_batch = model(batch)
+            emb_batch2 = model2(batch)
+        # print(emb_batch)
+        if cfg['head_type'] == 'IoMHead':
+            emb_batch = tf.cast(emb_batch, tf.int32)
+            embeddings[idx:idx + batch_size] = emb_batch  # not working? why
+            emb_batch2 = tf.cast(emb_batch2, tf.int32)
+            embeddings2[idx:idx + batch_size] = emb_batch2  # not working? why
+        else:
+            embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
+            embeddings2[idx:idx + batch_size] = l2_norm(emb_batch2)
+        # embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
+        # print(embeddings)
+        # embeddings = embeddings +embeddings2
+    print("[*] concatenate ...")
+    print(embeddings.shape)
+    embeddings = np.concatenate((embeddings, embeddings2), axis=1)
+    print(embeddings.shape)
+
+    if isLUT:  # length of bin
+        # here do the binary convert
+        # # here convert the embedding to binary
+        LUT1 = genLUT(q=cfg['q'], bin_dim=isLUT, isPerm=False)
+        embeddings = tf.cast(embeddings, tf.int32)
+        LUV = tf.gather(LUT1, embeddings)
+        embeddings = tf.reshape(LUV, (embeddings.shape[0], isLUT * embeddings.shape[1]))
+
+        ##### end ########
+    tpr, fpr, accuracy, best_thresholds, auc, eer = evaluate(
+        embeddings, issame, nrof_folds,measure, cfg)
+
+    return accuracy.mean(), best_thresholds.mean(), auc, eer, embeddings
+
+
 '''
 below if for archead with IoM layer
 '''

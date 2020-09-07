@@ -33,7 +33,7 @@ def callMe():
     set_memory_growth()
 
     # cfg = load_yaml('./configs/iom_res50_random_xception.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
-    cfg = load_yaml('./configs/iom_res50_random_inceptionresnet.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
+    cfg = load_yaml('config_random/iom_res50_random_inceptionresnet.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
     permKey = None
     if cfg['head_type'] == 'IoMHead':  #
         # permKey = generatePermKey(cfg['embd_shape'])
