@@ -23,7 +23,7 @@ Descriptor_orig1 = importdata("../"+feat_path);
 Descriptor_orig2 = importdata("../"+feat_path2);
 Descriptor_orig = [Descriptor_orig1 Descriptor_orig2]; % fusion 
 
-fid_lfw_name=importdata("../embeddings/" + filename_path);
+fid_lfw_name=importdata("../" + filename_path);
 
 if ds == "LFW"
     [Descriptors,lfw_label] = generate_lfw_align(Descriptor_orig,fid_lfw_name);
