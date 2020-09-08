@@ -31,7 +31,7 @@ fid_lfw_name=importdata("../" + filename_path);
 [perf] = evaluate_searching_mixdemix(hash_facenet_probe_c,hash_facenet_probe_o1,hash_facenet_probe_o2,hash_facenet_probe_o3,hash_facenet_gallery,facenet_probe_label_c,facenet_probe_label_o1,facenet_probe_label_o2,facenet_probe_label_o3, facenet_gallery_label);
 perf = [perf 0 0];
 fid=fopen(log_path,'a');
-fwrite(fid,hashcode_path+" ");
+fwrite(fid,feat_path+" vs "+feat_path2);
 fclose(fid)
 dlmwrite(log_path, perf, '-append');
 end
