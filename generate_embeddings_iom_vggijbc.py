@@ -1,3 +1,4 @@
+
 '''
 Copyright © 2020 by Xingbo Dong
 xingbod@gmail.com
@@ -20,7 +21,7 @@ from modules.utils import set_memory_growth, load_yaml, l2_norm
 from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
 import tqdm
 import csv
-from modules.embedding_util import load_data_from_dir,extractFeat,extractFeatAppend
+from modules.embedding_util import load_data_from_dir,extractFeat
 from modules.LUT import genLUT
 
 # modules.utils.set_memory_growth()
@@ -60,7 +61,24 @@ def main(_argv):
         exit()
 
 
+    '''
 
+    For VGG2, we should select and pre-process the vgg dataset first, as the dataset is quite large, we would only select 50 imgs per person
+
+    '''
+
+    dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=cfg['eval_batch_size'],
+                                 img_ext='png', ds='VGG2')
+    feats, names, n = extractFeat(dataset, arcmodel, 512)
+    with open('embeddings_0831/' + cfg['backbone_type'] + '_VGG2_feat.csv',
+              'w') as f:
+        # using csv.writer method from CSV package
+        print('embeddings_0831/' + cfg['backbone_type'] + '_VGG2_feat.csv')
+        write = csv.writer(f)
+        write.writerows(feats)
+    with open('embeddings_0831/' + cfg['backbone_type'] + '_VGG2_name.txt', 'w') as outfile:
+        for i in names:
+            outfile.write(i + "\n")
 
     '''
 
@@ -70,12 +88,13 @@ def main(_argv):
 
     dataset = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/img', BATCH_SIZE=cfg['eval_batch_size'],
                                  img_ext='png', ds='IJBC')
-    feats1, names1, n = extractFeat(dataset, arcmodel)
+    feats1, names1, n = extractFeat(dataset, arcmodel, 512)
 
     dataset2 = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/frames', BATCH_SIZE=cfg['eval_batch_size'],
                                  img_ext='png', ds='IJBC')
-    feats, names, n = extractFeatAppend(dataset2, arcmodel,feats1,names1)
-
+    feats2, names2, n = extractFeat(dataset2, arcmodel, 512)
+    feats = [feats1,feats2]
+    names = [names1, names2]
     with open('embeddings_0831/' + cfg['backbone_type'] + '_ijbc_feat.csv',
               'w') as f:
         # using csv.writer method from CSV package
@@ -85,8 +104,6 @@ def main(_argv):
     with open('embeddings_0831/' + cfg['backbone_type'] + '_ijbc_name.txt', 'w') as outfile:
         for i in names:
             outfile.write(i + "\n")
-
-
 
 
     for q in [2, 4, 8, 16]:
@@ -101,19 +118,36 @@ def main(_argv):
                                                permKey=permKey, cfg=cfg)
             model.summary(line_length=80)
             cfg['embd_shape'] = m * q
+
             ##########################################
+            dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled',
+                                         BATCH_SIZE=cfg['eval_batch_size'], img_ext='png', ds='VGG2')
+            feats, names, n = extractFeat(dataset, model)
+            with open('embeddings_0831/' + cfg['backbone_type'] + '_VGG2_feat_drIoM_' + str(cfg['m']) + 'x' + str(
+                    cfg['q']) + '.csv',
+                      'w') as f:
+                # using csv.writer method from CSV package
+                print('embeddings_0831/' + cfg['backbone_type'] + '_VGG2_feat_drIoM_' + str(cfg['m']) + 'x' + str(
+                    cfg['q']) + '.csv')
+                write = csv.writer(f)
+                write.writerows(feats)
+            with open('embeddings_0831/' + cfg['backbone_type'] + '_VGG2_name_' + str(cfg['m']) + 'x' + str(
+                    cfg['q']) + '.txt', 'w') as outfile:
+                for i in names:
+                    outfile.write(i + "\n")
 
             ##########################################
             dataset = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/img',
                                          BATCH_SIZE=cfg['eval_batch_size'],
                                          img_ext='png', ds='IJBC')
-            feats1, names1, n = extractFeat(dataset, arcmodel)
+            feats1, names1, n = extractFeat(dataset, model)
             dataset2 = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/frames',
                                           BATCH_SIZE=cfg['eval_batch_size'],
                                           img_ext='png', ds='IJBC')
-            feats, names, n = extractFeatAppend(dataset2, arcmodel,feats1,names1)
+            feats2, names2, n = extractFeat(dataset2, model)
 
-
+            feats = [feats1, feats2]
+            names = [names1, names2]
             with open('embeddings_0831/' + cfg['backbone_type'] + '_ijbc_feat_drIoM_' + str(cfg['m']) + 'x' + str(
                     cfg['q']) + '.csv',
                       'w') as f:
@@ -139,18 +173,36 @@ def main(_argv):
                                                permKey=permKey, cfg=cfg)
             model.summary(line_length=80)
             cfg['embd_shape'] = m * q
-            ##########################################
 
+            ##########################################
+            dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled',
+                                         BATCH_SIZE=cfg['eval_batch_size'], img_ext='png', ds='VGG2')
+            feats, names, n = extractFeat(dataset, model)
+            with open('embeddings_0831/' + cfg['backbone_type'] + '_VGG2_feat_drIoM_' + str(cfg['m']) + 'x' + str(
+                    cfg['q']) + '.csv',
+                      'w') as f:
+                # using csv.writer method from CSV package
+                print('embeddings_0831/' + cfg['backbone_type'] + '_VGG2_feat_drIoM_' + str(cfg['m']) + 'x' + str(
+                    cfg['q']) + '.csv')
+                write = csv.writer(f)
+                write.writerows(feats)
+            with open('embeddings_0831/' + cfg['backbone_type'] + '_VGG2_name_' + str(cfg['m']) + 'x' + str(
+                    cfg['q']) + '.txt', 'w') as outfile:
+                for i in names:
+                    outfile.write(i + "\n")
 
             ##########################################
             dataset = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/img',
                                          BATCH_SIZE=cfg['eval_batch_size'],
                                          img_ext='png', ds='IJBC')
-            feats1, names1, n = extractFeat(dataset, arcmodel)
+            feats1, names1, n = extractFeat(dataset, model)
             dataset2 = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/frames',
                                           BATCH_SIZE=cfg['eval_batch_size'],
                                           img_ext='png', ds='IJBC')
-            feats, names, n = extractFeatAppend(dataset2, arcmodel,feats1,names1)
+            feats2, names2, n = extractFeat(dataset2, model)
+
+            feats = [feats1, feats2]
+            names = [names1, names2]
 
             with open('embeddings_0831/' + cfg['backbone_type'] + '_ijbc_feat_drIoM_' + str(cfg['m']) + 'x' + str(
                     cfg['q']) + '.csv',

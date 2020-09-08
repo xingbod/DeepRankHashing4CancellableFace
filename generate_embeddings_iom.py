@@ -259,11 +259,11 @@ def main(_argv):
             dataset = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/img',
                                          BATCH_SIZE=cfg['eval_batch_size'],
                                          img_ext='png', ds='IJBC')
-            feats1, names1, n = extractFeat(dataset, arcmodel)
+            feats1, names1, n = extractFeat(dataset, model)
             dataset2 = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/frames',
                                           BATCH_SIZE=cfg['eval_batch_size'],
                                           img_ext='png', ds='IJBC')
-            feats2, names2, n = extractFeat(dataset2, arcmodel)
+            feats2, names2, n = extractFeat(dataset2, model)
 
             feats = [feats1, feats2]
             names = [names1, names2]
