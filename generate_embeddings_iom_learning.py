@@ -104,7 +104,7 @@ def main(_argv):
         # using csv.writer method from CSV package
         write = csv.writer(f)
         write.writerows(feats)
-    with open('embeddings_dl/' + cfg['backbone_type'] + '_lfw_name_' + str(cfg['m']) + 'x' + str(
+    with open('embeddings_dl/' + cfg['backbone_type'] + '_lfw_name_dl_' + str(cfg['m']) + 'x' + str(
             cfg['q']) + '.txt', 'w') as outfile:
         for i in names:
             outfile.write(i + "\n")
@@ -143,7 +143,7 @@ def main(_argv):
             cfg['q']) + '.csv')
         write = csv.writer(f)
         write.writerows(feats)
-    with open('embeddings_dl/' + cfg['backbone_type'] + '_ijbc_name_' + str(cfg['m']) + 'x' + str(
+    with open('embeddings_dl/' + cfg['backbone_type'] + '_ijbc_name_dl_' + str(cfg['m']) + 'x' + str(
             cfg['q']) + '.txt', 'w') as outfile:
         for i in names:
             outfile.write(i + "\n")
