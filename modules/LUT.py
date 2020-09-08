@@ -41,7 +41,7 @@ def genLUT(q=8,bin_dim=8,isPerm=False):
 
 if __name__ == '__main__':
     try:
-       LUT = genLUT(q=8,bin_dim=2,isPerm=False)
+       LUT = genLUT(q=8,bin_dim=1,isPerm=False)
        print(LUT,len(LUT))
     except SystemExit:
         pass

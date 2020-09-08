@@ -16,7 +16,7 @@ lambda = 0.3;
 % measure = 'Euclidean';
 % ds = "LFW";
 % remark = "deepfeat";
-log_path = "logs/log_"+ds+"_"+remark+".log";
+log_path = "logs/log_id_fusion_"+ds+"_"+remark+".log";
 %%
 
 Descriptor_orig1 = importdata("../"+feat_path);
