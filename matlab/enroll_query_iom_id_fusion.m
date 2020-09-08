@@ -22,7 +22,7 @@ Descriptor_orig1 = importdata("../"+feat_path);
 Descriptor_orig2 = importdata("../"+feat_path2);
 Descriptor_orig = [Descriptor_orig1 Descriptor_orig2]; % fusion 
 
-fid_lfw_name=importdata("../embeddings/" + filename_path);
+fid_lfw_name=importdata("../" + filename_path);
 
 
 [hash_facenet_probe_c,hash_facenet_probe_o1,hash_facenet_probe_o2,hash_facenet_probe_o3,hash_facenet_gallery,facenet_probe_label_c,facenet_probe_label_o1,facenet_probe_label_o2,facenet_probe_label_o3, facenet_gallery_label] = generateDataset(ds,Descriptor_orig,fid_lfw_name);
