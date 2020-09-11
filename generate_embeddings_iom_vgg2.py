@@ -66,18 +66,18 @@ def main(_argv):
 
     '''
 
-    dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=cfg['eval_batch_size'],
-                                 img_ext='png', ds='VGG2')
-    feats, names, n = extractFeat(dataset, arcmodel)
-    with open('embeddings_0831/' + cfg['backbone_type'] + '_VGG2_50_feat.csv',
-              'w') as f:
-        # using csv.writer method from CSV package
-        print('embeddings_0831/' + cfg['backbone_type'] + '_VGG2_50_feat.csv')
-        write = csv.writer(f)
-        write.writerows(feats)
-    with open('embeddings_0831/' + cfg['backbone_type'] + '_VGG2_50_name.txt', 'w') as outfile:
-        for i in names:
-            outfile.write(i + "\n")
+    # dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=cfg['eval_batch_size'],
+    #                              img_ext='png', ds='VGG2')
+    # feats, names, n = extractFeat(dataset, arcmodel)
+    # with open('embeddings_0831/' + cfg['backbone_type'] + '_VGG2_50_feat.csv',
+    #           'w') as f:
+    #     # using csv.writer method from CSV package
+    #     print('embeddings_0831/' + cfg['backbone_type'] + '_VGG2_50_feat.csv')
+    #     write = csv.writer(f)
+    #     write.writerows(feats)
+    # with open('embeddings_0831/' + cfg['backbone_type'] + '_VGG2_50_name.txt', 'w') as outfile:
+    #     for i in names:
+    #         outfile.write(i + "\n")
 
     #
     for q in [2, 4, 8, 16]:
