@@ -204,7 +204,7 @@ def main(_argv):
             first_name = listmy[i][2].strip()
             second_name = listmy[i][3].strip()
             issame = int(listmy[i][4].strip())
-            if dict.get(first_name,-1)==-1:
+            if dict.__contains__(first_name):
                 try:
                     dataset_1 = load_data_from_dir('./data/test_dataset/aligned_images_DB_YTF/160x160',
                                                    subset=first_name)
@@ -213,7 +213,7 @@ def main(_argv):
                 except Exception:
                     print('[*]', first_name, second_name, 'failed')
                     continue
-            if dict.get(first_name,-1)==-1:
+            if dict.__contains__(second_name):
                 try:
                     dataset_2 = load_data_from_dir('./data/test_dataset/aligned_images_DB_YTF/160x160',
                                                    subset=second_name)
