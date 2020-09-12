@@ -197,7 +197,7 @@ def main(_argv):
     for line in file:
         decoded_line = line.decode("utf-8")
         listmy.append(decoded_line.split(","))
-    def getScore(arcmodel):
+    def getScore(arcmodel,dimension=512):
         scores = []
         issames = []
         dict = {}
@@ -209,7 +209,7 @@ def main(_argv):
                 try:
                     dataset_1 = load_data_from_dir('./data/test_dataset/aligned_images_DB_YTF/160x160',
                                                    subset=first_name)
-                    feats1 = extractFeat(dataset_1, arcmodel)
+                    feats1 = extractFeat(dataset_1, arcmodel,feature_dim=dimension)
                     dict[first_name.replace("/", "_")] = feats1
                 except Exception:
                     print('[*]', first_name, second_name, 'failed')
@@ -218,7 +218,7 @@ def main(_argv):
                 try:
                     dataset_2 = load_data_from_dir('./data/test_dataset/aligned_images_DB_YTF/160x160',
                                                    subset=second_name)
-                    feats2 = extractFeat(dataset_2, arcmodel)
+                    feats2 = extractFeat(dataset_2, arcmodel,feature_dim=dimension)
                     dict[second_name.replace("/", "_")] = feats2
                 except Exception:
                     print('[*]', first_name, second_name, 'failed')
@@ -241,13 +241,13 @@ def main(_argv):
 
     # scores, issames = getScore(arcmodel)
     # eer_orig, auc_orig = computeEER(issames, scores)
-    # eer_orig = 0
-    # auc_orig = 0
+    eer_orig = 0
+    auc_orig = 0
     # print(eer_orig,auc_orig)
     model = IoMFaceModelFromArFace(size=cfg['input_size'],
                                    arcmodel=arcmodel, training=False,
                                    permKey=permKey, cfg=cfg)
-    scores, issames = getScore(model)
+    scores, issames = getScore(model,cfg['m'])
     eer_r_iom, auc_r_iom = computeEER(issames, scores)
 
 
@@ -262,7 +262,7 @@ def main(_argv):
         print("[*] Cannot find ckpt from {}.".format(ckpt_path))
         exit()
     model.summary(line_length=80)
-    scores, issames = getScore(model)
+    scores, issames = getScore(model,cfg['m'])
     eer_dl_iom, auc_dl_iom = computeEER(issames, scores)
 
     log_str2 = '''backbone={} \t {:.4f}\t {:.4f}\t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \n\n '''.format(
