@@ -204,7 +204,7 @@ def main(_argv):
             first_name = listmy[i][2].strip()
             second_name = listmy[i][3].strip()
             issame = int(listmy[i][4].strip())
-            if dict.__contains__(first_name.replace("/", "_")):
+            if not dict.__contains__(first_name.replace("/", "_")):
                 try:
                     dataset_1 = load_data_from_dir('./data/test_dataset/aligned_images_DB_YTF/160x160',
                                                    subset=first_name)
@@ -213,7 +213,7 @@ def main(_argv):
                 except Exception:
                     print('[*]', first_name, second_name, 'failed')
                     continue
-            if dict.__contains__(second_name.replace("/", "_")):
+            if not dict.__contains__(second_name.replace("/", "_")):
                 try:
                     dataset_2 = load_data_from_dir('./data/test_dataset/aligned_images_DB_YTF/160x160',
                                                    subset=second_name)
@@ -222,21 +222,20 @@ def main(_argv):
                 except Exception:
                     print('[*]', first_name, second_name, 'failed')
                     continue
-            print(dict)
             # feats1 = extractFeat(dataset_1, arcmodel)
             # feats2 = extractFeat(dataset_2, arcmodel)
-            feats1 = dict[first_name.replace("/", "_")]
-            feats2 = dict[second_name.replace("/", "_")]
-            #     dist = sklearn.metrics.pairwise_distances(feats1, feats2, metric='hamming')
-            score = distance.euclidean(feats1, feats2)
-            # dist = distance.hamming(embeddings1, embeddings2)
-            #     dist = tf.linalg.diag_part(dist)
-            #     dist = dist.numpy()
-            #     score = np.average(dist)
-            print('issame', issame, 'score', score)
-            scores.append(score)
-            issames.append(issame)
-
+            if dict.__contains__(first_name.replace("/", "_")) and dict.__contains__(second_name.replace("/", "_")):
+                feats1 = dict[first_name.replace("/", "_")]
+                feats2 = dict[second_name.replace("/", "_")]
+                #     dist = sklearn.metrics.pairwise_distances(feats1, feats2, metric='hamming')
+                score = distance.euclidean(feats1, feats2)
+                # dist = distance.hamming(embeddings1, embeddings2)
+                #     dist = tf.linalg.diag_part(dist)
+                #     dist = dist.numpy()
+                #     score = np.average(dist)
+                print('issame', issame, 'score', score)
+                scores.append(score)
+                issames.append(issame)
         return scores,issames
 
     scores, issames = getScore(arcmodel)
