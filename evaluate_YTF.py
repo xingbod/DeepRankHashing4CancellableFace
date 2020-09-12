@@ -196,7 +196,7 @@ def main(_argv):
     for line in file:
         decoded_line = line.decode("utf-8")
         listmy.append(decoded_line.split(","))
-
+    dict = {}
     def getScore(arcmodel):
         scores = []
         issames = []
@@ -204,15 +204,29 @@ def main(_argv):
             first_name = listmy[i][2].strip()
             second_name = listmy[i][3].strip()
             issame = int(listmy[i][4].strip())
-            try:
-                dataset_1 = load_data_from_dir('./data/test_dataset/aligned_images_DB_YTF/160x160', subset=first_name)
-                dataset_2 = load_data_from_dir('./data/test_dataset/aligned_images_DB_YTF/160x160', subset=second_name)
+            if dict.get(first_name,-1)==-1:
+                try:
+                    dataset_1 = load_data_from_dir('./data/test_dataset/aligned_images_DB_YTF/160x160',
+                                                   subset=first_name)
+                    feats1 = extractFeat(dataset_1, arcmodel)
+                    dict[first_name] = feats1
+                except Exception:
+                    print('[*]', first_name, second_name, 'failed')
+                    continue
+            if dict.get(first_name,-1)==-1:
+                try:
+                    dataset_2 = load_data_from_dir('./data/test_dataset/aligned_images_DB_YTF/160x160',
+                                                   subset=second_name)
+                    feats2 = extractFeat(dataset_2, arcmodel)
+                    dict[second_name] = feats2
+                except Exception:
+                    print('[*]', first_name, second_name, 'failed')
+                    continue
 
-            except Exception:
-                print('[*]', first_name, second_name, 'failed')
-                continue
-            feats1 = extractFeat(dataset_1, arcmodel)
-            feats2 = extractFeat(dataset_2, arcmodel)
+            # feats1 = extractFeat(dataset_1, arcmodel)
+            # feats2 = extractFeat(dataset_2, arcmodel)
+            feats1 = dict[first_name]
+            feats2 = dict[second_name]
             #     dist = sklearn.metrics.pairwise_distances(feats1, feats2, metric='hamming')
             score = distance.euclidean(feats1, feats2)
             # dist = distance.hamming(embeddings1, embeddings2)
