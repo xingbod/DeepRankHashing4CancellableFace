@@ -222,7 +222,7 @@ def main(_argv):
                 except Exception:
                     print('[*]', first_name, second_name, 'failed')
                     continue
-
+            print(dict)
             # feats1 = extractFeat(dataset_1, arcmodel)
             # feats2 = extractFeat(dataset_2, arcmodel)
             feats1 = dict[first_name.replace("/", "_")]
