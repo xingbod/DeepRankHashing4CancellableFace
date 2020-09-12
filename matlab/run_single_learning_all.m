@@ -8,6 +8,13 @@ function run_single_learning_all(embpath,backbone,DS)
 % run_single("embeddings_dl","ResNet50","IJBC")
 % run_single_learning_all("embeddings_dl","Xception","IJBC")
 % run_single_learning_all("embeddings_dl","Xception","VGG2")
+% run_single_learning_all("embeddings_dl","ResNet50","IJBC")
+% run_single_learning_all("embeddings_dl","ResNet50","VGG2")
+% run_single_learning_all("embeddings_dl","InceptionResNetV2","IJBC")
+% run_single_learning_all("embeddings_dl","InceptionResNetV2","VGG2")
+% run_single_learning_all("embeddings_0831","ResNet50","IJBC")
+% run_single_learning_all("embeddings_0831","InceptionResNetV2","IJBC")
+% run_single_learning_all("embeddings_0831","Xception","IJBC")
 
 
 if DS == "IJBC"
