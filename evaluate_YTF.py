@@ -233,7 +233,7 @@ def main(_argv):
                 #     dist = tf.linalg.diag_part(dist)
                 #     dist = dist.numpy()
                 #     score = np.average(dist)
-                print('issame', issame, 'score', score)
+                # print('issame', issame, 'score', score)
                 scores.append(score)
                 issames.append(issame)
         return scores,issames
