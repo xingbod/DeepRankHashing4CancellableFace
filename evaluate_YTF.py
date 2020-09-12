@@ -176,7 +176,8 @@ def main(_argv):
 
     elif cfg['backbone_type'] == 'InceptionResNetV2':
         ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_InceptionResNetV2')
-
+    elif cfg['backbone_type'] == 'Xception':
+        ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_Xception')
     elif cfg['backbone_type'] == 'lresnet100e_ir':
         ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_lresnet100e_ir')
     else:
@@ -240,12 +241,15 @@ def main(_argv):
 
     scores, issames = getScore(arcmodel)
     eer_orig, auc_orig = computeEER(issames, scores)
-
+    eer_orig = 0
+    auc_orig = 0
+    print(eer_orig,auc_orig)
     model = IoMFaceModelFromArFace(size=cfg['input_size'],
                                    arcmodel=arcmodel, training=False,
                                    permKey=permKey, cfg=cfg)
     scores, issames = getScore(model)
     eer_r_iom, auc_r_iom = computeEER(issames, scores)
+
 
     if FLAGS.ckpt_epoch == '':
         ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
@@ -261,8 +265,8 @@ def main(_argv):
     scores, issames = getScore(model)
     eer_dl_iom, auc_dl_iom = computeEER(issames, scores)
 
-    log_str2 = '''backbone={} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \n\n '''.format(
-        cfg['backbone_type'],eer_orig, auc_orig,eer_r_iom, auc_r_iom,eer_dl_iom, auc_dl_iom)
+    log_str2 = '''backbone={} \t {:.4f}\t {:.4f}\t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \n\n '''.format(
+        cfg['backbone_type'],cfg['m'], cfg['q'], eer_orig, auc_orig,eer_r_iom, auc_r_iom,eer_dl_iom, auc_dl_iom)
     with open('./logs/YTF_' + cfg['sub_name'] + "_Output.md", "a") as text_file:
         text_file.write(log_str2)
     print(log_str2)
