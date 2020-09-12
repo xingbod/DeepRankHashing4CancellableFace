@@ -239,11 +239,11 @@ def main(_argv):
                 issames.append(issame)
         return scores,issames
 
-    scores, issames = getScore(arcmodel)
-    eer_orig, auc_orig = computeEER(issames, scores)
-    eer_orig = 0
-    auc_orig = 0
-    print(eer_orig,auc_orig)
+    # scores, issames = getScore(arcmodel)
+    # eer_orig, auc_orig = computeEER(issames, scores)
+    # eer_orig = 0
+    # auc_orig = 0
+    # print(eer_orig,auc_orig)
     model = IoMFaceModelFromArFace(size=cfg['input_size'],
                                    arcmodel=arcmodel, training=False,
                                    permKey=permKey, cfg=cfg)
