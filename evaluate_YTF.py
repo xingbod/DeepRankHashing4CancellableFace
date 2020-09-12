@@ -196,10 +196,10 @@ def main(_argv):
     for line in file:
         decoded_line = line.decode("utf-8")
         listmy.append(decoded_line.split(","))
-    dict = {}
     def getScore(arcmodel):
         scores = []
         issames = []
+        dict = {}
         for i in tqdm.tqdm(range(1, 5001)):
             first_name = listmy[i][2].strip()
             second_name = listmy[i][3].strip()
