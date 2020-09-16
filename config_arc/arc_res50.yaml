@@ -1,6 +1,6 @@
 # general
-batch_size: 128
-eval_batch_size: 200
+batch_size: 16
+eval_batch_size: 16
 input_size: 112
 embd_shape: 512
 sub_name: 'arc_res50'

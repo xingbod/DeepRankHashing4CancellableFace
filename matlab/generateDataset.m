@@ -33,7 +33,7 @@ if ds=="LFW"
     
     Descriptors = align_lfw_feat_dIoM;
     
-  
+    
     %% Voting protocol based on mixing
     m = size(Descriptors,2);
     q=max(max(Descriptors))+1;
@@ -58,8 +58,8 @@ if ds=="LFW"
         cnt=size(thisuseremplate,1);
         if cnt>=4
             known(allnames{nameidx})=  M(allnames{nameidx});
-%         elseif cnt>1
-%             known_unknowns(allnames{nameidx})=  M(allnames{nameidx});
+            %         elseif cnt>1
+            %             known_unknowns(allnames{nameidx})=  M(allnames{nameidx});
         else
             unknown_unknowns(allnames{nameidx})=  M(allnames{nameidx});
         end
@@ -104,12 +104,12 @@ if ds=="LFW"
     
     K=[];
     K_label=[];
-%     for nameidx=1:length(known_unknowns_names)
-%         thisuseremplate=known_unknowns(known_unknowns_names{nameidx});
-%         cnt=size(thisuseremplate,1);
-%         K = [K ;thisuseremplate(2:end,:) ];
-%         K_label=[K_label repmat(string(known_unknowns_names{nameidx}),1,cnt-1)];
-%     end
+    %     for nameidx=1:length(known_unknowns_names)
+    %         thisuseremplate=known_unknowns(known_unknowns_names{nameidx});
+    %         cnt=size(thisuseremplate,1);
+    %         K = [K ;thisuseremplate(2:end,:) ];
+    %         K_label=[K_label repmat(string(known_unknowns_names{nameidx}),1,cnt-1)];
+    %     end
     
     % S union U  o2
     U=[];
@@ -118,7 +118,7 @@ if ds=="LFW"
     for nameidx=1:length(unknown_unknowns_names)
         thisuseremplate=unknown_unknowns(unknown_unknowns_names{nameidx});
         cnt=size(thisuseremplate,1);
-        U = [U ;thisuseremplate]; 
+        U = [U ;thisuseremplate];
         U_label=[U_label repmat(string(unknown_unknowns_names{nameidx}),1,cnt)];
     end
     
@@ -137,17 +137,17 @@ if ds=="LFW"
     %label trans to number
     for nameidx=1:length(allnames)
         facenet_probe_label_c(find(facenet_probe_label_c==string(allnames{nameidx})))=nameidx;
-%         facenet_probe_label_o1(find(facenet_probe_label_o1==string(allnames{nameidx})))=nameidx;
+        %         facenet_probe_label_o1(find(facenet_probe_label_o1==string(allnames{nameidx})))=nameidx;
         facenet_probe_label_o2(find(facenet_probe_label_o2==string(allnames{nameidx})))=nameidx;
-%         facenet_probe_label_o3(find(facenet_probe_label_o3==string(allnames{nameidx})))=nameidx;
+        %         facenet_probe_label_o3(find(facenet_probe_label_o3==string(allnames{nameidx})))=nameidx;
         facenet_gallery_label(find(facenet_gallery_label==string(allnames{nameidx})))=nameidx;
     end
     % I also dont want to do so
     
     facenet_probe_label_c = double(facenet_probe_label_c);
-%     facenet_probe_label_o1 = double(facenet_probe_label_o1);
+    %     facenet_probe_label_o1 = double(facenet_probe_label_o1);
     facenet_probe_label_o2 = double(facenet_probe_label_o2);
-%     facenet_probe_label_o3 = double(facenet_probe_label_o3);
+    %     facenet_probe_label_o3 = double(facenet_probe_label_o3);
     facenet_gallery_label = double(facenet_gallery_label);
     
     
@@ -159,46 +159,40 @@ if ds=="LFW"
     
     
 elseif ds == "VGG2"
-    samples = 2000;
     samples_per_user = 6;
-    known = Descriptor_orig(1:samples*samples_per_user,:);
-%     known_unknowns = Descriptor_orig(2000*50+1:4000*50,:);
-    unknown_unknowns =Descriptor_orig(samples*samples_per_user+1:samples*2*samples_per_user,:);
+    known = Descriptor_orig(1:2000*samples_per_user,:);
+    known_unknowns = Descriptor_orig(2000*samples_per_user+1:4000*samples_per_user,:);
+    unknown_unknowns =Descriptor_orig(4000*samples_per_user+1:6000*samples_per_user,:);
+    
     
     %% train set and  gallery probe set
-%     facenet_train_set = [known(1:50:2000*50,:); known(2:50:2000*50,:); known_unknowns(1:50:2000*50,:)];
-%     facenet_train_label=[1:2000 1:2000 2001:4000];
+    facenet_train_set = [known(1:samples_per_user:2000*samples_per_user,:); known(2:samples_per_user:2000*samples_per_user,:); known_unknowns(1:samples_per_user:2000*samples_per_user,:)];
+    facenet_train_label=[1:2000 1:2000 2001:4000];
     
-    facenet_gallery=[known(1:samples_per_user:samples*samples_per_user,:);known(2:samples_per_user:samples*samples_per_user,:);known(3:samples_per_user:samples*samples_per_user,:)];
-    facenet_gallery_label=[1:samples 1:samples 1:samples];
+    facenet_gallery=[known(1:samples_per_user:2000*samples_per_user,:);known(2:samples_per_user:2000*samples_per_user,:);known(3:samples_per_user:2000*samples_per_user,:)];
+    facenet_gallery_label=[1:2000 1:2000 1:2000];
     
-    S=[known(4:samples_per_user:samples*samples_per_user,:);known(5:samples_per_user:samples*samples_per_user,:);known(6:samples_per_user:samples*samples_per_user,:)];
-    S_label=[1:samples 1:samples 1:samples];
+    S=[known(4:samples_per_user:2000*samples_per_user,:);known(5:samples_per_user:2000*samples_per_user,:);known(4:samples_per_user:2000*samples_per_user,:)];
+    S_label=[1:2000 1:2000 1:2000];
     
-%     K=[ known_unknowns(2:50:2000*50,:); known_unknowns(3:50:2000*50,:); known_unknowns(4:50:2000*50,:)];
-%     K_label=[2001:4000 2001:4000 2001:4000];
+    K=[ known_unknowns(2:samples_per_user:2000*samples_per_user,:); known_unknowns(3:samples_per_user:2000*samples_per_user,:); known_unknowns(4:samples_per_user:2000*samples_per_user,:)];
+    K_label=[2001:4000 2001:4000 2001:4000];
     
-    U=[unknown_unknowns(1:samples_per_user:samples*samples_per_user,:)];
-    U_label=[samples+1:samples*2];
+    U=[unknown_unknowns(1:samples_per_user:2000*samples_per_user,:)];
+    U_label=[4001:6000];
     
     
     facenet_probe_c=S;
     facenet_probe_label_c=S_label;
     
-%     facenet_probe_o1=[S ; K];
-%     facenet_probe_label_o1=[S_label K_label];
-      facenet_probe_o1=[];
-    facenet_probe_label_o1=[];
+    facenet_probe_o1=[S ; K];
+    facenet_probe_label_o1=[S_label K_label];
     
     facenet_probe_o2=[S;U];
     facenet_probe_label_o2=[S_label U_label];
     
-%     facenet_probe_o3=[S;K;U];
-%     facenet_probe_label_o3=[S_label K_label U_label];
-%     
-    facenet_probe_o3=[];
-    facenet_probe_label_o3=[];
-    
+    facenet_probe_o3=[S;K;U];
+    facenet_probe_label_o3=[S_label K_label U_label];
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
@@ -230,8 +224,8 @@ elseif ds == "IJBC"
         cnt=size(thisuseremplate,1);
         if cnt>=30
             known(allnames{nameidx})=  M(allnames{nameidx});
-%         elseif cnt>5
-%             known_unknowns(allnames{nameidx})=  M(allnames{nameidx});
+            %         elseif cnt>5
+            %             known_unknowns(allnames{nameidx})=  M(allnames{nameidx});
         else
             unknown_unknowns(allnames{nameidx})=  M(allnames{nameidx});
         end
@@ -257,12 +251,12 @@ elseif ds == "IJBC"
     facenet_gallery = facenet_train_set;
     facenet_gallery_label = facenet_train_label;
     
-%     known_unknowns_names=known_unknowns.keys;
-%     for nameidx=1:length(known_unknowns_names)
-%         thisuseremplate=known_unknowns(known_unknowns_names{nameidx});
-%         facenet_train_set = [facenet_train_set ;thisuseremplate(1,:) ];
-%         facenet_train_label=[facenet_train_label string(known_unknowns_names{nameidx})];
-%     end
+    %     known_unknowns_names=known_unknowns.keys;
+    %     for nameidx=1:length(known_unknowns_names)
+    %         thisuseremplate=known_unknowns(known_unknowns_names{nameidx});
+    %         facenet_train_set = [facenet_train_set ;thisuseremplate(1,:) ];
+    %         facenet_train_label=[facenet_train_label string(known_unknowns_names{nameidx})];
+    %     end
     % remaining as facenet_probe_c
     S=[];
     S_label=[];
@@ -276,12 +270,12 @@ elseif ds == "IJBC"
     
     K=[];
     K_label=[];
-%     for nameidx=1:length(known_unknowns_names)
-%         thisuseremplate=known_unknowns(known_unknowns_names{nameidx});
-%         cnt=size(thisuseremplate,1);
-%         K = [K ;thisuseremplate(2:4,:) ];
-%         K_label=[K_label repmat(string(known_unknowns_names{nameidx}),1,3)];
-%     end
+    %     for nameidx=1:length(known_unknowns_names)
+    %         thisuseremplate=known_unknowns(known_unknowns_names{nameidx});
+    %         cnt=size(thisuseremplate,1);
+    %         K = [K ;thisuseremplate(2:4,:) ];
+    %         K_label=[K_label repmat(string(known_unknowns_names{nameidx}),1,3)];
+    %     end
     
     % S union U  o2
     U=[];
@@ -313,17 +307,17 @@ elseif ds == "IJBC"
     %label trans to number
     for nameidx=1:length(allnames)
         facenet_probe_label_c(find(facenet_probe_label_c==string(allnames{nameidx})))=nameidx;
-%         facenet_probe_label_o1(find(facenet_probe_label_o1==string(allnames{nameidx})))=nameidx;
+        %         facenet_probe_label_o1(find(facenet_probe_label_o1==string(allnames{nameidx})))=nameidx;
         facenet_probe_label_o2(find(facenet_probe_label_o2==string(allnames{nameidx})))=nameidx;
-%         facenet_probe_label_o3(find(facenet_probe_label_o3==string(allnames{nameidx})))=nameidx;
+        %         facenet_probe_label_o3(find(facenet_probe_label_o3==string(allnames{nameidx})))=nameidx;
         facenet_gallery_label(find(facenet_gallery_label==string(allnames{nameidx})))=nameidx;
     end
     % I also dont want to do so
     
     facenet_probe_label_c = double(facenet_probe_label_c);
-%     facenet_probe_label_o1 = double(facenet_probe_label_o1);
+    %     facenet_probe_label_o1 = double(facenet_probe_label_o1);
     facenet_probe_label_o2 = double(facenet_probe_label_o2);
-%     facenet_probe_label_o3 = double(facenet_probe_label_o3);
+    %     facenet_probe_label_o3 = double(facenet_probe_label_o3);
     facenet_gallery_label = double(facenet_gallery_label);
     
     

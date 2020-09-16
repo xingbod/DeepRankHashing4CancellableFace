@@ -8,5 +8,6 @@ logs/*
 .embeddings/*
 .trash
 data/*
+pre_models/*
 matlab/BLUFR/data/*
 matlab/data/*
