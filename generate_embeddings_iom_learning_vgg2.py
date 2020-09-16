@@ -95,19 +95,6 @@ def main(_argv):
     cfg['embd_shape'] = m * q
 
 
-    dataset = load_data_from_dir('./data/lfw_mtcnnpy_160', BATCH_SIZE=cfg['eval_batch_size'])
-    feats, names, n = extractFeat(dataset, model,)
-    with open(
-            'embeddings_dl/' + cfg['backbone_type'] + '_lfw_feat_dlIoM_' + str(cfg['m']) + 'x' + str(
-                cfg['q']) + '.csv',
-            'w') as f:
-        # using csv.writer method from CSV package
-        write = csv.writer(f)
-        write.writerows(feats)
-    with open('embeddings_dl/' + cfg['backbone_type'] + '_lfw_name_dl_' + str(cfg['m']) + 'x' + str(
-            cfg['q']) + '.txt', 'w') as outfile:
-        for i in names:
-            outfile.write(i + "\n")
     ###########################
     dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=cfg['eval_batch_size'],
                                  img_ext='png', ds='VGG2')
@@ -125,28 +112,6 @@ def main(_argv):
         for i in names:
             outfile.write(i + "\n")
 
-    ##########################################
-    dataset = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/img',
-                                 BATCH_SIZE=cfg['eval_batch_size'],
-                                 img_ext='png', ds='IJBC')
-    feats1, names1, n = extractFeat(dataset, model)
-    dataset2 = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/frames',
-                                  BATCH_SIZE=cfg['eval_batch_size'],
-                                  img_ext='png', ds='IJBC')
-    feats, names, n = extractFeatAppend(dataset2, model, feats1, names1)
-
-    with open('embeddings_dl/' + cfg['backbone_type'] + '_ijbc_feat_dlIoM_' + str(cfg['m']) + 'x' + str(
-            cfg['q']) + '.csv',
-              'w') as f:
-        # using csv.writer method from CSV package
-        print('embeddings_dl/' + cfg['backbone_type'] + '_ijbc_feat_dlIoM_' + str(cfg['m']) + 'x' + str(
-            cfg['q']) + '.csv')
-        write = csv.writer(f)
-        write.writerows(feats)
-    with open('embeddings_dl/' + cfg['backbone_type'] + '_ijbc_name_dl_' + str(cfg['m']) + 'x' + str(
-            cfg['q']) + '.txt', 'w') as outfile:
-        for i in names:
-            outfile.write(i + "\n")
 
 
 

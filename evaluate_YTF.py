@@ -176,7 +176,8 @@ def main(_argv):
 
     elif cfg['backbone_type'] == 'InceptionResNetV2':
         ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_InceptionResNetV2')
-
+    elif cfg['backbone_type'] == 'Xception':
+        ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_Xception')
     elif cfg['backbone_type'] == 'lresnet100e_ir':
         ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_lresnet100e_ir')
     else:
@@ -196,43 +197,59 @@ def main(_argv):
     for line in file:
         decoded_line = line.decode("utf-8")
         listmy.append(decoded_line.split(","))
-
-    def getScore(arcmodel):
+    def getScore(arcmodel,dimension=512):
         scores = []
         issames = []
+        dict = {}
         for i in tqdm.tqdm(range(1, 5001)):
             first_name = listmy[i][2].strip()
             second_name = listmy[i][3].strip()
             issame = int(listmy[i][4].strip())
-            try:
-                dataset_1 = load_data_from_dir('./data/test_dataset/aligned_images_DB_YTF/160x160', subset=first_name)
-                dataset_2 = load_data_from_dir('./data/test_dataset/aligned_images_DB_YTF/160x160', subset=second_name)
-
-            except Exception:
-                print('[*]', first_name, second_name, 'failed')
-                continue
-            feats1 = extractFeat(dataset_1, arcmodel)
-            feats2 = extractFeat(dataset_2, arcmodel)
-            #     dist = sklearn.metrics.pairwise_distances(feats1, feats2, metric='hamming')
-            score = distance.euclidean(feats1, feats2)
-            # dist = distance.hamming(embeddings1, embeddings2)
-            #     dist = tf.linalg.diag_part(dist)
-            #     dist = dist.numpy()
-            #     score = np.average(dist)
-            print('issame', issame, 'score', score)
-            scores.append(score)
-            issames.append(issame)
-
+            if not dict.__contains__(first_name.replace("/", "_")):
+                try:
+                    dataset_1 = load_data_from_dir('./data/test_dataset/aligned_images_DB_YTF/160x160',
+                                                   subset=first_name)
+                    feats1 = extractFeat(dataset_1, arcmodel,feature_dim=dimension)
+                    dict[first_name.replace("/", "_")] = feats1
+                except Exception:
+                    print('[*]', first_name, second_name, 'failed')
+                    continue
+            if not dict.__contains__(second_name.replace("/", "_")):
+                try:
+                    dataset_2 = load_data_from_dir('./data/test_dataset/aligned_images_DB_YTF/160x160',
+                                                   subset=second_name)
+                    feats2 = extractFeat(dataset_2, arcmodel,feature_dim=dimension)
+                    dict[second_name.replace("/", "_")] = feats2
+                except Exception:
+                    print('[*]', first_name, second_name, 'failed')
+                    continue
+            # feats1 = extractFeat(dataset_1, arcmodel)
+            # feats2 = extractFeat(dataset_2, arcmodel)
+            if dict.__contains__(first_name.replace("/", "_")) and dict.__contains__(second_name.replace("/", "_")):
+                feats1 = dict[first_name.replace("/", "_")]
+                feats2 = dict[second_name.replace("/", "_")]
+                #     dist = sklearn.metrics.pairwise_distances(feats1, feats2, metric='hamming')
+                score = distance.euclidean(feats1, feats2)
+                # dist = distance.hamming(embeddings1, embeddings2)
+                #     dist = tf.linalg.diag_part(dist)
+                #     dist = dist.numpy()
+                #     score = np.average(dist)
+                # print('issame', issame, 'score', score)
+                scores.append(score)
+                issames.append(issame)
         return scores,issames
 
-    scores, issames = getScore(arcmodel)
-    eer_orig, auc_orig = computeEER(issames, scores)
-
+    # scores, issames = getScore(arcmodel)
+    # eer_orig, auc_orig = computeEER(issames, scores)
+    eer_orig = 0
+    auc_orig = 0
+    # print(eer_orig,auc_orig)
     model = IoMFaceModelFromArFace(size=cfg['input_size'],
                                    arcmodel=arcmodel, training=False,
                                    permKey=permKey, cfg=cfg)
-    scores, issames = getScore(model)
+    scores, issames = getScore(model,cfg['m'])
     eer_r_iom, auc_r_iom = computeEER(issames, scores)
+
 
     if FLAGS.ckpt_epoch == '':
         ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
@@ -245,11 +262,11 @@ def main(_argv):
         print("[*] Cannot find ckpt from {}.".format(ckpt_path))
         exit()
     model.summary(line_length=80)
-    scores, issames = getScore(model)
+    scores, issames = getScore(model,cfg['m'])
     eer_dl_iom, auc_dl_iom = computeEER(issames, scores)
 
-    log_str2 = '''backbone={} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \n\n '''.format(
-        cfg['backbone_type'],eer_orig, auc_orig,eer_r_iom, auc_r_iom,eer_dl_iom, auc_dl_iom)
+    log_str2 = '''backbone={} \t {:.4f}\t {:.4f}\t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \n\n '''.format(
+        cfg['backbone_type'],cfg['m'], cfg['q'], eer_orig, auc_orig,eer_r_iom, auc_r_iom,eer_dl_iom, auc_dl_iom)
     with open('./logs/YTF_' + cfg['sub_name'] + "_Output.md", "a") as text_file:
         text_file.write(log_str2)
     print(log_str2)

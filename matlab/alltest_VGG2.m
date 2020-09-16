@@ -1,7 +1,7 @@
 backbone = "InceptionResNetV2";
 measure = "Euclidean";
 remark = "deep_orig_feat";
-enroll_query_search("embeddings_0831/"+backbone+"_VGG2_feat.csv", 'embeddings_0831/ResNet50_VGG2_name.txt',measure,"VGG2",remark);
+enroll_query_search("embeddings_0831/"+backbone+"_VGG2_50_feat.csv", 'embeddings_0831/ResNet50_VGG2_50_name.txt',measure,"VGG2",remark);
 
 remark = "random_iom";
 measure = "Hamming";
