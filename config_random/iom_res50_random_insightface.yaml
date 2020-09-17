@@ -1,7 +1,7 @@
 # general
-batch_size: 8
+batch_size: 64
 input_size: 112
-eval_batch_size: 8
+eval_batch_size: 64
 # embd_shape is for the Resnet, backbone
 embd_shape: 512
 sub_name: 'res100_pretrained_insightface'
