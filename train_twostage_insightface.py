@@ -14,7 +14,7 @@ from losses.euclidan_distance_loss import triplet_loss, triplet_loss_omoindrot
 from losses.metric_learning_loss import arcface_pair_loss,ms_loss,bin_LUT_loss,code_balance_loss
 from losses.sampling_matters import margin_loss,triplet_loss_with_sampling
 import modules.dataset_triplet as dataset_triplet
-from modules.keras_resnet50 import KitModel
+from modules.keras_resnet100 import KitModel
 
 flags.DEFINE_string('cfg_path', './configs/iom_res50_twostage_triplet_online.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
@@ -40,7 +40,7 @@ def main(_):
         permKey = tf.eye(cfg['embd_shape']) # for training, we don't permutate, won't influence the performance
 
         # import converted model
-    arcmodel = KitModel('pre_models/resnet50/resnet50.npy')
+    arcmodel = KitModel('pre_models/resnet100/resnet100.npy')
     for layer in arcmodel.layers:
         layer.trainable = False
     arcmodel.summary()
