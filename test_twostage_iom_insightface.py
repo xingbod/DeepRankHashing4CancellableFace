@@ -14,7 +14,7 @@ import math
 from modules.evaluations import get_val_data, perform_val, perform_val_yts
 from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
 from modules.utils import set_memory_growth, load_yaml, l2_norm
-from modules.keras_resnet50 import KitModel
+from modules.keras_resnet100 import KitModel
 
 # modules.utils.set_memory_growth()
 flags.DEFINE_string('cfg_path', './configs/iom_res50.yaml', 'config file path')
@@ -39,7 +39,7 @@ def main(_argv):
         permKey = tf.eye(cfg['embd_shape'])  # for training, we don't permutate, won't influence the performance
     m = cfg['m']
     q = cfg['q']
-    arcmodel = KitModel('pre_models/resnet50/resnet50.npy')
+    arcmodel = KitModel('pre_models/resnet100/resnet100.npy')
     for layer in arcmodel.layers:
         layer.trainable = False
     arcmodel.summary()
