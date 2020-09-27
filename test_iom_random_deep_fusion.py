@@ -58,6 +58,8 @@ def callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_
 
     m = cfg['m'] = mycfg['m']
     q = cfg['q'] = mycfg['q']
+    cfg['embd_shape'] = m * q
+
     permKey = None
     if cfg['head_type'] == 'IoMHead':  #
         # permKey = generatePermKey(cfg['embd_shape'])
