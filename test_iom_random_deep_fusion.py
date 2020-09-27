@@ -59,11 +59,11 @@ def callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_
     m = cfg['m'] = mycfg['m']
     q = cfg['q'] = mycfg['q']
     cfg['embd_shape'] = m * q
-
+    cfg['head_type'] = 'IoMHead'
     permKey = None
-    if cfg['head_type'] == 'IoMHead':  #
-        # permKey = generatePermKey(cfg['embd_shape'])
-        permKey = tf.eye(cfg['embd_shape'])  # for training, we don't permutate, won't influence the performance
+    # if cfg['head_type'] == 'IoMHead':  #
+    #     # permKey = generatePermKey(cfg['embd_shape'])
+    #     permKey = tf.eye(cfg['embd_shape'])  # for training, we don't permutate, won't influence the performance
 
     # here I add the extra IoM layer and head
     model = IoMFaceModelFrom2ArcFace(size=cfg['input_size'],
