@@ -137,4 +137,6 @@ for m in [32, 64, 128, 256, 512]:
         print(m, q, '****')
         mycfg['m'] = m
         mycfg['q'] = q
-        callMe(cfg_path = './config_arc/arc_res50.yaml',cfg_path2 = './config_arc/arc_Xception.yaml')
+        # callMe(cfg_path = './config_arc/arc_res50.yaml',cfg_path2 = './config_arc/arc_Xception.yaml')
+        callMe(cfg_path = './config_arc/arc_res50.yaml',cfg_path2 = './config_arc/arc_inceptionResNetV2.yaml')
+        callMe(cfg_path = './config_arc/arc_Xception.yaml',cfg_path2 = './config_arc/arc_inceptionResNetV2.yaml')
