@@ -55,7 +55,7 @@ def callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_
 
     arcmodel1, cfg = getModel(cfg_path)
     arcmodel2, cfg2 = getModel(cfg_path2)
-
+    cfg['eval_batch_size'] = min( cfg['eval_batch_size'], cfg2['eval_batch_size'])
 
     m = cfg['m'] = mycfg['m']
     q = cfg['q'] = mycfg['q']
