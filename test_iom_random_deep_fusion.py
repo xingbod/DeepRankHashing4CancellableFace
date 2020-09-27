@@ -38,6 +38,7 @@ def callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_
         arcmodel = ArcFaceModel(size=cfg['input_size'],
                                 embd_shape=cfg['embd_shape'],
                                 backbone_type=cfg['backbone_type'],
+                                name='arcface_'+cfg['backbone_type'],
                                 head_type='ArcHead',
                                 training=False,
                                 cfg=cfg)
