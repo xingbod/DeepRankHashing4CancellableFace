@@ -205,6 +205,29 @@ def IoMFaceModelFromArFace(size=None, channels=3, arcmodel=None, name='IoMface_m
     return Model(inputs, logist, name=name)
 
 
+def IoMFaceModelFrom2ArcFace(size=None, channels=3, arcmodel=None, arcmodel2=None, name='IoMface_model',
+                           margin=0.5, logist_scale=64, embd_shape=512,
+                           head_type='ArcHead', backbone_type='ResNet50',
+                           w_decay=5e-4, use_pretrain=True, training=False, permKey=None, cfg=None):
+    """IoMFaceModelFromArFace Model"""
+    x = inputs = Input([size, size, channels], name='input_image')
+    x1 = arcmodel(x)
+    x2 = arcmodel2(x)
+    # x = Dropout(0.2)(x)# 2020 07 09 add by xingbo
+    if not (permKey is None):
+        x1 = PermLayer(permKey)(x1)  # permutation before project to IoM hash code
+        x2 = PermLayer(permKey)(x2)  # permutation before project to IoM hash code
+    # here I add one extra hidden layer
+    # x = Dense(1024, kernel_regularizer=_regularizer(w_decay))(x)
+    # x = IoMProjectionLayer(cfg)(x)
+
+    x = concatenate([x1, x2])
+
+    x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
+              name="IoMProjection")(x)  # extra connection layer
+    logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x)  # loss need to change
+    return Model(inputs, logist, name=name)
+
 def IoMFaceModelFromArFace2(size=None, channels=3, arcmodel=None, name='IoMface_model',
                             margin=0.5, logist_scale=64, embd_shape=512,
                             head_type='ArcHead', backbone_type='ResNet50',
