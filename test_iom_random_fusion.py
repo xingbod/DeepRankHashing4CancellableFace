@@ -50,8 +50,9 @@ def callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_
             print("[*] load ckpt from {}".format(ckpt_path))
             arcmodel.load_weights(ckpt_path)
         else:
+            print("[*] Wanrning!!!!")
             print("[*] Cannot find ckpt from {}.".format(ckpt_path))
-            exit()
+
         m = cfg['m'] = mycfg['m']
         q = cfg['q'] = mycfg['q']
 

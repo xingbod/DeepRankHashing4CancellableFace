@@ -13,6 +13,7 @@ import math
 from modules.evaluations import get_val_data, perform_val, perform_val_fusion, perform_val_yts
 from modules.utils import set_memory_growth, load_yaml, l2_norm
 from modules.models import IoMFaceModelFrom2ArcFace, ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
+from modules.keras_resnet100 import KitModel
 
 flags.DEFINE_string('cfg_path', './configs/iom_res50_random.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
@@ -47,8 +48,8 @@ def callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_
             print("[*] load ckpt from {}".format(ckpt_path))
             arcmodel.load_weights(ckpt_path)
         else:
+            print("[*] Wanrning!!!!")
             print("[*] Cannot find ckpt from {}.".format(ckpt_path))
-            exit()
 
         return arcmodel,cfg
 
@@ -138,5 +139,8 @@ for m in [32, 64, 128, 256, 512]:
         mycfg['m'] = m
         mycfg['q'] = q
         # callMe(cfg_path = './config_arc/arc_res50.yaml',cfg_path2 = './config_arc/arc_Xception.yaml')
-        callMe(cfg_path = './config_arc/arc_res50.yaml',cfg_path2 = './config_arc/arc_inceptionResNetV2.yaml')
-        callMe(cfg_path = './config_arc/arc_Xception.yaml',cfg_path2 = './config_arc/arc_inceptionResNetV2.yaml')
+        # callMe(cfg_path = './config_arc/arc_res50.yaml',cfg_path2 = './config_arc/arc_inceptionResNetV2.yaml')
+        # callMe(cfg_path = './config_arc/arc_Xception.yaml',cfg_path2 = './config_arc/arc_inceptionResNetV2.yaml')
+        callMe(cfg_path = './config_arc/arc_res50.yaml',cfg_path2 = './config_arc/arc_Insight_res100.yaml')
+        callMe(cfg_path = './config_arc/arc_Insight_res100.yaml',cfg_path2 = './config_arc/arc_inceptionResNetV2.yaml')
+        callMe(cfg_path = './config_arc/arc_Xception.yaml',cfg_path2 = './config_arc/arc_Insight_res100.yaml')

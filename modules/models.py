@@ -25,6 +25,7 @@ from .layers import (
     PermLayer
 )
 from losses.sampling_matters.margin_loss import MarginLossLayer
+from modules.keras_resnet100 import KitModel
 
 
 def _regularizer(weights_decay=5e-4):
@@ -65,6 +66,8 @@ def Backbone(backbone_type='ResNet50', use_pretrain=True):
         elif backbone_type == 'VGG19':
             return VGG19(input_shape=x_in.shape[1:], include_top=False,
                          weights=weights)(x_in)
+        elif backbone_type == 'Insight_ResNet100':
+            return KitModel('pre_models/resnet100/resnet100.npy')
         else:
             raise TypeError('backbone_type error!')
 
