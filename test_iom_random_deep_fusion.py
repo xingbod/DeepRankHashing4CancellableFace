@@ -129,6 +129,7 @@ def callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_
             'hidden_layer_remark'] + "_0927.md", "a") as text_file:
             text_file.write(log_str2)
 
+    evl(0, measure='Hamming')  # no LUT
 
 for m in [32, 64, 128, 256, 512]:
     for q in [8]:
