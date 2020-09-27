@@ -64,7 +64,7 @@ def callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_
 
     # here I add the extra IoM layer and head
     model = IoMFaceModelFrom2ArcFace(size=cfg['input_size'],
-                                     arcmodel=arcmodel1, arcmodel1=arcmodel2, training=False,
+                                     arcmodel=arcmodel1, arcmodel2=arcmodel2, training=False,
                                      permKey=permKey, cfg=cfg)
     model.summary(line_length=80)
 
