@@ -66,7 +66,7 @@ def Backbone(backbone_type='ResNet50', use_pretrain=True):
         elif backbone_type == 'VGG19':
             return VGG19(input_shape=x_in.shape[1:], include_top=False,
                          weights=weights)(x_in)
-        elif backbone_type == 'Insight_ResNet100':
+        elif backbone_type == 'Insight_ResNet100':# here use the pretrained model build by Insightface team
             return KitModel('pre_models/resnet100/resnet100.npy')(x_in)
         else:
             raise TypeError('backbone_type error!')
