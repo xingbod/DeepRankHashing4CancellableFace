@@ -127,8 +127,7 @@ def callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_
             q, m, isLUT, measure, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, acc_lfw,
             acc_agedb30, acc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
 
-        with open('./logs/' + cfg['sub_name'] +'_vs_'+cfg2['sub_name'] + "_random_" + measure + '_layer_' + cfg[
-            'hidden_layer_remark'] + "_0927.md", "a") as text_file:
+        with open('./logs/' + cfg['sub_name'] +'_vs_'+cfg2['sub_name'] + "_random_" + measure + '_layer_1'+ "_0927.md", "a") as text_file:
             text_file.write(log_str2)
 
     evl(0, measure='Hamming')  # no LUT
