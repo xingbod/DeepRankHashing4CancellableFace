@@ -7,6 +7,7 @@
 * [Installation](#Installation)
 * [Data Preparing](#Data-Preparing)
 * [Training and Testing](#Training-and-Testing)
+* [Using InsightFace pre_build model](#Using InsightFace pre_build model)
 * [References](#References)
 
 ## Installation
@@ -52,7 +53,7 @@ conda install tensorflow-gpu==1.15.0
 
 ## Try the model
 
-If you want to try first, you can run the run_me.py file, and it will firstly load the model, and then read images of two people. The hash code will be generated and the distance will also be computed. The weight file in section ` Using InsightFace pre_build model` is needed before you use the following example. 
+If you want to try first, you can run the run_me.py file, and it will firstly load the model, and then read images of two people. The hash code will be generated and the distance will also be computed. The weight file in section [Using InsightFace pre_build model](#Using InsightFace pre_build model) is needed before you use the following example. 
 
 
 You can finally get the distance between same person and different person:
