@@ -9,7 +9,7 @@ embd_shape: 512
 #iom_res50_twostage_triplet -- only two stage with triplet loss
 #iom_res50_twostage_triplet and quantization loss -- triplet loss + quantization loss, this in another config file
 sub_name: 'cfg15_allloss_pre_res50_256x8'
-backbone_type: 'pre_res50' # 'ResNet50', 'MobileNetV2'
+backbone_type: 'Insight_ResNet100' # 'ResNet50', 'MobileNetV2'
 head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
 bin_lut_loss: 'tanh'
