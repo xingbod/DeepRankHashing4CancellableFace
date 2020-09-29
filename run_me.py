@@ -30,7 +30,7 @@ from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFro
 from modules.utils import set_memory_growth, load_yaml, l2_norm,generatePermKey
 
 # modules.utils.set_memory_growth()
-flags.DEFINE_string('cfg_path', './configs/iom_res50.yaml', 'config file path')
+flags.DEFINE_string('cfg_path', './config_15/cfg15_allloss_res100_512x8.yaml', 'config file path')
 flags.DEFINE_string('ckpt_epoch', '', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_string('img_path', '', 'path to input image')
