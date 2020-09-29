@@ -50,6 +50,42 @@ If encounter any probelm, you may need to use:
 conda install tensorflow-gpu==1.15.0
 ```
 
+## Try the model
+
+If you want to try first, you can run the run_me.py file, and it will firstly load the model, and then read images of two people. The hash code will be generated and the distance will also be computed.
+
+You can finally get the distance between same person and different person:
+
+The command is like below:
+
+```bash
+IoMArcFace$  python run_me.py --cfg_path ./config_15/cfg15_allloss_res100_512x8.yaml
+Num GPUs Available:  1
+1 Physical GPUs, 1 Logical GPUs
+[*] Warning!!!! Cannot find ckpt from None, random weight of IoM layer will be used.
+Model: "IoMface_model"
+________________________________________________________________________________
+Layer (type)                        Output Shape                    Param #     
+================================================================================
+input_image (InputLayer)            [(None, 112, 112, 3)]           0           
+________________________________________________________________________________
+arcface_model (Model)               (None, 512)                     70899904    
+________________________________________________________________________________
+perm_layer (PermLayer)              (None, 512)                     0           
+________________________________________________________________________________
+IoMProjection (Dense)               (None, 4096)                    2101248     
+________________________________________________________________________________
+IoMHead (Model)                     (None, 512)                     0           
+================================================================================
+Total params: 73,001,152
+Trainable params: 72,929,472
+Non-trainable params: 71,680
+________________________________________________________________________________
+dist_positive: 318.0, dist_negative: 443.0
+```
+
+The model consists of a feature extractor network, a permutation layer, plus a IoM projection layer.
+
 
 ## Data Preparing
 All datasets used in this repository can be found from [face.evoLVe.PyTorch's Data-Zoo](https://github.com/ZhaoJ9014/face.evoLVe.PyTorch#Data-Zoo).
@@ -211,6 +247,35 @@ nohup python -u train_twostage_tripletloss_online.py --cfg_path config_10/iom_re
 python  test_twostage_iom.py --cfg_path config_10/iom_res50_twostage_1layer_hard_arcloss_256x8_0.yaml 
 ```
 
+## Using InsightFace pre_build model
+In this work, we also try to adopt the original pre-build model by InsightFace team. However, their original model is trained on Mxnet, which is not fit tensorflow directly. Hence we perform the model conversion firstly to generate a tensorflow model. 
+
+We adopted their ResNet100 model, the original performance is:
+
+<table><thead><tr><th>Method</th><th>LFW(%)</th><th>CFP-FP(%)</th><th>AgeDB-30(%)</th><th>MegaFace(%)</th></tr></thead><tbody><tr><td>Ours</td><td>99.77</td><td>98.27</td><td>98.28</td><td>98.47</td></tr></tbody></table>
+
+While after the model conversion, the generated TF2 model performance is:
+
+<table><thead><tr><th></th><th>LFW</th><th>AgeDB30</th><th>CFP - FP</th></tr></thead><tbody><tr><td>Accuracy</td><td>0.9960</td><td>0.9752</td><td>0.9643</td></tr><tr><td>EER</td><td>0.0040</td><td>0.0305</td><td>0.0387</td></tr><tr><td>AUC</td><td>0.9987</td><td>0.9900</td><td>0.9877</td></tr><tr><td>Threshold</td><td>0.7340</td><td>0.7710</td><td>0.8320</td></tr></tbody></table>
+
+There is a slightly accuracy drop, but it is still better than our own trained model.
+
+To use this pre-build model, just set the **backbone_type** in the config file as Insight_ResNet100:
+
+```
+batch_size: 16
+eval_batch_size: 16
+input_size: 112
+embd_shape: 512
+sub_name: 'arc_Insight_ResNet100'
+backbone_type: 'Insight_ResNet100' # 'ResNet50', 'MobileNetV2'
+head_type: ArcHead # 'ArcHead', 'NormHead'
+is_ccrop: False # central-cropping or not
+```
+
+Please note that the weight file is required, it is stored in `pre_models/resnet100/resnet100.npy`
+
+The weight file and other related files can be downloaded from [this link](https://drive.google.com/file/d/1aOy12NnkEBmzLa9atQQCAlKiRO8zck49/view?usp=sharing).
 
 ## References
 

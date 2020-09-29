@@ -40,7 +40,7 @@ def main(_):
         permKey = tf.eye(cfg['embd_shape']) # for training, we don't permutate, won't influence the performance
 
         # import converted model
-    arcmodel = KitModel('pre_models/resnet100/resnet100.npy')
+    arcmodel = KitModel('../pre_models/resnet100/resnet100.npy')
     for layer in arcmodel.layers:
         layer.trainable = False
     arcmodel.summary()
