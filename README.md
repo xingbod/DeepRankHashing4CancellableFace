@@ -7,7 +7,7 @@
 * [Installation](#Installation)
 * [Data Preparing](#Data-Preparing)
 * [Training and Testing](#Training-and-Testing)
-* [Using InsightFace pre_build model](#Using InsightFace pre_build model)
+* [Using InsightFace pre_build model](#Using-InsightFace-pre_build-model)
 * [References](#References)
 
 ## Installation
@@ -249,7 +249,7 @@ nohup python -u train_twostage_tripletloss_online.py --cfg_path config_10/iom_re
 python  test_twostage_iom.py --cfg_path config_10/iom_res50_twostage_1layer_hard_arcloss_256x8_0.yaml 
 ```
 
-## Using InsightFace pre_build model
+# Using-InsightFace-pre_build-model
 In this work, we also try to adopt the original pre-build model by InsightFace team. However, their original model is trained on Mxnet, which is not fit tensorflow directly. Hence we perform the model conversion firstly to generate a tensorflow model. 
 
 We adopted their ResNet100 model, the original performance is:
