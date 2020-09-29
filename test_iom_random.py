@@ -36,7 +36,7 @@ def callMe():
     set_memory_growth()
     isInsightmodel = 100
     # cfg = load_yaml('./configs/iom_res50_random_xception.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
-    cfg = load_yaml('config_random/iom_res50_random_insightface.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
+    cfg = load_yaml('configs/config_random/iom_res50_random_insightface.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
     permKey = None
     if cfg['head_type'] == 'IoMHead':  #
         # permKey = generatePermKey(cfg['embd_shape'])

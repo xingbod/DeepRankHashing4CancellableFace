@@ -61,7 +61,7 @@ You can finally get the distance between same person and different person:
 The command is like below:
 
 ```bash
-IoMArcFace$  python run_me.py --cfg_path ./config_15/cfg15_allloss_res100_512x8.yaml
+IoMArcFace$  python run_me.py --cfg_path .configs/config_15/cfg15_allloss_res100_512x8.yaml
 Num GPUs Available:  1
 1 Physical GPUs, 1 Logical GPUs
 [*] Warning!!!! Cannot find ckpt from None, random weight of IoM layer will be used.
@@ -231,22 +231,22 @@ Note:
 Stage 1: Here have two modes for training the arcface your model, which should be perform the same results at the end.
 ```bash
 # traning with tf.GradientTape(), great for debugging.
-python train.py --mode="eager_tf" --cfg_path="./configs/arc_res50.yaml"
+python train.py --mode="eager_tf" --cfg_path="./configs/config_arc/arc_res50.yaml"
 
 # training with model.fit().
-python train.py --mode="fit" --cfg_path="./configs/arc_res50.yaml"
+python train.py --mode="fit" --cfg_path="./configs/config_arc/arc_res50.yaml"
 ```
 Stage 2: Training the deep IoM:
 
 ```bash
 # traning with tf.GradientTape(),For deep IoM, can only train by eager_tf
-nohup python -u train_twostage_tripletloss_online.py --cfg_path config_10/iom_res50_twostage_1layer_hard_arcloss_256x8_0.yaml >1layer_hard_arcloss_256x8_0.log & 
+nohup python -u train_twostage_tripletloss_online.py --cfg_path ./configs/config_10/iom_res50_twostage_1layer_hard_arcloss_256x8_0.yaml >1layer_hard_arcloss_256x8_0.log & 
 
 
 ### Testing the performance of deep IoM
 
 ```bash
-python  test_twostage_iom.py --cfg_path config_10/iom_res50_twostage_1layer_hard_arcloss_256x8_0.yaml 
+python  test_twostage_iom.py --cfg_path ./configs/config_10/iom_res50_twostage_1layer_hard_arcloss_256x8_0.yaml 
 ```
 
 # Using-InsightFace-pre_build-model
