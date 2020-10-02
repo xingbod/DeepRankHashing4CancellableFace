@@ -56,8 +56,7 @@ def main(_argv):
         print("[*] load ckpt from {}".format(ckpt_path))
         arcmodel.load_weights(ckpt_path)
     else:
-        print("[*] Cannot find ckpt from {}.".format(ckpt_path))
-        exit()
+        print("[*] Warnning!!! Cannot find ckpt from {}.".format(ckpt_path))
 
 
 
@@ -289,3 +288,4 @@ if __name__ == '__main__':
     except SystemExit:
         pass
 
+    
