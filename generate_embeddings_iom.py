@@ -61,7 +61,7 @@ def main(_argv):
 
 
     dataset = load_data_from_dir('./data/lfw_mtcnnpy_160', BATCH_SIZE=cfg['eval_batch_size'], ds='LFW')
-    feats, names, n = extractFeat(dataset, arcmodel, 512)
+    feats, names, n = extractFeat(dataset, arcmodel)
     with open('embeddings_0831/' + cfg['backbone_type'] + '_lfw_feat.csv',
               'w') as f:
         print('embeddings_0831/' + cfg['backbone_type'] + '_lfw_feat.csv')
@@ -79,7 +79,7 @@ def main(_argv):
 
     dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=cfg['eval_batch_size'],
                                  img_ext='png', ds='VGG2')
-    feats, names, n = extractFeat(dataset, arcmodel, 512)
+    feats, names, n = extractFeat(dataset, arcmodel)
     with open('embeddings_0831/' + cfg['backbone_type'] + '_VGG2_feat.csv',
               'w') as f:
         # using csv.writer method from CSV package
@@ -98,11 +98,11 @@ def main(_argv):
 
     dataset = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/img', BATCH_SIZE=cfg['eval_batch_size'],
                                  img_ext='png', ds='IJBC')
-    feats1, names1, n = extractFeat(dataset, arcmodel, 512)
+    feats1, names1, n = extractFeat(dataset, arcmodel)
 
     dataset2 = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/frames', BATCH_SIZE=cfg['eval_batch_size'],
                                  img_ext='png', ds='IJBC')
-    feats2, names2, n = extractFeat(dataset2, arcmodel, 512)
+    feats2, names2, n = extractFeat(dataset2, arcmodel)
     feats = [feats1,feats2]
     names = [names1, names2]
     with open('embeddings_0831/' + cfg['backbone_type'] + '_ijbc_feat.csv',
