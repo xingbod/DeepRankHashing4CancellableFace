@@ -20,7 +20,7 @@ from modules.utils import set_memory_growth, load_yaml, l2_norm
 from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
 import tqdm
 import csv
-from modules.embedding_util import load_data_from_dir,extractFeat
+from modules.embedding_util import load_data_from_dir,extractFeat, extractFeatAppend
 from modules.LUT import genLUT
 
 # modules.utils.set_memory_growth()
@@ -102,9 +102,8 @@ def main(_argv):
 
     dataset2 = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/frames', BATCH_SIZE=cfg['eval_batch_size'],
                                  img_ext='png', ds='IJBC')
-    feats2, names2, n = extractFeat(dataset2, arcmodel)
-    feats = [feats1,feats2]
-    names = [names1, names2]
+    feats, names, n = extractFeatAppend(dataset2, arcmodel, feats1, names1)
+
     with open('embeddings_0831/' + cfg['backbone_type'] + '_ijbc_feat.csv',
               'w') as f:
         # using csv.writer method from CSV package
@@ -190,14 +189,12 @@ def main(_argv):
             dataset = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/img',
                                          BATCH_SIZE=cfg['eval_batch_size'],
                                          img_ext='png', ds='IJBC')
-            feats1, names1, n = extractFeat(dataset, arcmodel)
+            feats1, names1, n = extractFeat(dataset, model)
             dataset2 = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/frames',
                                           BATCH_SIZE=cfg['eval_batch_size'],
                                           img_ext='png', ds='IJBC')
-            feats2, names2, n = extractFeat(dataset2, arcmodel)
+            feats, names, n = extractFeatAppend(dataset2, model, feats1, names1)
 
-            feats = [feats1, feats2]
-            names = [names1, names2]
             with open('embeddings_0831/' + cfg['backbone_type'] + '_ijbc_feat_drIoM_' + str(cfg['m']) + 'x' + str(
                     cfg['q']) + '.csv',
                       'w') as f:
@@ -262,10 +259,7 @@ def main(_argv):
             dataset2 = load_data_from_dir('/media/Storage/facedata/ijbc_mtcnn_160/images/frames',
                                           BATCH_SIZE=cfg['eval_batch_size'],
                                           img_ext='png', ds='IJBC')
-            feats2, names2, n = extractFeat(dataset2, model)
-
-            feats = [feats1, feats2]
-            names = [names1, names2]
+            feats, names, n = extractFeatAppend(dataset2, model, feats1, names1)
 
             with open('embeddings_0831/' + cfg['backbone_type'] + '_ijbc_feat_drIoM_' + str(cfg['m']) + 'x' + str(
                     cfg['q']) + '.csv',
