@@ -36,36 +36,29 @@ def callMe():
     set_memory_growth()
     isInsightmodel = 100
     # cfg = load_yaml('./configs/iom_res50_random_xception.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
-    cfg = load_yaml('configs/config_random/iom_res50_random_insightface.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
+    cfg = load_yaml('configs/config_random/iom_res100_random_insightface.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
     permKey = None
     if cfg['head_type'] == 'IoMHead':  #
         # permKey = generatePermKey(cfg['embd_shape'])
         permKey = tf.eye(cfg['embd_shape'])  # for training, we don't permutate, won't influence the performance
-    if isInsightmodel==100:
-        # import converted model
-        arcmodel = KitModel100('pre_models/resnet100/resnet100.npy')
-        for layer in arcmodel.layers:
-            layer.trainable = False
-    elif isInsightmodel==50:
-        arcmodel = KitModel50('pre_models/resnet50/resnet50.npy')
-        for layer in arcmodel.layers:
-            layer.trainable = False
-    else:
-        arcmodel = ArcFaceModel(size=cfg['input_size'],
-                                embd_shape=cfg['embd_shape'],
-                                backbone_type=cfg['backbone_type'],
-                                head_type='ArcHead',
-                                training=False,
-                                cfg=cfg)
 
-        ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_InceptionResNetV2')
-        # ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_Xception')
-        if ckpt_path is not None:
-            print("[*] load ckpt from {}".format(ckpt_path))
-            arcmodel.load_weights(ckpt_path)
-        else:
-            print("[*] Cannot find ckpt from {}.".format(ckpt_path))
-            exit()
+    arcmodel = ArcFaceModel(size=cfg['input_size'],
+                            embd_shape=cfg['embd_shape'],
+                            backbone_type=cfg['backbone_type'],
+                            head_type='ArcHead',
+                            training=False,
+                            cfg=cfg)
+
+    # ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_InceptionResNetV2')
+    # ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_Xception')
+    ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
+
+    if ckpt_path is not None:
+        print("[*] load ckpt from {}".format(ckpt_path))
+        arcmodel.load_weights(ckpt_path)
+    else:
+        print("[*] Cannot find ckpt from {}.".format(ckpt_path))
+        # exit()
 
     m = cfg['m'] = mycfg['m']
     q = cfg['q'] = mycfg['q']
@@ -198,7 +191,7 @@ def callMe():
 #         callMe()
 #
 for m in [ 512]:
-    for q in [2,4,8,16,32,64]:
+    for q in [8]:#2,4,8,16,32,64
         print(m, q, '****')
         mycfg['m'] = m
         mycfg['q'] = q
