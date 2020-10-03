@@ -168,7 +168,10 @@ def ArcFaceModel(size=None, channels=3, num_classes=None, name='arcface_model',
 
     x = Backbone(backbone_type=backbone_type, use_pretrain=use_pretrain)(x)
 
-    embds = OutputLayer(embd_shape, w_decay=w_decay)(x)
+    if backbone_type == 'Insight_ResNet100':  # here use the pretrained model build by Insightface team, we don't need the output layer anymore
+        embds = x
+    else:
+        embds = OutputLayer(embd_shape, w_decay=w_decay)(x)
 
     if training:
         assert num_classes is not None
