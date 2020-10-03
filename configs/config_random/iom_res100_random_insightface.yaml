@@ -1,11 +1,11 @@
 # general
 batch_size: 64
 input_size: 112
-eval_batch_size: 64
+eval_batch_size: 16
 # embd_shape is for the Resnet, backbone
 embd_shape: 512
 sub_name: 'res100_pretrained_insightface'
-backbone_type: 'ResNet100' # 'ResNet50', 'MobileNetV2'
+backbone_type: 'Insight_ResNet100' # 'ResNet50', 'MobileNetV2'
 head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
 isLUT: False
