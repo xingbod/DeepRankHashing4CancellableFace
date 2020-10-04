@@ -20,7 +20,7 @@ flags.DEFINE_string('cfg_path', './configs/iom_res50.yaml', 'config file path')
 flags.DEFINE_string('ckpt_epoch', '', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_string('img_path', '', 'path to input image')
-flags.DEFINE_integer('is_flip', False, 'is flip the image?')
+flags.DEFINE_bool('is_flip', False, 'is flip the image?')
 
 
 def main(_argv):
