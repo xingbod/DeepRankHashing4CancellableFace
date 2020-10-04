@@ -54,7 +54,7 @@ def set_layer_weights(model, weights_dict):
     return model
 
 
-def KitModel(weight_file = None):
+def KitModel_50(weight_file = None):
     global weights_dict
     weights_dict = load_weights_from_file(weight_file) if not weight_file == None else None
 
