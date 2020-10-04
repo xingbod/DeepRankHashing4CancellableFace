@@ -39,7 +39,7 @@ def main(_argv):
         model.load_weights(ckpt_path)
     else:
         print("[*] Cannot find ckpt from {}.".format(ckpt_path))
-        exit()
+        # exit()
 
     if FLAGS.img_path:
         print("[*] Encode {} to ./output_embeds.npy".format(FLAGS.img_path))
