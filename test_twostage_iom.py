@@ -98,6 +98,8 @@ def main(_argv):
         # print("    Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(rr_ytf[0], rr_fs[0]))
         mAp_fs = mAp_ytf = 0
         rr_ytf = rr_fs = [0]
+        is_flip = True
+        print('[*] is_flip : {}'.format(is_flip))
         if isLUT == 0 and measure == 'Jaccard':
             isLUT = q
 
@@ -108,7 +110,7 @@ def main(_argv):
         print("[*] Perform Evaluation on LFW...")
         acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = perform_val(
             cfg['embd_shape'], cfg['eval_batch_size'], model, lfw, lfw_issame,
-            is_ccrop=cfg['is_ccrop'], cfg=cfg, isLUT=isLUT, measure=measure,is_flip=True)
+            is_ccrop=cfg['is_ccrop'], cfg=cfg, isLUT=isLUT, measure=measure,is_flip=is_flip)
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
         # with open('embeddings/' + cfg['sub_name'] + '_embeddings_lfw.csv', 'w', newline='') as file:
         #     writer = csv.writer(file, escapechar='/', quoting=csv.QUOTE_NONE)
@@ -116,14 +118,14 @@ def main(_argv):
         print("[*] Perform Evaluation on AgeDB30...")
         acc_agedb30, best_th_agedb30, auc_agedb30, eer_agedb30, embeddings_agedb30 = perform_val(
             cfg['embd_shape'], cfg['eval_batch_size'], model, agedb_30,
-            agedb_30_issame, is_ccrop=cfg['is_ccrop'], cfg=cfg, isLUT=isLUT, measure=measure,is_flip=True)
+            agedb_30_issame, is_ccrop=cfg['is_ccrop'], cfg=cfg, isLUT=isLUT, measure=measure,is_flip=is_flip)
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_agedb30, best_th_agedb30, auc_agedb30,
                                                                           eer_agedb30))
 
         print("[*] Perform Evaluation on CFP-FP...")
         acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp, eer_cfp_fp, embeddings_cfp_fp = perform_val(
             cfg['embd_shape'], cfg['eval_batch_size'], model, cfp_fp, cfp_fp_issame,
-            is_ccrop=cfg['is_ccrop'], cfg=cfg, isLUT=isLUT, measure=measure,is_flip=True)
+            is_ccrop=cfg['is_ccrop'], cfg=cfg, isLUT=isLUT, measure=measure,is_flip=is_flip)
         print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_cfp_fp, best_th_cfp_fp, auc_cfp_fp,
                                                                           eer_cfp_fp))
 
