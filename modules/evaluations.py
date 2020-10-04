@@ -271,6 +271,8 @@ def perform_val(embedding_size, batch_size, model,
     """perform val"""
     if cfg['head_type'] == 'IoMHead':
         embedding_size = int(embedding_size / cfg['q'])
+    if is_flip:
+        embedding_size = embedding_size * 2
     embeddings = np.zeros([len(carray), embedding_size])
 
     for idx in tqdm.tqdm(range(0, len(carray), batch_size), ascii=True):
