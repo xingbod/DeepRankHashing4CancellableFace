@@ -20,6 +20,7 @@ flags.DEFINE_string('cfg_path', './configs/iom_res50.yaml', 'config file path')
 flags.DEFINE_string('ckpt_epoch', '', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_string('img_path', '', 'path to input image')
+flags.DEFINE_integer('is_flip', False, 'is flip the image?')
 
 
 def main(_argv):
@@ -98,7 +99,7 @@ def main(_argv):
         # print("    Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(rr_ytf[0], rr_fs[0]))
         mAp_fs = mAp_ytf = 0
         rr_ytf = rr_fs = [0]
-        is_flip = True
+        is_flip = FLAGS.is_flip
         print('[*] is_flip : {}'.format(is_flip))
         if isLUT == 0 and measure == 'Jaccard':
             isLUT = q
