@@ -51,7 +51,7 @@ class Embedding:
     img_flip = np.fliplr(img)
     # img = np.transpose(img, (2,0,1)) #3*112*112, RGB
     # img_flip = np.transpose(img_flip,(2,0,1))
-    input_blob = np.zeros((2, 3, self.image_size[1], self.image_size[0]),dtype=np.uint8)
+    input_blob = np.zeros((2,  self.image_size[1], self.image_size[0],3),dtype=np.uint8)
 
     input_blob[0] = img
     input_blob[1] = img_flip
