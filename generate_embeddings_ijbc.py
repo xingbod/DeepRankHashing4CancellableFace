@@ -48,23 +48,6 @@ def get_groundtruth(dataset):
 
     return frame_map
 
-def process_crop(input):
-    (frame_id, frame_data) = input
-    print(frame_id)
-    x, y, w, h,subject_id = frame_data
-    try:
-        draw = cv2.cvtColor(cv2.imread(path_to_frames + frame_id), cv2.COLOR_BGR2RGB)
-        y = int(y)
-        x = int(x)
-        w = int(w)
-        h = int(h)
-
-        face = draw[y:y + h, x:x + w]
-        create_dir(save_path + subject_id+'/')
-        cv2.imwrite(save_path + subject_id+'/'+frame_id.split('/')[-2]+frame_id.split('/')[-1], face)
-    except Exception as e:
-        print(e)
-
 
 def main(_argv):
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
