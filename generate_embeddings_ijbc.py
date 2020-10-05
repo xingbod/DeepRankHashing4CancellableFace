@@ -92,11 +92,12 @@ def main(_argv):
     cfg['embd_shape'] = m * q
 
     ###########################
-    metadata_path = root_path + 'protocols/ijbc_1N_probe_mixed.csv'
+    metadata_path = root_path + 'protocols/ijbc_1N_gallery_G1.csv'
     path_to_frames = root_path + 'images/'
     frames_data = get_groundtruth(metadata_path)
     feats = []
     names = []
+    cnt =0
     for items in tqdm.tqdm(frames_data.items()):
         frame_id, frame_data = items
         x, y, w, h, subject_id = frame_data
