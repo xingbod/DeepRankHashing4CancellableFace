@@ -14,7 +14,7 @@ k2 = 6;
 lambda = 0.3;
 % measure = 'Hamming';
 % ds = "LFW";
-log_path = "logs/log_"+ds+"_"+remark+"_id.log";
+log_path = "logs/log_"+ds+"_"+remark+"_idnew.log";
 
 %%
 
