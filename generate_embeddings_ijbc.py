@@ -97,7 +97,7 @@ def main(_argv):
     frames_data = get_groundtruth(metadata_path)
     feats = []
     names = []
-    for frame_id, frame_data in tqdm.tqdm(frames_data):
+    for (frame_id, frame_data) in tqdm.tqdm(frames_data):
         x, y, w, h, subject_id = frame_data
         try:
             draw = cv2.cvtColor(cv2.imread(path_to_frames + frame_id), cv2.COLOR_BGR2RGB)
