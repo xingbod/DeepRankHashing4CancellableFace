@@ -306,6 +306,7 @@ def getModel():
     return model
 
 model = getModel()
+model.summary(line_length=80)
 
 # =============================================================
 # load image features
