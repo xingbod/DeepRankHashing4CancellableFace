@@ -98,6 +98,7 @@ def main(_argv):
     feats = []
     names = []
     for items in tqdm.tqdm(frames_data):
+        print(items,'*************')
         frame_id, frame_data = items
         x, y, w, h, subject_id = frame_data
         try:
