@@ -37,6 +37,8 @@ from menpo.visualize.viewmatplotlib import sample_colours_from_colourmap
 from modules.utils import load_yaml
 from modules.models import build_or_load_IoMmodel
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 def read_template_subject_id_list(path):
     ijb_meta = np.loadtxt(path, dtype=str, skiprows=1, delimiter=',')

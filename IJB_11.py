@@ -47,6 +47,9 @@ from modules.models import build_or_load_IoMmodel
 
 warnings.filterwarnings("ignore")
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+
 parser = argparse.ArgumentParser(description='do ijb test')
 # general
 parser.add_argument('--model-prefix', default='', help='path to load model.')
