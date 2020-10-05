@@ -42,7 +42,7 @@ remark = "random_iom_identification";
 measure = "Hamming";
 for m = [64 128 256 512]
     for q = [8]
-        tic
+        tic_dl
         enroll_query_iom_id(embpath+"/"+backbone+"_"+embed+"_feat_drIoM_"+num2str(m)+"x"+num2str(q)+".csv", 'embeddings_0831/'+backbone+'_'+embed+'_name.txt',measure,DS,remark);
         toc
     end
