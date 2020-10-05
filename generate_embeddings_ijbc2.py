@@ -72,15 +72,15 @@ def main(_argv):
 
     ##########################################
     dataset = load_data_from_dir('/media/Storage/facedata/ijbc/images_cropped_G1', BATCH_SIZE=cfg['eval_batch_size'],
-                                 img_ext='png', ds='VGG2')
+                                 img_ext='png', ds='IJBC_CROP')
     feats1, names1, n = extractFeat(dataset, model)
 
     dataset2 = load_data_from_dir('/media/Storage/facedata/ijbc/images_cropped_G2', BATCH_SIZE=cfg['eval_batch_size'],
-                                 img_ext='png', ds='VGG2')
+                                 img_ext='png', ds='IJBC_CROP')
     feats2, names2, n = extractFeat(dataset2, model)
 
     dataset3 = load_data_from_dir('/media/Storage/facedata/ijbc/images_cropped', BATCH_SIZE=cfg['eval_batch_size'],
-                                 img_ext='png', ds='VGG2')
+                                 img_ext='png', ds='IJBC_CROP')
     feats_prob, names_prob, n = extractFeat(dataset3, model)
 
     with open('embeddings_dl/' + cfg['backbone_type'] + '_ijbc_G1_feat_dlIoM_' + str(cfg['m']) + 'x' + str(

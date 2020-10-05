@@ -32,7 +32,7 @@ def load_data_from_dir(save_path, BATCH_SIZE=128, img_ext='png', ds='LFW'):
         #         wh = tf.strings.split(parts[-1], ".")[0]
         if ds == 'LFW':
             wh = tf.strings.split(parts[-1], ".")[0]
-        elif ds == 'VGG2':
+        elif ds == 'VGG2' or ds == 'IJBC_CROP':
             wh = parts[-2]
         elif ds == 'IJBC':
             wh = tf.strings.split(parts[-1], "_")[0]
