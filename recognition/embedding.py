@@ -58,7 +58,7 @@ class Embedding:
 
     input_data = input_blob.astype(np.float32) / 255.
 
-    feat = self.model(input_data)
+    feat = self.model(input_data).numpy()
     feat = feat.reshape([-1, feat.shape[0] * feat.shape[1]])
     feat = feat.flatten()
     return feat
