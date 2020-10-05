@@ -18,6 +18,8 @@ lambda = 0.3;
 % remark = "deepfeat";
 log_path = "logs/log_id_fusion_"+ds+"_"+remark+".log";
 %%
+disp('loading : ' + feat_path)
+disp('loading : ' + feat_path2)
 
 Descriptor_orig1 = importdata("../"+feat_path);
 Descriptor_orig2 = importdata("../"+feat_path2);

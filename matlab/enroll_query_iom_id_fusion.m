@@ -17,6 +17,8 @@ lambda = 0.3;
 log_path = "logs/log_"+ds+"_"+remark+".log";
 %%
 
+disp('loading : ' + feat_path)
+disp('loading : ' + feat_path2)
 
 Descriptor_orig1 = importdata("../"+feat_path);
 Descriptor_orig2 = importdata("../"+feat_path2);

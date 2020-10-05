@@ -18,7 +18,8 @@ lambda = 0.3;
 % remark = "deepfeat";
 log_path = "logs/log_"+ds+"_"+remark+".log";
 %%
-
+disp('loading : ' + feat_path)
+disp('loading : ' + filename_path)
 Descriptor_orig = importdata("../"+feat_path);
 fid_lfw_name=importdata("../" + filename_path);
 if ds == "LFW"

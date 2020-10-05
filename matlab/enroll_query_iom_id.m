@@ -17,7 +17,8 @@ lambda = 0.3;
 log_path = "logs/log_"+ds+"_"+remark+"_idnew.log";
 
 %%
-
+disp('loading : ' + hashcode_path)
+disp('loading : ' + filename_path)
 Descriptor_orig = importdata("../"+hashcode_path);
 fid_lfw_name=importdata("../" + filename_path);
 
