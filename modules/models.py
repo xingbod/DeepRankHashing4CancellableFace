@@ -396,7 +396,7 @@ def IoMFaceModel(size=None, channels=3, num_classes=None, name='IoMface_model',
     return Model(inputs, logist, name=name)
 '''
 
-def build_or_load_IoMmodel(arc_cfg,iom_cfg, ckpt_epoch = ''):
+def build_or_load_IoMmodel(arc_cfg,iom_cfg, ckpt_epoch = '', is_only_arc=False):
     permKey = None
     if arc_cfg['head_type'] == 'IoMHead':  #
         # permKey = generatePermKey(cfg['embd_shape'])
@@ -417,6 +417,8 @@ def build_or_load_IoMmodel(arc_cfg,iom_cfg, ckpt_epoch = ''):
     else:
         print("[*] Cannot find ckpt from {}.".format(ckpt_path), '')
 
+    if is_only_arc:
+        return arcmodel
     # here I add the extra IoM layer and head
     if iom_cfg['hidden_layer_remark'] == '1':
         model = IoMFaceModelFromArFace(size=iom_cfg['input_size'],
@@ -458,3 +460,4 @@ def build_or_load_IoMmodel(arc_cfg,iom_cfg, ckpt_epoch = ''):
         # exit(0)
 
     return model
+

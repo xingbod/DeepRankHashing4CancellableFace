@@ -256,7 +256,7 @@ print('Time: %.2f s. ' % (stop - start))
 
 
 cfg = load_yaml('configs/config_random/iom_res100_random_insightface.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
-model = build_or_load_IoMmodel(cfg, cfg)
+model = build_or_load_IoMmodel(cfg, cfg, is_only_arc=True)
 model.summary(line_length=80)
 
 # =============================================================
