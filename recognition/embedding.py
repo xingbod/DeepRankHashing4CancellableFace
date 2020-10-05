@@ -47,7 +47,7 @@ class Embedding:
     tform.estimate(landmark5, self.src)
     M = tform.params[0:2,:]
     img = cv2.warpAffine(rimg,M,(self.image_size[1],self.image_size[0]), borderValue = 0.0)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img_flip = np.fliplr(img)
     # img = np.transpose(img, (2,0,1)) #3*112*112, RGB
     # img_flip = np.transpose(img_flip,(2,0,1))
