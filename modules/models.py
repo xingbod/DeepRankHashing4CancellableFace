@@ -395,3 +395,66 @@ def IoMFaceModel(size=None, channels=3, num_classes=None, name='IoMface_model',
         logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x)  # loss need to change
     return Model(inputs, logist, name=name)
 '''
+
+def build_or_load_IoMmodel(arc_cfg,iom_cfg, ckpt_epoch = ''):
+    permKey = None
+    if arc_cfg['head_type'] == 'IoMHead':  #
+        # permKey = generatePermKey(cfg['embd_shape'])
+        permKey = tf.eye(arc_cfg['embd_shape'])  # for training, we don't permutate, won't influence the performance
+
+    arcmodel = ArcFaceModel(size=arc_cfg['input_size'],
+                            embd_shape=arc_cfg['embd_shape'],
+                            backbone_type=arc_cfg['backbone_type'],
+                            head_type='ArcHead',
+                            training=False,
+                            cfg=arc_cfg)
+
+    ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + arc_cfg['sub_name'])
+
+    if ckpt_path is not None:
+        print("[*] load ckpt from {}".format(ckpt_path))
+        arcmodel.load_weights(ckpt_path)
+    else:
+        print("[*] Cannot find ckpt from {}.".format(ckpt_path), '')
+
+    # here I add the extra IoM layer and head
+    if iom_cfg['hidden_layer_remark'] == '1':
+        model = IoMFaceModelFromArFace(size=iom_cfg['input_size'],
+                                       arcmodel=arcmodel, training=False,
+                                       permKey=permKey, cfg=iom_cfg)
+    elif iom_cfg['hidden_layer_remark'] == '2':
+        model = IoMFaceModelFromArFace2(size=iom_cfg['input_size'],
+                                        arcmodel=arcmodel, training=False,
+                                        permKey=permKey, cfg=iom_cfg)
+    elif iom_cfg['hidden_layer_remark'] == '3':
+        model = IoMFaceModelFromArFace3(size=iom_cfg['input_size'],
+                                        arcmodel=arcmodel, training=False,
+                                        permKey=permKey, cfg=iom_cfg)
+    elif iom_cfg['hidden_layer_remark'] == 'T':  # 2 layers
+        model = IoMFaceModelFromArFace_T(size=iom_cfg['input_size'],
+                                         arcmodel=arcmodel, training=False,
+                                         permKey=permKey, cfg=iom_cfg)
+    elif iom_cfg['hidden_layer_remark'] == 'T1':
+        model = IoMFaceModelFromArFace_T1(size=iom_cfg['input_size'],
+                                          arcmodel=arcmodel, training=False,
+                                          permKey=permKey, cfg=iom_cfg)
+    else:
+        model = IoMFaceModelFromArFace(size=iom_cfg['input_size'],
+                                       arcmodel=arcmodel, training=False,
+                                       permKey=permKey, cfg=iom_cfg)
+    if ckpt_epoch == '':
+        ckpt_path_iom = tf.train.latest_checkpoint('./checkpoints/' + iom_cfg['sub_name'])
+    else:
+        ckpt_path_iom = './checkpoints/' + iom_cfg['sub_name'] + '/' + ckpt_epoch
+
+    if ckpt_path_iom is not None:
+        print("[*] load ckpt from {}".format(ckpt_path_iom))
+        model.load_weights(ckpt_path_iom)
+    else:
+        print("[*] Warning!!!! Cannot find ckpt from {}.".format(ckpt_path_iom),'Using random layer')
+
+    if ckpt_path is None and ckpt_path_iom is None:
+        print("[*] Warning!!!! Both arc model and IoM layer are random, plc check carefully...")
+        # exit(0)
+
+    return model

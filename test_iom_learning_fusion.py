@@ -12,7 +12,7 @@ import csv
 import math
 from modules.evaluations import get_val_data, perform_val, perform_val_fusion, perform_val_yts
 from modules.utils import set_memory_growth, load_yaml, l2_norm
-from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
+from modules.models import ArcFaceModel, IoMFaceModelFromArFace, build_or_load_IoMmodel,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
 
 flags.DEFINE_string('cfg_path', './configs/iom_res50_random.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
@@ -34,29 +34,7 @@ def callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_
 
     def getModel(cfg_path):
         cfg = load_yaml(cfg_path)  # cfg = load_yaml(FLAGS.cfg_path)
-        permKey = None
-        if cfg['head_type'] == 'IoMHead':  #
-            # permKey = generatePermKey(cfg['embd_shape'])
-            permKey = tf.eye(cfg['embd_shape'])  # for training, we don't permutate, won't influence the performance
-
-        arcmodel = ArcFaceModel(size=cfg['input_size'],
-                                embd_shape=cfg['embd_shape'],
-                                backbone_type=cfg['backbone_type'],
-                                head_type='ArcHead',
-                                training=False,
-                                cfg=cfg)
-
-        # here I add the extra IoM layer and head
-        model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                       arcmodel=arcmodel, training=False,
-                                       permKey=permKey, cfg=cfg)
-        ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
-        if ckpt_path is not None:
-            print("[*] load ckpt from {}".format(ckpt_path))
-            model.load_weights(ckpt_path)
-        else:
-            print("[*] Cannot find ckpt from {}.".format(ckpt_path))
-            exit()
+        model = build_or_load_IoMmodel(cfg, cfg)
         model.summary(line_length=80)
         return model,cfg
 

@@ -12,7 +12,7 @@ import csv
 import math
 
 from modules.evaluations import get_val_data, perform_val,perform_val_fusion, perform_val_yts
-from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
+from modules.models import ArcFaceModel, IoMFaceModelFromArFace, build_or_load_IoMmodel,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
 from modules.utils import set_memory_growth, load_yaml, l2_norm
 
 # modules.utils.set_memory_growth()
@@ -34,35 +34,11 @@ def main(_argv):
 
     def getModel(cfg_path):
         cfg = load_yaml(cfg_path)
-        permKey = None
-        if cfg['head_type'] == 'IoMHead':  #
-            # permKey = generatePermKey(cfg['embd_shape'])
-            permKey = tf.eye(cfg['embd_shape'])  # for training, we don't permutate, won't influence the performance
         m = cfg['m']
         q = cfg['q']
-        arcmodel = ArcFaceModel(size=cfg['input_size'],
-                                embd_shape=cfg['embd_shape'],
-                                backbone_type=cfg['backbone_type'],
-                                head_type='ArcHead',
-                                training=False,
-                                # here equal false, just get the model without acrHead, to load the model trained by arcface
-                                cfg=cfg)
-        model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                       arcmodel=arcmodel, training=False,
-                                       permKey=permKey, cfg=cfg)
-
-        if FLAGS.ckpt_epoch == '':
-            ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
-        else:
-            ckpt_path = './checkpoints/' + cfg['sub_name'] + '/' + FLAGS.ckpt_epoch
-        if ckpt_path is not None:
-            print("[*] load ckpt from {}".format(ckpt_path))
-            model.load_weights(ckpt_path)
-        else:
-            print("[*] Cannot find ckpt from {}.".format(ckpt_path))
-            exit()
+        model = build_or_load_IoMmodel(cfg, cfg)
         model.summary(line_length=80)
-        return  model,cfg
+        return model,cfg
 
     model, cfg = getModel(FLAGS.cfg_path)
     model2, cfg2 = getModel(FLAGS.cfg_path2)

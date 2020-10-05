@@ -12,9 +12,8 @@ import csv
 import math
 from modules.evaluations import get_val_data, perform_val, perform_val_yts
 from modules.utils import set_memory_growth, load_yaml, l2_norm
-from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
-from modules.keras_resnet50 import KitModel as KitModel50
-from modules.keras_resnet100 import KitModel as KitModel100
+from modules.models import ArcFaceModel, IoMFaceModelFromArFace, build_or_load_IoMmodel,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
+
 
 flags.DEFINE_string('cfg_path', './configs/iom_res50_random.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
@@ -36,58 +35,11 @@ def callMe():
     set_memory_growth()
     isInsightmodel = 100
     # cfg = load_yaml('./configs/iom_res50_random_xception.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
-    cfg = load_yaml('configs/config_random/iom_res100_random_insightface.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
-    permKey = None
-    if cfg['head_type'] == 'IoMHead':  #
-        # permKey = generatePermKey(cfg['embd_shape'])
-        permKey = tf.eye(cfg['embd_shape'])  # for training, we don't permutate, won't influence the performance
-
-    arcmodel = ArcFaceModel(size=cfg['input_size'],
-                            embd_shape=cfg['embd_shape'],
-                            backbone_type=cfg['backbone_type'],
-                            head_type='ArcHead',
-                            training=False,
-                            cfg=cfg)
-
-    # ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_InceptionResNetV2')
-    # ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_Xception')
-    ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
-
-    if ckpt_path is not None:
-        print("[*] load ckpt from {}".format(ckpt_path))
-        arcmodel.load_weights(ckpt_path)
-    else:
-        print("[*] Cannot find ckpt from {}.".format(ckpt_path))
-        # exit()
-
+    cfg_arc = load_yaml('configs/config_arc/arc_Insight_res100.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
+    cfg = cfg_iom = load_yaml('configs/config_random/iom_res100_random_insightface.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
     m = cfg['m'] = mycfg['m']
     q = cfg['q'] = mycfg['q']
-
-    # here I add the extra IoM layer and head
-    if cfg['hidden_layer_remark'] == '1':
-        model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                       arcmodel=arcmodel, training=False,
-                                       permKey=permKey, cfg=cfg)
-    elif cfg['hidden_layer_remark'] == '2':
-        model = IoMFaceModelFromArFace2(size=cfg['input_size'],
-                                        arcmodel=arcmodel, training=False,
-                                        permKey=permKey, cfg=cfg)
-    elif cfg['hidden_layer_remark'] == '3':
-        model = IoMFaceModelFromArFace3(size=cfg['input_size'],
-                                        arcmodel=arcmodel, training=False,
-                                        permKey=permKey, cfg=cfg)
-    elif cfg['hidden_layer_remark'] == 'T':  # 2 layers
-        model = IoMFaceModelFromArFace_T(size=cfg['input_size'],
-                                         arcmodel=arcmodel, training=False,
-                                         permKey=permKey, cfg=cfg)
-    elif cfg['hidden_layer_remark'] == 'T1':
-        model = IoMFaceModelFromArFace_T1(size=cfg['input_size'],
-                                          arcmodel=arcmodel, training=False,
-                                          permKey=permKey, cfg=cfg)
-    else:
-        model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                       arcmodel=arcmodel, training=False,
-                                       permKey=permKey, cfg=cfg)
+    model = build_or_load_IoMmodel(cfg_arc,cfg)
     model.summary(line_length=80)
     model.layers[0].trainable = False
     # for layer in model.layers:
