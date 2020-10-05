@@ -13,6 +13,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 '''
 # !/usr/bin/env python
 # coding: utf-8
+import pickle
 import os
 import numpy as np
 import timeit
@@ -32,6 +33,9 @@ sys.path.append('recognition')
 from embedding import Embedding
 from menpo.visualize import print_progress
 from menpo.visualize.viewmatplotlib import sample_colours_from_colourmap
+
+from modules.utils import load_yaml
+from modules.models import build_or_load_IoMmodel
 
 
 def read_template_subject_id_list(path):
@@ -60,9 +64,9 @@ def read_template_pair_list(path):
 #    img_feats = np.loadtxt(feature_path)
 #    faceness_scores = np.loadtxt(faceness_path)
 #    return img_feats, faceness_scores
-def get_image_feature(img_path, img_list_path, model_path, epoch, gpu_id):
+def get_image_feature(img_path, img_list_path, model):
     img_list = open(img_list_path)
-    embedding = Embedding(model_path, epoch, gpu_id)
+    embedding = Embedding(model)
     files = img_list.readlines()
     print('files:', len(files))
     faceness_scores = []
@@ -142,7 +146,7 @@ def verification(template_norm_feats=None, unique_templates=None, p1=None, p2=No
 
 def read_score(path):
     with open(path, 'rb') as fid:
-        img_feats = cPickle.load(fid)
+        img_feats = pickle.load(fid)
     return img_feats
 
 
@@ -257,7 +261,12 @@ if __name__ == "__main__":
     img_path = './%s/loose_crop' % target
     img_list_path = './%s/meta/%s_name_5pts_score.txt' % (target, target.lower())
     # img_feats, faceness_scores = get_image_feature(feature_path, face_path)
-    img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model_path, epoch, gpu_id)
+
+    cfg = load_yaml('configs/config_random/iom_res100_random_insightface.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
+    model = build_or_load_IoMmodel(cfg, cfg)
+    model.summary(line_length=80)
+
+    img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
     print('img_feats', img_feats.shape)
     print('faceness_scores', faceness_scores.shape)
     stop = timeit.default_timer()

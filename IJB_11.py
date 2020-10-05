@@ -40,21 +40,10 @@ from pathlib import Path
 import warnings
 
 
-from absl import app, flags, logging
-from absl.flags import FLAGS
-# import cv2
 import os
 import numpy as np
-import tensorflow as tf
-if tf.__version__.startswith('1'):# important is you want to run with tf1.x,
-    print('[*] enable eager execution')
-    tf.compat.v1.enable_eager_execution()
-import modules
-import csv
-import math
-from modules.evaluations import get_val_data, perform_val, perform_val_yts
-from modules.utils import set_memory_growth, load_yaml, l2_norm
-from modules.models import ArcFaceModel, IoMFaceModelFromArFace, IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
+from modules.utils import load_yaml
+from modules.models import build_or_load_IoMmodel
 
 warnings.filterwarnings("ignore")
 
@@ -263,49 +252,8 @@ print('Time: %.2f s. ' % (stop - start))
 # load model
 
 
-
-
-def getModel():
-    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
-
-    logger = tf.get_logger()
-    logger.disabled = True
-    logger.setLevel(logging.FATAL)
-    set_memory_growth()
-    isInsightmodel = 100
-    # cfg = load_yaml('./configs/iom_res50_random_xception.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
-    cfg = load_yaml('configs/config_random/iom_res100_random_insightface.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
-    permKey = None
-    if cfg['head_type'] == 'IoMHead':  #
-        # permKey = generatePermKey(cfg['embd_shape'])
-        permKey = tf.eye(cfg['embd_shape'])  # for training, we don't permutate, won't influence the performance
-
-    arcmodel = ArcFaceModel(size=cfg['input_size'],
-                            embd_shape=cfg['embd_shape'],
-                            backbone_type=cfg['backbone_type'],
-                            head_type='ArcHead',
-                            training=False,
-                            cfg=cfg)
-
-    # ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_InceptionResNetV2')
-    # ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_Xception')
-    ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
-
-    if ckpt_path is not None:
-        print("[*] load ckpt from {}".format(ckpt_path))
-        arcmodel.load_weights(ckpt_path)
-    else:
-        print("[*] Cannot find ckpt from {}.".format(ckpt_path))
-        # exit()
-
-    model = IoMFaceModelFromArFace(size=cfg['input_size'],
-                                   arcmodel=arcmodel, training=False,
-                                   permKey=permKey, cfg=cfg)
-
-    return model
-
-model = getModel()
+cfg = load_yaml('configs/config_random/iom_res100_random_insightface.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
+model = build_or_load_IoMmodel(cfg, cfg)
 model.summary(line_length=80)
 
 # =============================================================
