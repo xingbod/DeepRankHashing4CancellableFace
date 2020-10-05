@@ -14,7 +14,7 @@ k2 = 6;
 lambda = 0.3;
 % measure = 'Hamming';
 % ds = "LFW";
-log_path = "logs/log_"+ds+"_"+remark+".log";
+log_path = "logs/log_"+ds+"_"+remark+"_id.log";
 
 %%
 
@@ -22,14 +22,21 @@ Descriptor_orig = importdata("../"+hashcode_path);
 fid_lfw_name=importdata("../" + filename_path);
 
 
-
+% 
 [hash_facenet_probe_c,hash_facenet_probe_o1,hash_facenet_probe_o2,hash_facenet_probe_o3,hash_facenet_gallery,facenet_probe_label_c,facenet_probe_label_o1,facenet_probe_label_o2,facenet_probe_label_o3, facenet_gallery_label] = generateDataset(ds,Descriptor_orig,fid_lfw_name);
+% 
+% [perf] = evaluate_searching(hash_facenet_probe_c,hash_facenet_probe_o1,hash_facenet_probe_o2,hash_facenet_probe_o3,hash_facenet_gallery,facenet_probe_label_c,facenet_probe_label_o1,facenet_probe_label_o2,facenet_probe_label_o3, facenet_gallery_label,measure);
+% perf = [perf reportVR reportDIR];
+% fid=fopen(log_path,'a');
+% fwrite(fid,feat_path+" ");
+% fclose(fid);
+% dlmwrite(log_path, perf, '-append');
 
 
 [perf] = evaluate_searching_mixdemix(hash_facenet_probe_c,hash_facenet_probe_o1,hash_facenet_probe_o2,hash_facenet_probe_o3,hash_facenet_gallery,facenet_probe_label_c,facenet_probe_label_o1,facenet_probe_label_o2,facenet_probe_label_o3, facenet_gallery_label);
 perf = [perf 0 0];
 fid=fopen(log_path,'a');
-fwrite(fid,hashcode_path+" ");
+fwrite(fid,hashcode_path+"_id ");
 fclose(fid)
 dlmwrite(log_path, perf, '-append');
 end

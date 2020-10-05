@@ -6,7 +6,7 @@ function run_single_learning(featpath,namepath,DS)
 
 measure = "Hamming";
 remark = "deep_learning_iom";
-enroll_query_search(featpath,namepath,measure,DS,remark);
+% enroll_query_search(featpath,namepath,measure,DS,remark);
 
 enroll_query_iom_id(featpath,namepath,measure,DS,remark);
 

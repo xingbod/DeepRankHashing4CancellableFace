@@ -21,7 +21,7 @@ log_path = "logs/log_"+ds+"_"+remark+".log";
 
 Descriptor_orig = importdata("../"+feat_path);
 fid_lfw_name=importdata("../" + filename_path);
-if ds == "LFW"
+if ds == "1LFW"
     [Descriptors,lfw_label] = generate_lfw_align(Descriptor_orig,fid_lfw_name);
     %% BLUFR
     [reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure',measure);

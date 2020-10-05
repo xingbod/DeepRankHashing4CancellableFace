@@ -44,14 +44,15 @@ for i = progress(1:size(facenet_probe_label_c,2))
     for j=1: size(mixing_facenet_gallery,1)
         gallery_bin =  mixing_facenet_gallery(j,:);
         retrieved_id = bitxor(gallery_bin,hash_facenet_probe_c(i,:));
-        dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
+%         dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
+        dist(j) = pdist2( retrieved_id,identifiers(facenet_gallery_label(j),:),  measure);
     end
     final_dist(i,:) = dist;
 
 end
 
 
-final_dist_o1 = zeros(size(facenet_probe_label_o1,2),size(mixing_facenet_gallery,1));
+% final_dist_o1 = zeros(size(facenet_probe_label_o1,2),size(mixing_facenet_gallery,1));
 % for i = progress(1:size(facenet_probe_label_o1,2))
 %     dist =  zeros(1,size(mixing_facenet_gallery,1));
 %     for j=1: size(mixing_facenet_gallery,1)
@@ -70,13 +71,15 @@ for i = progress(1:size(facenet_probe_label_o2,2))
     for j=1: size(mixing_facenet_gallery,1)
         gallery_bin =  mixing_facenet_gallery(j,:);
         retrieved_id = bitxor(gallery_bin,hash_facenet_probe_o2(i,:));
-        dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
+%         dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
+         dist(j) = pdist2( retrieved_id,identifiers(facenet_gallery_label(j),:),  measure);
+
     end
     final_dist_o2(i,:) = dist;
 end
 
 
-final_dist_o3 = zeros(size(facenet_probe_label_o3,2),size(mixing_facenet_gallery,1));
+% final_dist_o3 = zeros(size(facenet_probe_label_o3,2),size(mixing_facenet_gallery,1));
 % for i = progress(1:size(facenet_probe_label_o3,2))
 %     dist =  zeros(1,size(mixing_facenet_gallery,1));
 %     for j=1: size(mixing_facenet_gallery,1)
