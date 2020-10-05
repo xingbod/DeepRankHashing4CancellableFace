@@ -16,13 +16,14 @@ function run_single_learning_all(embpath,backbone,DS)
 % run_single_learning_all("embeddings_0831","InceptionResNetV2","IJBC")
 % run_single_learning_all("embeddings_0831","Xception","IJBC")
 
-
+correct_str = "_dl";
 if DS == "IJBC"
     embed = "ijbc";
 elseif DS == "VGG2"
     embed = "VGG2";
 else DS == "LFW"
     embed = "lfw";
+    correct_str = "";
 end
 % measure = "Euclidean";
 % remark = "learning_DIoMH";
@@ -52,7 +53,7 @@ measure = "Hamming";
 for m = [64 128 256 512]
     for q = [8]
         tic
-        enroll_query_iom_id(embpath+"/"+backbone+"_"+embed+"_feat_dlIoM_"+num2str(m)+"x"+num2str(q)+".csv",  'embeddings_dl/'+backbone+'_'+embed+'_name_'+num2str(m)+"x"+num2str(q)+'.txt',measure,DS,remark);
+        enroll_query_iom_id(embpath+"/"+backbone+"_"+embed+"_feat_dlIoM_"+num2str(m)+"x"+num2str(q)+".csv",  'embeddings_dl/'+backbone+'_'+embed+'_name'+correct_str+'_'+num2str(m)+"x"+num2str(q)+'.txt',measure,DS,remark);
         toc
     end
 end
@@ -60,7 +61,7 @@ end
 for m = [512]
     for q = [2 4 16]
         tic
-        enroll_query_iom_id(embpath+"/"+backbone+"_"+embed+"_feat_dlIoM_"+num2str(m)+"x"+num2str(q)+".csv",  'embeddings_dl/'+backbone+'_'+embed+'_name_'+num2str(m)+"x"+num2str(q)+'.txt',measure,DS,remark);
+        enroll_query_iom_id(embpath+"/"+backbone+"_"+embed+"_feat_dlIoM_"+num2str(m)+"x"+num2str(q)+".csv",  'embeddings_dl/'+backbone+'_'+embed+'_name'+correct_str+'_'+num2str(m)+"x"+num2str(q)+'.txt',measure,DS,remark);
         toc
     end
 end
