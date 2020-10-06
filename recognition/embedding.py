@@ -92,8 +92,8 @@ class Embedding:
 
     # input_data = imgs / 255.
     # input_data_flip = img_flips.astype(np.float32) / 255.
-
-    feat = self.model(imgs).numpy()
+    input_data = np.expand_dims(imgs, 0)
+    feat = self.model(input_data).numpy()
     # feat_flip = self.model(input_data_flip).numpy()
 
     # feat = feat.reshape([-1, feat.shape[0] * feat.shape[1]])
