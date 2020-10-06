@@ -138,7 +138,7 @@ def get_image_feature(img_path, img_list_path, model):
         print('processing', img_index)
         feats = embedding.getFeat(np.array(crop_imgs))
         img_feats.append(feats)
-    img_feats = np.array(img_feats).astype(np.float32)
+    img_feats = np.array(img_feats)
     faceness_scores = np.array(faceness_scores).astype(np.float32)
 
     # img_feats = np.ones( (len(files), 1024), dtype=np.float32) * 0.01
