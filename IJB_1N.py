@@ -312,7 +312,7 @@ if __name__ == "__main__":
     model.summary(line_length=80)
 
     # img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
-    img_feats = np.load("img_feats.npy")
+    img_feats = np.load("img_feats_" + cfg['backbone_type'] + ".npy")
     faceness_scores = np.load("faceness_scores.npy")
     print('img_feats', img_feats.shape)
     print('faceness_scores', faceness_scores.shape)
