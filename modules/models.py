@@ -409,16 +409,15 @@ def build_or_load_IoMmodel(arc_cfg=None, ckpt_epoch = '', is_only_arc=False):
                             training=False,
                             cfg=arc_cfg)
 
-    ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + arc_cfg['sub_name'])
-
-    if ckpt_path is not None:
-        print("[*] load ckpt from {}".format(ckpt_path))
-        arcmodel.load_weights(ckpt_path)
-    else:
-        print("[*] Cannot find ckpt from {}.".format(ckpt_path), ', this means you will give a IoM weight later.')
-
     if is_only_arc:
+        ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + arc_cfg['sub_name'])
+        if ckpt_path is not None:
+            print("[*] load ckpt from {}".format(ckpt_path))
+            arcmodel.load_weights(ckpt_path)
+        else:
+            print("[*] Cannot find ckpt from {}.".format(ckpt_path), ', this means you will give a IoM weight later.')
         return arcmodel
+
     iom_cfg = arc_cfg
     # here I add the extra IoM layer and head
     if iom_cfg['hidden_layer_remark'] == '1':
@@ -456,9 +455,6 @@ def build_or_load_IoMmodel(arc_cfg=None, ckpt_epoch = '', is_only_arc=False):
     else:
         print("[*] Warning!!!! Cannot find ckpt from {}.".format(ckpt_path_iom),'Using random layer')
 
-    if ckpt_path is None and ckpt_path_iom is None:
-        print("[*] Warning!!!! Both arc model and IoM layer are random, plc check carefully...")
-        # exit(0)
 
     return model
 
