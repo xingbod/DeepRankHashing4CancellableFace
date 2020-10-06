@@ -1,6 +1,6 @@
-run_single_learning_all("embeddings_dl","Xception","IJBC")
-run_single_learning_all("embeddings_dl","ResNet50","IJBC")
-run_single_learning_all("embeddings_dl","InceptionResNetV2","IJBC")
+% run_single_learning_all("embeddings_dl","Xception","IJBC")
+% run_single_learning_all("embeddings_dl","ResNet50","IJBC")
+% run_single_learning_all("embeddings_dl","InceptionResNetV2","IJBC")
 
 measure = "Hamming";
 remark = "fusion_learn_DIoMH";
