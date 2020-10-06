@@ -21,10 +21,8 @@ Names_G1 = importdata("../embeddings_dl/Insight_ResNet100_ijbc_G1_name_dl_512x8.
 Names_G2 = importdata("../embeddings_dl/Insight_ResNet100_ijbc_G2_name_dl_512x8.txt");
 Names_P = importdata("../embeddings_dl/Insight_ResNet100_ijbc_P_name_dl_512x8.txt");
 
-Descriptor_G = [Descriptor_G1 ;Descriptor_G2];
-Names_G =[Names_G1; Names_G2];
 
-final_dist_o2 =(pdist2( Descriptor_G,Descriptor_P,  measure));
+final_dist_o2 =(pdist2( Descriptor_G1,Descriptor_P,  measure));
 
 % final_dist_o2_re = re_ranking_score(final_dist_o2',Names_G,Names_P,Descriptor_G,Descriptor_P, k1, k2, lambda,measure);
 
@@ -52,7 +50,7 @@ iom_osiFAR = zeros(numTrials, numOsiFarPoints); % open-set identification false 
 
 %% Compute the cosine similarity score between the test samples.
 
-[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist_o2, Names_G, Names_P, osiFarPoints );
+[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist_o2, Names_G1, Names_P, osiFarPoints );
 
 % [iom_DIR_re(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist_o2_re, Names_G, Names_P, osiFarPoints );
 
