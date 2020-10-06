@@ -89,7 +89,7 @@ class Embedding:
       img_flip = np.fliplr(img)
       img_flips.append(img_flip)
 
-    input_data = imgs.astype(np.float32) / 255.
+    input_data = imgs / 255.
     # input_data_flip = img_flips.astype(np.float32) / 255.
 
     feat = self.model(input_data).numpy()
