@@ -26,7 +26,7 @@ import numpy.matlib
 import heapq
 import math
 from datetime import datetime as dt
-
+import tqdm
 from sklearn import preprocessing
 
 sys.path.append('recognition')
@@ -66,6 +66,31 @@ def read_template_pair_list(path):
 #    img_feats = np.loadtxt(feature_path)
 #    faceness_scores = np.loadtxt(faceness_path)
 #    return img_feats, faceness_scores
+# def get_image_feature(img_path, img_list_path, model):
+#     img_list = open(img_list_path)
+#     embedding = Embedding(model)
+#     files = img_list.readlines()
+#     print('files:', len(files))
+#     faceness_scores = []
+#     img_feats = []
+#     for img_index, each_line in enumerate(files):
+#         if img_index % 500 == 0:
+#             print('processing', img_index)
+#         name_lmk_score = each_line.strip().split(' ')
+#         img_name = os.path.join(img_path, name_lmk_score[0])
+#         img = cv2.imread(img_name)
+#         lmk = np.array([float(x) for x in name_lmk_score[1:-1]], dtype=np.float32)
+#         lmk = lmk.reshape((5, 2))
+#         img_feats.append(embedding.get(img, lmk))
+#         faceness_scores.append(name_lmk_score[-1])
+#     img_feats = np.array(img_feats).astype(np.float32)
+#     faceness_scores = np.array(faceness_scores).astype(np.float32)
+#
+#     # img_feats = np.ones( (len(files), 1024), dtype=np.float32) * 0.01
+#     # faceness_scores = np.ones( (len(files), ), dtype=np.float32 )
+#     return img_feats, faceness_scores
+
+
 def get_image_feature(img_path, img_list_path, model):
     img_list = open(img_list_path)
     embedding = Embedding(model)
@@ -73,16 +98,30 @@ def get_image_feature(img_path, img_list_path, model):
     print('files:', len(files))
     faceness_scores = []
     img_feats = []
-    for img_index, each_line in enumerate(files):
-        if img_index % 500 == 0:
-            print('processing', img_index)
+    crop_imgs = []
+    img_index = 1
+    for each_line in tqdm.tqdm(files):
+        # if img_index % 500 == 0:
+        #     print('processing', img_index)
         name_lmk_score = each_line.strip().split(' ')
         img_name = os.path.join(img_path, name_lmk_score[0])
         img = cv2.imread(img_name)
         lmk = np.array([float(x) for x in name_lmk_score[1:-1]], dtype=np.float32)
         lmk = lmk.reshape((5, 2))
-        img_feats.append(embedding.get(img, lmk))
+        crop_img = embedding.getCropImg(img, lmk)
+        crop_imgs.append(crop_img)
+        # img_feats.append(embedding.get(img, lmk))
         faceness_scores.append(name_lmk_score[-1])
+        if len(crop_imgs) == batch_size:
+            # print('processing', img_index,len(crop_imgs))
+            feats = embedding.getFeat(np.array(crop_imgs))
+            img_feats.append(feats)
+            crop_imgs = []
+        img_index = img_index + 1
+    if len(crop_imgs) > 0:
+        print('processing', img_index)
+        feats = embedding.getFeat(crop_imgs)
+        img_feats.append(feats)
     img_feats = np.array(img_feats).astype(np.float32)
     faceness_scores = np.array(faceness_scores).astype(np.float32)
 
@@ -233,6 +272,7 @@ if __name__ == "__main__":
     target = args.target
     model_path = args.model_prefix
     gpu_id = args.gpu
+    batch_size = args.batch_size
     epoch = args.model_epoch
     meta_dir = "%s/meta" % args.target  # meta root dir
     if target == 'IJBC':
