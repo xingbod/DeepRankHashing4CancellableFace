@@ -13,13 +13,13 @@ measure = 'Hamming';
 log_path = "logs/log_ijbc_idnew.log";
 
 %%
-Descriptor_G1 = importdata("../embedding_dl/Insight_ResNet100_ijbc_G1_feat_dlIoM_512x8.csv");
-Descriptor_G2 = importdata("../embedding_dl/Insight_ResNet100_ijbc_G2_feat_dlIoM_512x8.csv");
-Descriptor_P = importdata("../embedding_dl/Insight_ResNet100_ijbc_P_feat_dlIoM_512x8.csv");
+Descriptor_G1 = importdata("../embeddings_dl/Insight_ResNet100_ijbc_G1_feat_dlIoM_512x8.csv");
+Descriptor_G2 = importdata("../embeddings_dl/Insight_ResNet100_ijbc_G2_feat_dlIoM_512x8.csv");
+Descriptor_P = importdata("../embeddings_dl/Insight_ResNet100_ijbc_P_feat_dlIoM_512x8.csv");
 
-Names_G1 = importdata("../embedding_dl/Insight_ResNet100_ijbc_G1_name_dl_512x8.txt");
-Names_G2 = importdata("../embedding_dl/Insight_ResNet100_ijbc_G2_name_dl_512x8.txt");
-Names_P = importdata("../embedding_dl/Insight_ResNet100_ijbc_P_name_dl_512x8.txt");
+Names_G1 = importdata("../embeddings_dl/Insight_ResNet100_ijbc_G1_name_dl_512x8.txt");
+Names_G2 = importdata("../embeddings_dl/Insight_ResNet100_ijbc_G2_name_dl_512x8.txt");
+Names_P = importdata("../embeddings_dl/Insight_ResNet100_ijbc_P_name_dl_512x8.txt");
 
 Descriptor_G = [Descriptor_G1 ;Descriptor_G2];
 Names_G =[Names_G1; Names_G2];
