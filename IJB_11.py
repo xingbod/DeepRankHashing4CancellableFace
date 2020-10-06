@@ -291,7 +291,7 @@ img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
 stop = timeit.default_timer()
 print('Time: %.2f s. ' % (stop - start))
 print('Feature Shape: ({} , {}) .'.format(img_feats.shape[0], img_feats.shape[1]))
-np.save("img_feats.npy", img_feats)
+np.save("img_feats_"+cfg['backbone_type']+".npy", img_feats)
 np.save("faceness_scores.npy", faceness_scores)
 # # Step3: Get Template Features
 
