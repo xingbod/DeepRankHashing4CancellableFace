@@ -526,7 +526,7 @@ def KitModel(weight_file = None):
     # dropout0        = layers.Dropout(name = 'dropout0', rate = 0.4000000059604645, seed = None)(pre_fc1_flatten)
     pre_fc1         = layers.Dense(name = 'pre_fc1', units = 512, use_bias = True)(pre_fc1_flatten)
     fc1             = layers.BatchNormalization(name = 'fc1', axis = 1, epsilon = 1.9999999494757503e-05, center = True, scale = False)(pre_fc1)
-    model           = Model(inputs = [data], outputs = [fc1])
+    model           = Model(inputs = [data], outputs = [fc1],name='ResNet100-Pre-Insight')
     set_layer_weights(model, weights_dict)
     return model
 
