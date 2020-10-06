@@ -127,7 +127,7 @@ def get_image_feature(img_path, img_list_path, model):
         faceness_scores.append(name_lmk_score[-1])
         if img_index % 32 == 0:
             print('processing', img_index,len(crop_imgs))
-            feats = embedding.getFeat(crop_imgs)
+            feats = embedding.getFeat(np.array(crop_imgs))
             img_feats.append(feats)
             crop_imgs = []
         img_index = img_index + 1
