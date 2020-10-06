@@ -86,15 +86,16 @@ class Embedding:
 
   def getFeat(self, imgs):
     img_flips = []
-    # for img in imgs:
-    #   img_flip = np.fliplr(img)
-    #   img_flips.append(img_flip)
+    for img in imgs:
+      img_flip = np.fliplr(img)
+      img_flips.append(img_flip)
 
     # input_data = imgs / 255.
     # input_data_flip = img_flips.astype(np.float32) / 255.
     feat = self.model(imgs).numpy()
-    # feat_flip = self.model(input_data_flip).numpy()
+    feat_flip = self.model(img_flips).numpy()
 
+    feat= np.concatenate(feat,feat_flip, axis=1)
     # feat = feat.reshape([-1, feat.shape[0] * feat.shape[1]])
     # feat = feat.flatten()
     return feat
