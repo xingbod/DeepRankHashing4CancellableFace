@@ -39,7 +39,7 @@ from prettytable import PrettyTable
 from pathlib import Path
 import warnings
 
-
+import tqdm
 import os
 import numpy as np
 from modules.utils import load_yaml
@@ -111,7 +111,7 @@ def get_image_feature(img_path, img_list_path, model):
     print('files:', len(files))
     faceness_scores = []
     img_feats = []
-    for img_index, each_line in enumerate(files):
+    for img_index, each_line in tqdm.tqdm(enumerate(files)):
         if img_index % 500 == 0:
             print('processing', img_index)
         name_lmk_score = each_line.strip().split(' ')
