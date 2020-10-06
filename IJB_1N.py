@@ -266,12 +266,15 @@ if __name__ == "__main__":
     parser.add_argument('--model-epoch', default=1, type=int, help='')
     parser.add_argument('--gpu', default=7, type=int, help='gpu id')
     parser.add_argument('--batch-size', default=32, type=int, help='')
+    parser.add_argument('--cfg_path', default='configs/config_random/iom_res100_random_insightface.yaml', type=str,
+                        help='your config file')
     parser.add_argument('--job', default='insightface', type=str, help='job name')
     parser.add_argument('--target', default='IJBC', type=str, help='target, set to IJBC or IJBB')
     args = parser.parse_args()
     target = args.target
     model_path = args.model_prefix
     gpu_id = args.gpu
+    cfg_path = args.cfg_path
     batch_size = args.batch_size
     epoch = args.model_epoch
     meta_dir = "%s/meta" % args.target  # meta root dir
@@ -304,7 +307,7 @@ if __name__ == "__main__":
     img_list_path = './%s/meta/%s_name_5pts_score.txt' % (target, target.lower())
     # img_feats, faceness_scores = get_image_feature(feature_path, face_path)
 
-    cfg = load_yaml('configs/config_random/iom_res100_random_insightface.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
+    cfg = load_yaml(cfg_path)  # cfg = load_yaml(FLAGS.cfg_path)
     model = build_or_load_IoMmodel(cfg, cfg, is_only_arc=True)
     model.summary(line_length=80)
 
