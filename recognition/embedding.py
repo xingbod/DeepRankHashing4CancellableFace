@@ -62,3 +62,39 @@ class Embedding:
     feat = feat.reshape([-1, feat.shape[0] * feat.shape[1]])
     feat = feat.flatten()
     return feat
+
+  def getCropImg(self, rimg, landmark):
+    assert landmark.shape[0] == 68 or landmark.shape[0] == 5
+    assert landmark.shape[1] == 2
+    if landmark.shape[0] == 68:
+      landmark5 = np.zeros((5, 2), dtype=np.float32)
+      landmark5[0] = (landmark[36] + landmark[39]) / 2
+      landmark5[1] = (landmark[42] + landmark[45]) / 2
+      landmark5[2] = landmark[30]
+      landmark5[3] = landmark[48]
+      landmark5[4] = landmark[54]
+    else:
+      landmark5 = landmark
+    tform = trans.SimilarityTransform()
+    tform.estimate(landmark5, self.src)
+    M = tform.params[0:2, :]
+    img = cv2.warpAffine(rimg, M, (self.image_size[1], self.image_size[0]), borderValue=0.0)
+
+    return img
+
+
+  def getFeat(self, imgs):
+    img_flips = []
+    for img in imgs:
+      img_flip = np.fliplr(img)
+      img_flips.append(img_flip)
+
+    input_data = imgs.astype(np.float32) / 255.
+    # input_data_flip = img_flips.astype(np.float32) / 255.
+
+    feat = self.model(input_data).numpy()
+    # feat_flip = self.model(input_data_flip).numpy()
+
+    # feat = feat.reshape([-1, feat.shape[0] * feat.shape[1]])
+    # feat = feat.flatten()
+    return feat

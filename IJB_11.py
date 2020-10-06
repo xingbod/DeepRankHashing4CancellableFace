@@ -111,6 +111,8 @@ def get_image_feature(img_path, img_list_path, model):
     print('files:', len(files))
     faceness_scores = []
     img_feats = []
+    crop_imgs = []
+    img_index = 1
     for each_line in tqdm.tqdm(files):
         # if img_index % 500 == 0:
         #     print('processing', img_index)
@@ -119,8 +121,20 @@ def get_image_feature(img_path, img_list_path, model):
         img = cv2.imread(img_name)
         lmk = np.array([float(x) for x in name_lmk_score[1:-1]], dtype=np.float32)
         lmk = lmk.reshape((5, 2))
-        img_feats.append(embedding.get(img, lmk))
+        crop_img = embedding.getCropImg(img, lmk)
+        crop_imgs.append(crop_img)
+        # img_feats.append(embedding.get(img, lmk))
         faceness_scores.append(name_lmk_score[-1])
+        if img_index % 32 == 0:
+            print('processing', img_index)
+            feats = embedding.getFeat(crop_imgs)
+            img_feats.append(feats)
+            crop_imgs = []
+        img_index = img_index + 1
+    if img_index % 32 != 0:
+        print('processing', img_index)
+        feats = embedding.getFeat(crop_imgs)
+        img_feats.append(feats)
     img_feats = np.array(img_feats).astype(np.float32)
     faceness_scores = np.array(faceness_scores).astype(np.float32)
 
