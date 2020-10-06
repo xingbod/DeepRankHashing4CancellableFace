@@ -79,20 +79,21 @@ class Embedding:
     tform.estimate(landmark5, self.src)
     M = tform.params[0:2, :]
     img = cv2.warpAffine(rimg, M, (self.image_size[1], self.image_size[0]), borderValue=0.0)
+    img = img.astype(np.float32) / 255.
 
     return img
 
 
   def getFeat(self, imgs):
     img_flips = []
-    for img in imgs:
-      img_flip = np.fliplr(img)
-      img_flips.append(img_flip)
+    # for img in imgs:
+    #   img_flip = np.fliplr(img)
+    #   img_flips.append(img_flip)
 
-    input_data = imgs / 255.
+    # input_data = imgs / 255.
     # input_data_flip = img_flips.astype(np.float32) / 255.
 
-    feat = self.model(input_data).numpy()
+    feat = self.model(imgs).numpy()
     # feat_flip = self.model(input_data_flip).numpy()
 
     # feat = feat.reshape([-1, feat.shape[0] * feat.shape[1]])
