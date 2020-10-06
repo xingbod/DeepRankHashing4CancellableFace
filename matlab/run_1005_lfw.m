@@ -1,4 +1,4 @@
-run_single_learning_all("embeddings_dl","Xception","LFW")
+% run_single_learning_all("embeddings_dl","Xception","LFW")
 run_single_learning_all("embeddings_dl","ResNet50","LFW")
 run_single_learning_all("embeddings_dl","InceptionResNetV2","LFW")
 
