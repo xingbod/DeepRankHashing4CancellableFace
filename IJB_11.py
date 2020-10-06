@@ -71,7 +71,7 @@ use_norm_score = True  # if Ture, TestMode(N1)
 use_detector_score = True  # if Ture, TestMode(D1)
 use_flip_test = True  # if Ture, TestMode(F1)
 job = args.job
-
+is_only_arc = False
 
 def read_template_media_list(path):
     # ijb_meta = np.loadtxt(path, dtype=str)
@@ -276,7 +276,7 @@ print('Time: %.2f s. ' % (stop - start))
 
 
 cfg = load_yaml(cfg_path)  # cfg = load_yaml(FLAGS.cfg_path)
-model = build_or_load_IoMmodel(cfg, cfg, is_only_arc=True)
+model = build_or_load_IoMmodel(cfg, cfg, is_only_arc=is_only_arc)
 model.summary(line_length=80)
 
 # =============================================================
@@ -291,7 +291,7 @@ img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
 stop = timeit.default_timer()
 print('Time: %.2f s. ' % (stop - start))
 print('Feature Shape: ({} , {}) .'.format(img_feats.shape[0], img_feats.shape[1]))
-np.save("img_feats_"+cfg['backbone_type']+".npy", img_feats)
+np.save("img_feats_"+cfg['backbone_type']+'_'+str(is_only_arc)+'_'+ str(cfg['m']) + 'x' + str(cfg['q'])+".npy", img_feats)
 np.save("faceness_scores.npy", faceness_scores)
 # # Step3: Get Template Features
 

@@ -277,6 +277,8 @@ if __name__ == "__main__":
     cfg_path = args.cfg_path
     batch_size = args.batch_size
     epoch = args.model_epoch
+    is_only_arc = False
+
     meta_dir = "%s/meta" % args.target  # meta root dir
     if target == 'IJBC':
         gallery_s1_record = "%s_1N_gallery_G1.csv" % (args.target.lower())
@@ -312,7 +314,9 @@ if __name__ == "__main__":
     model.summary(line_length=80)
 
     # img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
-    img_feats = np.load("img_feats_" + cfg['backbone_type'] + ".npy")
+
+    img_feats = np.load("img_feats_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
+        cfg['q']) + ".npy")
     faceness_scores = np.load("faceness_scores.npy")
     print('img_feats', img_feats.shape)
     print('faceness_scores', faceness_scores.shape)
