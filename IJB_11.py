@@ -111,9 +111,9 @@ def get_image_feature(img_path, img_list_path, model):
     print('files:', len(files))
     faceness_scores = []
     img_feats = []
-    for img_index, each_line in tqdm.tqdm(files):
-        if img_index % 500 == 0:
-            print('processing', img_index)
+    for each_line in tqdm.tqdm(files):
+        # if img_index % 500 == 0:
+        #     print('processing', img_index)
         name_lmk_score = each_line.strip().split(' ')
         img_name = os.path.join(img_path, name_lmk_score[0])
         img = cv2.imread(img_name)
