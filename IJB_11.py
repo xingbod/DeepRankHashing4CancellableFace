@@ -102,20 +102,16 @@ def read_image_feature(path):
 
 
 # In[ ]:
-import csv
+
 
 def get_image_feature(img_path, img_list_path, model):
-
-    reader = csv.reader(open(img_list_path))
-    files = np.array(list(reader))
-
-    # img_list = open(img_list_path)
+    img_list = open(img_list_path)
     embedding = Embedding(model)
-    # files = img_list.readlines()
+    files = img_list.readlines()
     print('files:', len(files))
     faceness_scores = []
     img_feats = []
-    for img_index, each_line in tqdm.tqdm(enumerate(files)):
+    for img_index, each_line in tqdm.tqdm(files):
         if img_index % 500 == 0:
             print('processing', img_index)
         name_lmk_score = each_line.strip().split(' ')
