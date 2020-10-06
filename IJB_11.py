@@ -131,13 +131,16 @@ def get_image_feature(img_path, img_list_path, model):
         if len(crop_imgs) == batch_size:
             # print('processing', img_index,len(crop_imgs))
             feats = embedding.getFeat(np.array(crop_imgs))
-            img_feats.append(feats)
+            if len(img_feats) == 0:
+                img_feats = feats
+            else:
+                img_feats = np.concatenate((img_feats, feats), axis=0)
             crop_imgs = []
         img_index = img_index + 1
     if len(crop_imgs) > 0:
         print('processing', img_index)
         feats = embedding.getFeat(np.array(crop_imgs))
-        img_feats.append(feats)
+        img_feats = np.concatenate((img_feats, feats), axis=0)
     img_feats = np.array(img_feats)
     faceness_scores = np.array(faceness_scores).astype(np.float32)
 
