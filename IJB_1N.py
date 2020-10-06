@@ -311,7 +311,9 @@ if __name__ == "__main__":
     model = build_or_load_IoMmodel(cfg, cfg, is_only_arc=True)
     model.summary(line_length=80)
 
-    img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
+    # img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
+    img_feats = np.load("img_feats.npy")
+    faceness_scores = np.load("faceness_scores.npy")
     print('img_feats', img_feats.shape)
     print('faceness_scores', faceness_scores.shape)
     stop = timeit.default_timer()
