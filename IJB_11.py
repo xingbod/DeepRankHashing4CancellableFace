@@ -62,6 +62,7 @@ args = parser.parse_args()
 
 target = args.target
 model_path = args.model_prefix
+batch_size = args.batch_size
 gpu_id = args.gpu
 epoch = args.model_epoch
 use_norm_score = True  # if Ture, TestMode(N1)
@@ -125,7 +126,7 @@ def get_image_feature(img_path, img_list_path, model):
         crop_imgs.append(crop_img)
         # img_feats.append(embedding.get(img, lmk))
         faceness_scores.append(name_lmk_score[-1])
-        if len(crop_imgs) == 32:
+        if len(crop_imgs) == batch_size:
             # print('processing', img_index,len(crop_imgs))
             feats = embedding.getFeat(np.array(crop_imgs))
             img_feats.append(feats)
