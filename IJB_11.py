@@ -324,10 +324,10 @@ model.summary(line_length=80)
 start = timeit.default_timer()
 img_path = './%s/loose_crop' % target
 img_list_path = './%s/meta/%s_name_5pts_score.txt' % (target, target.lower())
-# img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
-img_feats = np.load("img_feats_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
-    cfg['q']) + ".npy")
-faceness_scores = np.load("faceness_scores.npy")
+img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
+# img_feats = np.load("img_feats_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
+#     cfg['q']) + ".npy")
+# faceness_scores = np.load("faceness_scores.npy")
 stop = timeit.default_timer()
 print('Time: %.2f s. ' % (stop - start))
 print('Feature Shape: ({} , {}) .'.format(img_feats.shape[0], img_feats.shape[1]))
