@@ -323,6 +323,7 @@ if __name__ == "__main__":
     faceness_scores = np.load("faceness_scores.npy")
     print('img_feats', img_feats.shape)
     print('faceness_scores', faceness_scores.shape)
+    print(img_feats[0])
     stop = timeit.default_timer()
     print('Time: %.2f s. ' % (stop - start))
     print('Feature Shape: ({} , {}) .'.format(img_feats.shape[0], img_feats.shape[1]))
