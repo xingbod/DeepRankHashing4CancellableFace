@@ -214,7 +214,7 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None):
     # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
     # template_norm_feats = sklearn.preprocessing.normalize(template_feats)
     template_norm_feats = template_feats
-    # print(template_norm_feats.shape)
+    print(template_norm_feats.shape)
     return template_norm_feats, unique_templates
 
 
