@@ -366,7 +366,7 @@ if use_detector_score:
 else:
     img_input_feats = img_input_feats
 
-template_norm_feats, unique_templates = image2template_feature(img_input_feats, templates, medias)
+template_norm_feats, unique_templates = image2template_feature_hash(img_input_feats, templates, medias)
 stop = timeit.default_timer()
 print('Time: %.2f s. ' % (stop - start))
 
