@@ -410,7 +410,7 @@ if __name__ == "__main__":
     probe_mixed_templates, probe_mixed_subject_ids = read_template_subject_id_list(
         os.path.join(meta_dir, probe_mixed_record))
     print(probe_mixed_templates.shape, probe_mixed_subject_ids.shape)
-    probe_mixed_templates_feature, probe_mixed_unique_templates, probe_mixed_unique_subject_ids = image2template_feature(
+    probe_mixed_templates_feature, probe_mixed_unique_templates, probe_mixed_unique_subject_ids = image2template_feature_hash(
         img_input_feats, total_templates, total_medias, probe_mixed_templates, probe_mixed_subject_ids)
     print("probe_mixed_templates_feature", probe_mixed_templates_feature.shape)
     print("probe_mixed_unique_subject_ids", probe_mixed_unique_subject_ids.shape)
