@@ -18,6 +18,7 @@ import os
 import numpy as np
 import timeit
 import sklearn
+import sklearn.metrics
 import cv2
 import sys
 import argparse
