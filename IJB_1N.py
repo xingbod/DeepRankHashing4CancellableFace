@@ -139,7 +139,7 @@ def image2template_feature(img_feats=None, templates=None, medias=None, choose_t
     # ==========================================================
     unique_templates, indices = np.unique(choose_templates, return_index=True)
     unique_subjectids = choose_ids[indices]
-    print('*****************',img_feats[0])
+    print('*image2template_feature***',img_feats[0])
     template_feats = np.zeros((len(unique_templates), img_feats.shape[1]))
 
     for count_template, uqt in enumerate(unique_templates):
@@ -395,7 +395,7 @@ if __name__ == "__main__":
     print("input features shape", img_input_feats.shape)
 
     # load gallery feature # image2template_feature_hash image2template_feature
-    gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature_hash(
+    gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature(
         img_input_feats, total_templates, total_medias, gallery_templates, gallery_subject_ids)
     stop = timeit.default_timer()
     print('Time: %.2f s. ' % (stop - start))
