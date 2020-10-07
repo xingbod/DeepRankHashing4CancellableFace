@@ -240,11 +240,12 @@ def evaluation(query_feats, gallery_feats, mask,measure = 'cosine'):
 
     # similarity = eucliden_dist(query_feats, gallery_feats)
     #
-    similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
+    # similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
     # similarity = (similarity / ( max(similarity.flatten())+ 1))
-    print("similarity",similarity[0])
-    # similarity = np.dot(query_feats, gallery_feats.T)
+    similarity = np.dot(query_feats, gallery_feats.T)
     print('similarity shape', similarity.shape)
+    print("similarity",similarity[0])
+
     top_inds = np.argsort(-similarity)
     print(top_inds.shape)
 
