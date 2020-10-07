@@ -230,7 +230,7 @@ def read_score(path):
     return img_feats
 
 
-def evaluation(query_feats, gallery_feats, mask,measure = 'euclidean'):
+def evaluation(query_feats, gallery_feats, mask,measure = 'cosine'):
     Fars = [0.01, 0.1]
     print(query_feats.shape)
     print(gallery_feats.shape)
@@ -241,6 +241,7 @@ def evaluation(query_feats, gallery_feats, mask,measure = 'euclidean'):
 
     similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
     similarity = (similarity / ( max(similarity.flatten())+ 1))
+    print("similarity",similarity[0])
     # similarity = np.dot(query_feats, gallery_feats.T)
     print('similarity shape', similarity.shape)
     top_inds = np.argsort(-similarity)
