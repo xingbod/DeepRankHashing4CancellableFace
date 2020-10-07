@@ -218,7 +218,10 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None):
 
 
 # In[ ]:
-
+def eucliden_dist(embeddings1, embeddings2):
+    diff = np.subtract(embeddings1, embeddings2)
+    dist = np.sum(np.square(diff), 1)
+    return dist
 
 def verification(template_norm_feats=None, unique_templates=None, p1=None, p2=None):
     # ==========================================================
@@ -237,7 +240,8 @@ def verification(template_norm_feats=None, unique_templates=None, p1=None, p2=No
     for c, s in enumerate(sublists):
         feat1 = template_norm_feats[template2id[p1[s]]]
         feat2 = template_norm_feats[template2id[p2[s]]]
-        similarity_score = np.sum(feat1 * feat2, -1)
+        # similarity_score = np.sum(feat1 * feat2, -1)
+        similarity_score =eucliden_dist(feat1,feat2)
         score[s] = similarity_score.flatten()
         if c % 10 == 0:
             print('Finish {}/{} pairs.'.format(c, total_sublists))
