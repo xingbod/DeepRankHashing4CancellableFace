@@ -237,6 +237,8 @@ def verification(template_norm_feats=None, unique_templates=None, p1=None, p2=No
     for c, s in enumerate(sublists):
         feat1 = template_norm_feats[template2id[p1[s]]]
         feat2 = template_norm_feats[template2id[p2[s]]]
+        print(feat1.shape)
+        print(feat2.shape)
         # similarity_score = np.sum(feat1 * feat2, -1)
         similarity_score = sklearn.metrics.pairwise_distances(feat1, feat2, metric='euclidean')
         similarity_score = similarity_score.flatten()
