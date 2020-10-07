@@ -171,7 +171,6 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
     # ==========================================================
     unique_templates, indices = np.unique(choose_templates, return_index=True)
     unique_subjectids = choose_ids[indices]
-    print('*****************',img_feats[0])
     template_feats = np.zeros((len(unique_templates), img_feats.shape[1]))
 
     for count_template, uqt in enumerate(unique_templates):
@@ -193,7 +192,8 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
         template_feats[count_template] = np.sum(media_norm_feats, 0)
         if count_template % 2000 == 0:
             print('Finish Calculating {} template features.'.format(count_template))
-    template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
+    # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
+    template_norm_feats = template_feats
     return template_norm_feats, unique_templates, unique_subjectids
 
 
@@ -395,8 +395,8 @@ if __name__ == "__main__":
         img_input_feats = img_input_feats
     print("input features shape", img_input_feats.shape)
 
-    # load gallery feature
-    gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature(
+    # load gallery feature # image2template_feature_hash image2template_feature
+    gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature_hash(
         img_input_feats, total_templates, total_medias, gallery_templates, gallery_subject_ids)
     stop = timeit.default_timer()
     print('Time: %.2f s. ' % (stop - start))
