@@ -139,7 +139,6 @@ def image2template_feature(img_feats=None, templates=None, medias=None, choose_t
     # ==========================================================
     unique_templates, indices = np.unique(choose_templates, return_index=True)
     unique_subjectids = choose_ids[indices]
-    print('*image2template_feature***',img_feats[0])
     template_feats = np.zeros((len(unique_templates), img_feats.shape[1]))
 
     for count_template, uqt in enumerate(unique_templates):
