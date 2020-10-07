@@ -200,9 +200,9 @@ def evaluation(query_feats, gallery_feats, mask,measure = 'hamming'):
     query_num = query_feats.shape[0]
     gallery_num = gallery_feats.shape[0]
 
-    similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
-    similarity = 1- (similarity / ( max(similarity.flatten())+ 1))
-    # similarity = np.dot(query_feats, gallery_feats.T)
+    # similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
+    # similarity = 1- (similarity / ( max(similarity.flatten())+ 1))
+    similarity = np.dot(query_feats, gallery_feats.T)
     print('similarity shape', similarity.shape)
     top_inds = np.argsort(-similarity)
     print(top_inds.shape)
