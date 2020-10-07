@@ -191,8 +191,8 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
         template_feats[count_template] = np.sum(media_norm_feats, 0)
         if count_template % 2000 == 0:
             print('Finish Calculating {} template features.'.format(count_template))
-    # template_norm_feats = template_feats
-    template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
+    template_norm_feats = template_feats
+    # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
     return template_norm_feats, unique_templates, unique_subjectids
 
 
@@ -226,7 +226,7 @@ def read_score(path):
     return img_feats
 
 
-def evaluation(query_feats, gallery_feats, mask,measure = 'hamming'):
+def evaluation(query_feats, gallery_feats, mask,measure = 'euclidean'):
     Fars = [0.01, 0.1]
     print(query_feats.shape)
     print(gallery_feats.shape)
@@ -235,9 +235,9 @@ def evaluation(query_feats, gallery_feats, mask,measure = 'hamming'):
     query_num = query_feats.shape[0]
     gallery_num = gallery_feats.shape[0]
 
-    # similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
-    # similarity = 1- (similarity / ( max(similarity.flatten())+ 1))
-    similarity = np.dot(query_feats, gallery_feats.T)
+    similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
+    similarity = 1- (similarity / ( max(similarity.flatten())+ 1))
+    # similarity = np.dot(query_feats, gallery_feats.T)
     print('similarity shape', similarity.shape)
     top_inds = np.argsort(-similarity)
     print(top_inds.shape)
@@ -395,7 +395,7 @@ if __name__ == "__main__":
     print("input features shape", img_input_feats.shape)
 
     # load gallery feature # image2template_feature_hash image2template_feature
-    gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature(
+    gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature_hash(
         img_input_feats, total_templates, total_medias, gallery_templates, gallery_subject_ids)
     stop = timeit.default_timer()
     print('Time: %.2f s. ' % (stop - start))
