@@ -382,9 +382,9 @@ if __name__ == "__main__":
 
     if use_flip_test:
         # concat --- F1
-        # img_input_feats = img_feats
+        img_input_feats = img_feats
         # add --- F2
-        img_input_feats = img_feats[:, 0:int(img_feats.shape[1] / 2)] + img_feats[:, int(img_feats.shape[1] / 2):]
+        # img_input_feats = img_feats[:, 0:int(img_feats.shape[1] / 2)] + img_feats[:, int(img_feats.shape[1] / 2):]
     else:
         img_input_feats = img_feats[:, 0:int(img_feats.shape[1] / 2)]
 
