@@ -171,6 +171,7 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
     # ==========================================================
     unique_templates, indices = np.unique(choose_templates, return_index=True)
     unique_subjectids = choose_ids[indices]
+    print('*****************', img_feats[0])
     template_feats = np.zeros((len(unique_templates), img_feats.shape[1]))
 
     for count_template, uqt in enumerate(unique_templates):
@@ -184,17 +185,14 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
             if ct == 1:
                 media_norm_feats += [face_norm_feats[ind_m]]
             else:  # image features from the same video will be aggregated into one feature
-                media_norm_feats += [np.sum(face_norm_feats[ind_m], 0, keepdims=True)]# mean for floating feature
+                media_norm_feats += [np.mean(face_norm_feats[ind_m], 0, keepdims=True)]
         media_norm_feats = np.array(media_norm_feats)
-        # print(media_norm_feats[0],'******222222')
-        media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
+        # media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
         template_feats[count_template] = np.sum(media_norm_feats, 0)
         if count_template % 2000 == 0:
             print('Finish Calculating {} template features.'.format(count_template))
-    # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
     template_norm_feats = template_feats
-    template_norm_feats = np.mod(template_norm_feats, 8)  # new add to make it between 0 and q
-    print(template_norm_feats[0],'******222222')
+    # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
     return template_norm_feats, unique_templates, unique_subjectids
 
 
