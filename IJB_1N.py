@@ -184,10 +184,10 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
             if ct == 1:
                 media_norm_feats += [face_norm_feats[ind_m]]
             else:  # image features from the same video will be aggregated into one feature
-                media_norm_feats += [np.max(face_norm_feats[ind_m], 0, keepdims=True)]# using sum to try
+                media_norm_feats += [np.median(face_norm_feats[ind_m], 0, keepdims=True)]# using sum to try
         media_norm_feats = np.array(media_norm_feats)
         # media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
-        template_feats[count_template] = np.max(media_norm_feats, 0)
+        template_feats[count_template] = np.median(media_norm_feats, 0)
         if count_template % 2000 == 0:
             print('Finish Calculating {} template features.'.format(count_template))
     # print('***template_feats',template_feats[0])
@@ -377,7 +377,7 @@ if __name__ == "__main__":
     # Feature norm from embedding network and faceness score are able to decrease weights for noise samples (not face).
     # ==========================================================
     use_norm_score = True  # if True, TestMode(N1)
-    use_detector_score = True  # if True, TestMode(D1)
+    use_detector_score = False  # if True, TestMode(D1)
     use_flip_test = True  # if True, TestMode(F1)
 
     if use_flip_test:
