@@ -247,7 +247,7 @@ def evaluation(query_feats, gallery_feats, mask,measure = 'euclidean'):
 
     top_inds = np.argsort(-similarity)
     print(top_inds.shape)
-
+    perf = []
     # calculate top1
     correct_num = 0
     for i in range(query_num):
@@ -255,6 +255,7 @@ def evaluation(query_feats, gallery_feats, mask,measure = 'euclidean'):
         if j == mask[i]:
             correct_num += 1
     print("top1 = {}".format(correct_num / query_num))
+    perf.append(correct_num / query_num)
     # calculate top5
     correct_num = 0
     for i in range(query_num):
@@ -262,6 +263,7 @@ def evaluation(query_feats, gallery_feats, mask,measure = 'euclidean'):
         if mask[i] in j:
             correct_num += 1
     print("top5 = {}".format(correct_num / query_num))
+    perf.append(correct_num / query_num)
     # calculate 10
     correct_num = 0
     for i in range(query_num):
@@ -269,6 +271,7 @@ def evaluation(query_feats, gallery_feats, mask,measure = 'euclidean'):
         if mask[i] in j:
             correct_num += 1
     print("top10 = {}".format(correct_num / query_num))
+    perf.append(correct_num / query_num)
 
     neg_pair_num = query_num * gallery_num - query_num
     print(neg_pair_num)
@@ -291,7 +294,9 @@ def evaluation(query_feats, gallery_feats, mask,measure = 'euclidean'):
         th = neg_sims[pos - 1]
         recall = np.sum(pos_sims > th) / query_num
         print("far = {:.10f} pr = {:.10f} th = {:.10f}".format(far, recall, th))
+        perf.append(recall)
 
+    print("performance: ", perf)
 
 def gen_mask(query_ids, reg_ids):
     mask = []
