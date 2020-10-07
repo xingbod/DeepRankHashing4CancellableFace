@@ -184,7 +184,7 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
             if ct == 1:
                 media_norm_feats += [face_norm_feats[ind_m]]
             else:  # image features from the same video will be aggregated into one feature
-                media_norm_feats += [np.sum(face_norm_feats[ind_m], 0, keepdims=True)]# using sum to try
+                media_norm_feats += [np.mean(face_norm_feats[ind_m], 0, keepdims=True)]# using sum to try
         media_norm_feats = np.array(media_norm_feats)
         # media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
         template_feats[count_template] = np.sum(media_norm_feats, 0)
