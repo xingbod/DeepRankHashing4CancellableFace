@@ -185,14 +185,14 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
             if ct == 1:
                 media_norm_feats += [face_norm_feats[ind_m]]
             else:  # image features from the same video will be aggregated into one feature
-                media_norm_feats += [np.mean(face_norm_feats[ind_m], 0, keepdims=True)]
+                media_norm_feats += [np.median(face_norm_feats[ind_m], 0, keepdims=True)]# using median to try
         media_norm_feats = np.array(media_norm_feats)
         # media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
         template_feats[count_template] = np.sum(media_norm_feats, 0)
         if count_template % 2000 == 0:
             print('Finish Calculating {} template features.'.format(count_template))
-    template_norm_feats = template_feats
-    # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
+    template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
+    print('***finaltemplate',template_norm_feats[0])
     return template_norm_feats, unique_templates, unique_subjectids
 
 
@@ -235,9 +235,9 @@ def evaluation(query_feats, gallery_feats, mask,measure = 'euclidean'):
     query_num = query_feats.shape[0]
     gallery_num = gallery_feats.shape[0]
 
-    similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
-    similarity = (similarity / ( max(similarity.flatten())+ 1))
-    # similarity = np.dot(query_feats, gallery_feats.T)
+    # similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
+    # similarity = (similarity / ( max(similarity.flatten())+ 1))
+    similarity = np.dot(query_feats, gallery_feats.T)
     print('similarity shape', similarity.shape)
     top_inds = np.argsort(-similarity)
     print(top_inds.shape)
