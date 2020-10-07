@@ -185,7 +185,7 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
             if ct == 1:
                 media_norm_feats += [face_norm_feats[ind_m]]
             else:  # image features from the same video will be aggregated into one feature
-                media_norm_feats += [np.sum(face_norm_feats[ind_m], 0, keepdims=True)]# using sum to try
+                media_norm_feats += [np.median(face_norm_feats[ind_m], 0, keepdims=True)]# using sum to try
         media_norm_feats = np.array(media_norm_feats)
         # media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
         template_feats[count_template] = np.sum(media_norm_feats, 0)
@@ -193,8 +193,9 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
             print('Finish Calculating {} template features.'.format(count_template))
     # print('***template_feats',template_feats[0])
     # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
+    template_feats = np.round(template_feats)
     template_norm_feats = np.mod(template_feats,8)
-    print('***finaltemplate',template_norm_feats[0])
+    print('***finaltemplate***',template_norm_feats[0])
     return template_norm_feats, unique_templates, unique_subjectids
 
 
