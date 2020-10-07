@@ -187,6 +187,7 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
             else:  # image features from the same video will be aggregated into one feature
                 media_norm_feats += [np.sum(face_norm_feats[ind_m], 0, keepdims=True)]# mean for floating feature
         media_norm_feats = np.array(media_norm_feats)
+        media_norm_feats = np.mod(media_norm_feats, 8)# new add to make it between 0 and q
         print(media_norm_feats[0],'******222222')
         # media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
         template_feats[count_template] = np.sum(media_norm_feats, 0)
