@@ -197,6 +197,7 @@ def evaluation(query_feats, gallery_feats, mask,measure = 'hamming'):
     print(query_feats.shape)
     print(gallery_feats.shape)
 
+    print(query_feats[0],'***********')
     query_num = query_feats.shape[0]
     gallery_num = gallery_feats.shape[0]
 
