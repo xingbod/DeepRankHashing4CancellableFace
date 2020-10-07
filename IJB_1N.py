@@ -229,6 +229,10 @@ def read_score(path):
         img_feats = pickle.load(fid)
     return img_feats
 
+def eucliden_dist(embeddings1, embeddings2):
+    diff = np.subtract(embeddings1, embeddings2)
+    dist = np.sum(np.square(diff), 1)
+    return dist
 
 def evaluation(query_feats, gallery_feats, mask,measure = 'cosine'):
     Fars = [0.01, 0.1]
@@ -239,8 +243,10 @@ def evaluation(query_feats, gallery_feats, mask,measure = 'cosine'):
     query_num = query_feats.shape[0]
     gallery_num = gallery_feats.shape[0]
 
-    similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
-    similarity = (similarity / ( max(similarity.flatten())+ 1))
+    similarity = eucliden_dist(query_feats, gallery_feats)
+    #
+    # similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
+    # similarity = (similarity / ( max(similarity.flatten())+ 1))
     print("similarity",similarity[0])
     # similarity = np.dot(query_feats, gallery_feats.T)
     print('similarity shape', similarity.shape)
