@@ -194,8 +194,8 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
     # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
     # template_feats = np.round(template_feats)
     print('***template_feats***',template_feats[0])
-    template_norm_feats = template_feats
-    # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
+    # template_norm_feats = template_feats
+    template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
     print('***finaltemplate***',template_norm_feats[0])
     return template_norm_feats, unique_templates, unique_subjectids
 
