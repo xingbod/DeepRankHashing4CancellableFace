@@ -170,7 +170,7 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
     # ==========================================================
     unique_templates, indices = np.unique(choose_templates, return_index=True)
     unique_subjectids = choose_ids[indices]
-    print('***222**************', img_feats[0])
+    print('***img_feats**', img_feats[0])
     template_feats = np.zeros((len(unique_templates), img_feats.shape[1]))
 
     for count_template, uqt in enumerate(unique_templates):
@@ -194,7 +194,7 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
     # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
     template_feats = np.round(template_feats)
     print('***template_feats***',template_feats[0])
-    template_norm_feats = template_feats
+    template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
     print('***finaltemplate***',template_norm_feats[0])
     return template_norm_feats, unique_templates, unique_subjectids
 
