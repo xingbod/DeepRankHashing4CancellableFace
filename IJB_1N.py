@@ -191,7 +191,7 @@ def read_score(path):
     return img_feats
 
 
-def evaluation(query_feats, gallery_feats, mask):
+def evaluation(query_feats, gallery_feats, mask,measure = 'Hamming'):
     Fars = [0.01, 0.1]
     print(query_feats.shape)
     print(gallery_feats.shape)
@@ -199,7 +199,8 @@ def evaluation(query_feats, gallery_feats, mask):
     query_num = query_feats.shape[0]
     gallery_num = gallery_feats.shape[0]
 
-    similarity = np.dot(query_feats, gallery_feats.T)
+    similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric='hamming')
+    # similarity = np.dot(query_feats, gallery_feats.T)
     print('similarity shape', similarity.shape)
     top_inds = np.argsort(-similarity)
     print(top_inds.shape)
