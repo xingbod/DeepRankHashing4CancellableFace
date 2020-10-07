@@ -191,8 +191,8 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
         template_feats[count_template] = np.sum(media_norm_feats, 0)
         if count_template % 2000 == 0:
             print('Finish Calculating {} template features.'.format(count_template))
-    template_norm_feats = template_feats
-    # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
+    # template_norm_feats = template_feats
+    template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
     return template_norm_feats, unique_templates, unique_subjectids
 
 
