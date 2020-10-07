@@ -194,8 +194,8 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
     # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
     template_feats = np.round(template_feats)
     print('***template_feats***',template_feats[0])
-    template_feats = np.mod(template_feats,8)
-    template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
+    template_norm_feats = template_feats
+    # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
     print('***finaltemplate***',template_norm_feats[0])
     return template_norm_feats, unique_templates, unique_subjectids
 
@@ -240,9 +240,9 @@ def evaluation(query_feats, gallery_feats, mask,measure = 'cosine'):
 
     # similarity = eucliden_dist(query_feats, gallery_feats)
     #
-    # similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
-    # similarity = (similarity / ( max(similarity.flatten())+ 1))
-    similarity = np.dot(query_feats, gallery_feats.T)
+    similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
+    similarity = (similarity / ( max(similarity.flatten())+ 1))
+    # similarity = np.dot(query_feats, gallery_feats.T)
     print('similarity shape', similarity.shape)
     print("similarity",similarity[0])
 
