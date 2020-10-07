@@ -192,7 +192,7 @@ def read_score(path):
     return img_feats
 
 
-def evaluation(query_feats, gallery_feats, mask,measure = 'euclidean'):
+def evaluation(query_feats, gallery_feats, mask,measure = 'hamming'):
     Fars = [0.01, 0.1]
     print(query_feats.shape)
     print(gallery_feats.shape)
