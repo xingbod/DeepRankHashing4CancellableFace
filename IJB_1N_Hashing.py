@@ -143,7 +143,7 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
     template_feats = np.zeros((len(unique_templates), img_feats.shape[1]*8))
     x2 = np.arange(1024)
     for count_template, uqt in enumerate(unique_templates):
-        this_template_feats = np.zeros(512 * 8)
+        this_template_feats = np.zeros(1024 * 8)
         (ind_t,) = np.where(templates == uqt)
         face_norm_feats = img_feats[ind_t]
         face_medias = medias[ind_t]
