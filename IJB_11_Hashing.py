@@ -174,6 +174,7 @@ def image2template_feature(img_feats=None, templates=None, medias=None):
             (ind_m,) = np.where(face_medias == u)
             if ct == 1:
                 index_t = np.multiply(face_norm_feats[ind_m], x2)
+                print(index_t,'****2')
                 this_template_feats[index_t] += 1
             else:  # image features from the same video will be aggregated into one feature
                 all_feat = face_norm_feats[ind_m]
