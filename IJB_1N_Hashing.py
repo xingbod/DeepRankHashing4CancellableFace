@@ -130,38 +130,6 @@ def get_image_feature(img_path, img_list_path, model):
     # faceness_scores = np.ones( (len(files), ), dtype=np.float32 )
     return img_feats, faceness_scores
 
-
-def image2template_feature(img_feats=None, templates=None, medias=None, choose_templates=None, choose_ids=None):
-    # ==========================================================
-    # 1. face image feature l2 normalization. img_feats:[number_image x feats_dim]
-    # 2. compute media feature.
-    # 3. compute template feature.
-    # ==========================================================
-    unique_templates, indices = np.unique(choose_templates, return_index=True)
-    unique_subjectids = choose_ids[indices]
-    template_feats = np.zeros((len(unique_templates), img_feats.shape[1]))
-
-    for count_template, uqt in enumerate(unique_templates):
-        (ind_t,) = np.where(templates == uqt)
-        face_norm_feats = img_feats[ind_t]
-        face_medias = medias[ind_t]
-        unique_medias, unique_media_counts = np.unique(face_medias, return_counts=True)
-        media_norm_feats = []
-        for u, ct in zip(unique_medias, unique_media_counts):
-            (ind_m,) = np.where(face_medias == u)
-            if ct == 1:
-                media_norm_feats += [face_norm_feats[ind_m]]
-            else:  # image features from the same video will be aggregated into one feature
-                media_norm_feats += [np.mean(face_norm_feats[ind_m], 0, keepdims=True)]
-        media_norm_feats = np.array(media_norm_feats)
-        # media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
-        template_feats[count_template] = np.sum(media_norm_feats, 0)
-        if count_template % 2000 == 0:
-            print('Finish Calculating {} template features.'.format(count_template))
-    template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
-    return template_norm_feats, unique_templates, unique_subjectids
-
-
 def image2template_feature_hash(img_feats=None, templates=None, medias=None, choose_templates=None, choose_ids=None):
     # ==========================================================
     # 1. face image feature l2 normalization. img_feats:[number_image x feats_dim]

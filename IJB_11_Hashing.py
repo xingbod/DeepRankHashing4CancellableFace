@@ -180,7 +180,7 @@ def image2template_feature(img_feats=None, templates=None, medias=None):
                 for iii in range(ct):
                     index_t = np.multiply(all_feat[iii], x2)
                     this_template_feats[index_t] += 1
-
+        print("**",this_template_feats)
         template_feats[
             count_template] = this_template_feats  # median can achieve good perf sum-mean can not.median-sum cannot
 
@@ -190,37 +190,6 @@ def image2template_feature(img_feats=None, templates=None, medias=None):
     # print(template_norm_feats.shape)
     return template_norm_feats, unique_templates
 
-def image2template_feature_hash(img_feats=None, templates=None, medias=None):
-    # ==========================================================
-    # 1. face image feature l2 normalization. img_feats:[number_image x feats_dim]
-    # 2. compute media feature.
-    # 3. compute template feature.
-    # ==========================================================
-    unique_templates = np.unique(templates)
-    template_feats = np.zeros((len(unique_templates), img_feats.shape[1]))
-
-    for count_template, uqt in enumerate(unique_templates):
-        (ind_t,) = np.where(templates == uqt)
-        face_norm_feats = img_feats[ind_t]
-        face_medias = medias[ind_t]
-        unique_medias, unique_media_counts = np.unique(face_medias, return_counts=True)
-        media_norm_feats = []
-        for u, ct in zip(unique_medias, unique_media_counts):
-            (ind_m,) = np.where(face_medias == u)
-            if ct == 1:
-                media_norm_feats += [face_norm_feats[ind_m]]
-            else:  # image features from the same video will be aggregated into one feature
-                media_norm_feats += [np.median(face_norm_feats[ind_m], axis=0, keepdims=True)]
-        media_norm_feats = np.array(media_norm_feats)
-        # media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
-        template_feats[count_template] = np.median(media_norm_feats, axis=0)
-        if count_template % 2000 == 0:
-            print('Finish Calculating {} template features.'.format(count_template))
-    # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
-    template_norm_feats = sklearn.preprocessing.normalize(template_feats)
-    # template_norm_feats = template_feats
-    print(template_norm_feats.shape)
-    return template_norm_feats, unique_templates
 
 
 # In[ ]:
@@ -377,7 +346,7 @@ if use_detector_score:
 else:
     img_input_feats = img_input_feats
 
-template_norm_feats, unique_templates = image2template_feature_hash(img_input_feats, templates, medias)
+template_norm_feats, unique_templates = image2template_feature(img_input_feats, templates, medias)
 stop = timeit.default_timer()
 print('Time: %.2f s. ' % (stop - start))
 
