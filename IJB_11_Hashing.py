@@ -159,6 +159,7 @@ def image2template_feature(img_feats=None, templates=None, medias=None):
     # 2. compute media feature.
     # 3. compute template feature.
     # ==========================================================
+    img_feats = img_feats.astype(int)
     unique_templates = np.unique(templates)
     template_feats = np.zeros((len(unique_templates), img_feats.shape[1] * 8))
     x2 = np.arange(1024)
