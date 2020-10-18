@@ -140,7 +140,7 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
     unique_subjectids = choose_ids[indices]
     print('***img_feats**', img_feats[0])
     template_feats = np.zeros((len(unique_templates), img_feats.shape[1]*8))
-    x2 = np.arange(512)
+    x2 = np.arange(1024)
     for count_template, uqt in enumerate(unique_templates):
         this_template_feats = np.zeros(512 * 8)
         (ind_t,) = np.where(templates == uqt)

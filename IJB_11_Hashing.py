@@ -161,7 +161,7 @@ def image2template_feature(img_feats=None, templates=None, medias=None):
     # ==========================================================
     unique_templates = np.unique(templates)
     template_feats = np.zeros((len(unique_templates), img_feats.shape[1] * 8))
-    x2 = np.arange(512)
+    x2 = np.arange(1024)
 
     for count_template, uqt in enumerate(unique_templates):
         this_template_feats = np.zeros(512 * 8)
