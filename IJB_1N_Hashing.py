@@ -131,6 +131,44 @@ def get_image_feature(img_path, img_list_path, model):
     return img_feats, faceness_scores
 
 
+
+def image2template_feature_hash_orig(img_feats=None, templates=None, medias=None, choose_templates=None, choose_ids=None):
+    # ==========================================================
+    # 1. face image feature l2 normalization. img_feats:[number_image x feats_dim]
+    # 2. compute media feature.
+    # 3. compute template feature.
+    # ==========================================================
+    unique_templates, indices = np.unique(choose_templates, return_index=True)
+    unique_subjectids = choose_ids[indices]
+    print('***img_feats**', img_feats[0])
+    template_feats = np.zeros((len(unique_templates), img_feats.shape[1]))
+
+    for count_template, uqt in enumerate(unique_templates):
+        (ind_t,) = np.where(templates == uqt)
+        face_norm_feats = img_feats[ind_t]
+        face_medias = medias[ind_t]
+        unique_medias, unique_media_counts = np.unique(face_medias, return_counts=True)
+        media_norm_feats = []
+        for u, ct in zip(unique_medias, unique_media_counts):
+            (ind_m,) = np.where(face_medias == u)
+            if ct == 1:
+                media_norm_feats += [face_norm_feats[ind_m]]
+            else:  # image features from the same video will be aggregated into one feature
+                media_norm_feats += [np.median(face_norm_feats[ind_m], 0, keepdims=True)]# using sum to try median can achieve good perf 40%  sum can not 3% mean can also 30%
+        media_norm_feats = np.array(media_norm_feats)
+        # media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
+        template_feats[count_template] = np.median(media_norm_feats, 0)# median can achieve good perf sum-mean can not.median-sum cannot
+        if count_template % 2000 == 0:
+            print('Finish Calculating {} template features.'.format(count_template))
+    # print('***template_feats',template_feats[0])
+    # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
+    # template_feats = np.round(template_feats)
+    print('***template_feats***',template_feats[0])
+    # template_norm_feats = template_feats
+    template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
+    print('***finaltemplate***',template_norm_feats[0])
+    return template_norm_feats, unique_templates, unique_subjectids
+
 def image2template_feature_hash(img_feats=None, templates=None, medias=None, choose_templates=None, choose_ids=None):
     # ==========================================================
     # 1. face image feature l2 normalization. img_feats:[number_image x feats_dim]
@@ -161,7 +199,6 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
                 all_feat = face_norm_feats[ind_m]
                 for iii in range(ct):
                     index_t = np.multiply(all_feat[iii], x2)
-                    print('**',index_t)
                     this_template_feats[index_t] += 1
 
         template_feats[count_template] = this_template_feats# median can achieve good perf sum-mean can not.median-sum cannot
@@ -387,7 +424,7 @@ if __name__ == "__main__":
     print("input features shape", img_input_feats.shape)
 
     # load gallery feature # image2template_feature_hash image2template_feature
-    gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature_hash(
+    gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature_hash_orig(
         img_input_feats, total_templates, total_medias, gallery_templates, gallery_subject_ids)
     stop = timeit.default_timer()
     print('Time: %.2f s. ' % (stop - start))
@@ -401,7 +438,7 @@ if __name__ == "__main__":
     probe_mixed_templates, probe_mixed_subject_ids = read_template_subject_id_list(
         os.path.join(meta_dir, probe_mixed_record))
     print(probe_mixed_templates.shape, probe_mixed_subject_ids.shape)
-    probe_mixed_templates_feature, probe_mixed_unique_templates, probe_mixed_unique_subject_ids = image2template_feature_hash(
+    probe_mixed_templates_feature, probe_mixed_unique_templates, probe_mixed_unique_subject_ids = image2template_feature_hash_orig(
         img_input_feats, total_templates, total_medias, probe_mixed_templates, probe_mixed_subject_ids)
     print("probe_mixed_templates_feature", probe_mixed_templates_feature.shape)
     print("probe_mixed_unique_subject_ids", probe_mixed_unique_subject_ids.shape)
