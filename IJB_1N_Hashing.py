@@ -202,8 +202,9 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
         min_inx = np.argmin(tmp)
         print('tmp: ',tmp)
         print('min_inx: ',min_inx)
+        print('count_template: ',count_template)
 
-        template_feats[count_template] = media_norm_feats(min_inx)
+        template_feats[count_template] = media_norm_feats[min_inx]
         # template_feats[count_template] = np.median(media_norm_feats, 0)# median can achieve good perf sum-mean can not.median-sum cannot
         if count_template % 2000 == 0:
             print('Finish Calculating {} template features.'.format(count_template))
