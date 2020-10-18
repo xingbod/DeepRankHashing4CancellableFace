@@ -155,12 +155,12 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
             (ind_m,) = np.where(face_medias == u)
             if ct == 1:
                 index_t = np.multiply(face_norm_feats[ind_m], x2)
-                this_template_feats[index_t] += 1
+                this_template_feats[index_t] = 1
             else:  # image features from the same video will be aggregated into one feature
                 all_feat = face_norm_feats[ind_m]
                 for iii in range(ct):
                     index_t = np.multiply(all_feat[iii], x2)
-                    this_template_feats[index_t] += 1
+                    this_template_feats[index_t] = 1
 
         template_feats[count_template] = this_template_feats# median can achieve good perf sum-mean can not.median-sum cannot
         if count_template % 2000 == 0:
