@@ -197,12 +197,12 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
                 media_norm_feats += [np.median(face_norm_feats[ind_m], 0, keepdims=True)]# using sum to try median can achieve good perf 40%  sum can not 3% mean can also 30%
         media_norm_feats = np.array(media_norm_feats)
         # media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
-        print('media_norm_feats: ',media_norm_feats)
+        # print('media_norm_feats: ',media_norm_feats)
         tmp = np.sum(media_norm_feats,-1)
         min_inx = np.argmin(tmp)
-        print('tmp: ',tmp)
-        print('min_inx: ',min_inx)
-        print('count_template: ',count_template)
+        # print('tmp: ',tmp)
+        # print('min_inx: ',min_inx)
+        # print('count_template: ',count_template)
 
         template_feats[count_template] = media_norm_feats[min_inx]
         # template_feats[count_template] = np.median(media_norm_feats, 0)# median can achieve good perf sum-mean can not.median-sum cannot
