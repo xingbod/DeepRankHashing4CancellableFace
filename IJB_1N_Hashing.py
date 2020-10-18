@@ -199,7 +199,7 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
         # media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
         # print('media_norm_feats: ',media_norm_feats)
         tmp = np.sum(media_norm_feats,-1)
-        min_inx = np.argmin(tmp)
+        min_inx = np.argmax(tmp)
         # print('tmp: ',tmp)
         # print('min_inx: ',min_inx)
         # print('count_template: ',count_template)
