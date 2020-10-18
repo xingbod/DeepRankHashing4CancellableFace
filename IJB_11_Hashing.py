@@ -181,8 +181,7 @@ def image2template_feature(img_feats=None, templates=None, medias=None):
                 for iii in range(ct):
                     index_t = np.multiply(all_feat[iii], x2)
                     this_template_feats[index_t] += 1
-        template_feats[
-            count_template] = this_template_feats  # median can achieve good perf sum-mean can not.median-sum cannot
+        template_feats[count_template] = this_template_feats  # median can achieve good perf sum-mean can not.median-sum cannot
 
         if count_template % 2000 == 0:
             print('Finish Calculating {} template features.'.format(count_template))
@@ -211,12 +210,12 @@ def verification(template_norm_feats=None, unique_templates=None, p1=None, p2=No
     for c, s in enumerate(sublists):
         feat1 = template_norm_feats[template2id[p1[s]]]
         feat2 = template_norm_feats[template2id[p2[s]]]
-        similarity_score = np.sum(feat1 * feat2, -1)
-        score[s] = similarity_score.flatten()
+        # similarity_score = np.sum(feat1 * feat2, -1)
+        # score[s] = similarity_score.flatten()
 
-        # similarity_score = sklearn.metrics.pairwise_distances(feat1, feat2, metric='euclidean')
-        # similarity_score = similarity_score.flatten()
-        # score[s]  = 1- (similarity_score / ( max(similarity_score)+ 1))
+        similarity_score = sklearn.metrics.pairwise_distances(feat1, feat2, metric='euclidean')
+        similarity_score = similarity_score.flatten()
+        score[s]  = 1- (similarity_score / ( max(similarity_score)+ 1))
         if c % 10 == 0:
             print('Finish {}/{} pairs.'.format(c, total_sublists))
     return score
