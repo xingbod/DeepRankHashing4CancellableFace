@@ -173,35 +173,35 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
     template_norm_feats = template_feats
     print('***finaltemplate***',template_norm_feats[0])
     return template_norm_feats, unique_templates, unique_subjectids
-
-
-def verification(template_norm_feats=None, unique_templates=None, p1=None, p2=None):
-    # ==========================================================
-    #         Compute set-to-set Similarity Score.
-    # ==========================================================
-    template2id = np.zeros((max(unique_templates) + 1, 1), dtype=int)
-    for count_template, uqt in enumerate(unique_templates):
-        template2id[uqt] = count_template
-
-    score = np.zeros((len(p1),))  # save cosine distance between pairs
-
-    total_pairs = np.array(range(len(p1)))
-    batchsize = 100000  # small batchsize instead of all pairs in one batch due to the memory limiation
-    sublists = [total_pairs[i:i + batchsize] for i in range(0, len(p1), batchsize)]
-    total_sublists = len(sublists)
-    for c, s in enumerate(sublists):
-        feat1 = template_norm_feats[template2id[p1[s]]]
-        feat2 = template_norm_feats[template2id[p2[s]]]
-
-        similarity_score = np.sum((feat1 - feat2)**2, -1)# Using euclidean distance to try
-        # similarity_score = np.divide(similarity_score, np.sum((feat1)**2, -1)+np.sum((feat2)**2, -1))
-        score[s] = similarity_score.flatten()
-
-        # similarity_score = np.sum(feat1 * feat2, -1)
-        # score[s] = similarity_score.flatten()
-        if c % 10 == 0:
-            print('Finish {}/{} pairs.'.format(c, total_sublists))
-    return score
+#
+#
+# def verification(template_norm_feats=None, unique_templates=None, p1=None, p2=None):
+#     # ==========================================================
+#     #         Compute set-to-set Similarity Score.
+#     # ==========================================================
+#     template2id = np.zeros((max(unique_templates) + 1, 1), dtype=int)
+#     for count_template, uqt in enumerate(unique_templates):
+#         template2id[uqt] = count_template
+#
+#     score = np.zeros((len(p1),))  # save cosine distance between pairs
+#
+#     total_pairs = np.array(range(len(p1)))
+#     batchsize = 100000  # small batchsize instead of all pairs in one batch due to the memory limiation
+#     sublists = [total_pairs[i:i + batchsize] for i in range(0, len(p1), batchsize)]
+#     total_sublists = len(sublists)
+#     for c, s in enumerate(sublists):
+#         feat1 = template_norm_feats[template2id[p1[s]]]
+#         feat2 = template_norm_feats[template2id[p2[s]]]
+#
+#         similarity_score = np.sum((feat1 - feat2)**2, -1)# Using euclidean distance to try
+#         # similarity_score = np.divide(similarity_score, np.sum((feat1)**2, -1)+np.sum((feat2)**2, -1))
+#         score[s] = similarity_score.flatten()
+#
+#         # similarity_score = np.sum(feat1 * feat2, -1)
+#         # score[s] = similarity_score.flatten()
+#         if c % 10 == 0:
+#             print('Finish {}/{} pairs.'.format(c, total_sublists))
+#     return score
 
 
 def read_score(path):
@@ -219,9 +219,9 @@ def evaluation(query_feats, gallery_feats, mask,measure = 'euclidean'):
     gallery_num = gallery_feats.shape[0]
 
     #
-    # similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
-    # similarity = 1- (similarity / ( max(similarity.flatten())+ 1))
-    similarity = np.dot(query_feats, gallery_feats.T)
+    similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
+    similarity = 1- (similarity / ( max(similarity.flatten())+ 1))
+    # similarity = np.dot(query_feats, gallery_feats.T)
     print('similarity shape', similarity.shape)
     print("similarity",similarity[0])
 
