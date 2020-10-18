@@ -161,6 +161,7 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
                 all_feat = face_norm_feats[ind_m]
                 for iii in range(ct):
                     index_t = np.multiply(all_feat[iii], x2)
+                    print('**',index_t)
                     this_template_feats[index_t] += 1
 
         template_feats[count_template] = this_template_feats# median can achieve good perf sum-mean can not.median-sum cannot
