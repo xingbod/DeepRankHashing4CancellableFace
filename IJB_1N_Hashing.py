@@ -136,6 +136,7 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
     # 2. compute media feature.
     # 3. compute template feature.
     # ==========================================================
+    img_feats = img_feats.astype(int)
     unique_templates, indices = np.unique(choose_templates, return_index=True)
     unique_subjectids = choose_ids[indices]
     print('***img_feats**', img_feats[0])
