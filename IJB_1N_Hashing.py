@@ -198,7 +198,7 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
                 all_feat = face_norm_feats[ind_m]
                 for iii in range(ct):
                     index_t = np.multiply(all_feat[iii], x2)
-                    this_template_feats[index_t] = 1
+                    this_template_feats[index_t] += 1
 
         template_feats[count_template] = this_template_feats# median can achieve good perf sum-mean can not.median-sum cannot
         if count_template % 2000 == 0:
@@ -231,7 +231,7 @@ def verification(template_norm_feats=None, unique_templates=None, p1=None, p2=No
         feat2 = template_norm_feats[template2id[p2[s]]]
 
         similarity_score = np.sum((feat1 - feat2)**2, -1)# Using euclidean distance to try
-        similarity_score = np.multiply(similarity_score, np.sum((feat1)**2, -1)+np.sum((feat2)**2, -1))
+        similarity_score = np.divide(similarity_score, np.sum((feat1)**2, -1)+np.sum((feat2)**2, -1))
         score[s] = similarity_score.flatten()
 
         # similarity_score = np.sum(feat1 * feat2, -1)
@@ -423,7 +423,7 @@ if __name__ == "__main__":
     print("input features shape", img_input_feats.shape)
 
     # load gallery feature # image2template_feature_hash image2template_feature
-    gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature_hash_orig(
+    gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature_hash(
         img_input_feats, total_templates, total_medias, gallery_templates, gallery_subject_ids)
     stop = timeit.default_timer()
     print('Time: %.2f s. ' % (stop - start))
@@ -437,7 +437,7 @@ if __name__ == "__main__":
     probe_mixed_templates, probe_mixed_subject_ids = read_template_subject_id_list(
         os.path.join(meta_dir, probe_mixed_record))
     print(probe_mixed_templates.shape, probe_mixed_subject_ids.shape)
-    probe_mixed_templates_feature, probe_mixed_unique_templates, probe_mixed_unique_subject_ids = image2template_feature_hash_orig(
+    probe_mixed_templates_feature, probe_mixed_unique_templates, probe_mixed_unique_subject_ids = image2template_feature_hash(
         img_input_feats, total_templates, total_medias, probe_mixed_templates, probe_mixed_subject_ids)
     print("probe_mixed_templates_feature", probe_mixed_templates_feature.shape)
     print("probe_mixed_unique_subject_ids", probe_mixed_unique_subject_ids.shape)
