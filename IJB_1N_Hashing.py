@@ -131,43 +131,6 @@ def get_image_feature(img_path, img_list_path, model):
     return img_feats, faceness_scores
 
 
-def image2template_feature_hash_orig(img_feats=None, templates=None, medias=None, choose_templates=None, choose_ids=None):
-    # ==========================================================
-    # 1. face image feature l2 normalization. img_feats:[number_image x feats_dim]
-    # 2. compute media feature.
-    # 3. compute template feature.
-    # ==========================================================
-    unique_templates, indices = np.unique(choose_templates, return_index=True)
-    unique_subjectids = choose_ids[indices]
-    print('***img_feats**', img_feats[0])
-    template_feats = np.zeros((len(unique_templates), img_feats.shape[1]))
-
-    for count_template, uqt in enumerate(unique_templates):
-        (ind_t,) = np.where(templates == uqt)
-        face_norm_feats = img_feats[ind_t]
-        face_medias = medias[ind_t]
-        unique_medias, unique_media_counts = np.unique(face_medias, return_counts=True)
-        media_norm_feats = []
-        for u, ct in zip(unique_medias, unique_media_counts):
-            (ind_m,) = np.where(face_medias == u)
-            if ct == 1:
-                media_norm_feats += [face_norm_feats[ind_m]]
-            else:  # image features from the same video will be aggregated into one feature
-                media_norm_feats += [np.median(face_norm_feats[ind_m], 0, keepdims=True)]# using sum to try median can achieve good perf 40%  sum can not 3% mean can also 30%
-        media_norm_feats = np.array(media_norm_feats)
-        # media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
-        template_feats[count_template] = np.median(media_norm_feats, 0)# median can achieve good perf sum-mean can not.median-sum cannot
-        if count_template % 2000 == 0:
-            print('Finish Calculating {} template features.'.format(count_template))
-    # print('***template_feats',template_feats[0])
-    # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
-    # template_feats = np.round(template_feats)
-    print('***template_feats***',template_feats[0])
-    # template_norm_feats = template_feats
-    template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
-    print('***finaltemplate***',template_norm_feats[0])
-    return template_norm_feats, unique_templates, unique_subjectids
-
 def image2template_feature_hash(img_feats=None, templates=None, medias=None, choose_templates=None, choose_ids=None):
     # ==========================================================
     # 1. face image feature l2 normalization. img_feats:[number_image x feats_dim]
@@ -231,7 +194,7 @@ def verification(template_norm_feats=None, unique_templates=None, p1=None, p2=No
         feat2 = template_norm_feats[template2id[p2[s]]]
 
         similarity_score = np.sum((feat1 - feat2)**2, -1)# Using euclidean distance to try
-        similarity_score = np.divide(similarity_score, np.sum((feat1)**2, -1)+np.sum((feat2)**2, -1))
+        # similarity_score = np.divide(similarity_score, np.sum((feat1)**2, -1)+np.sum((feat2)**2, -1))
         score[s] = similarity_score.flatten()
 
         # similarity_score = np.sum(feat1 * feat2, -1)
