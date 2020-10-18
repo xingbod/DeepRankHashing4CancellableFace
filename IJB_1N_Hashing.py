@@ -468,7 +468,7 @@ if __name__ == "__main__":
     print("input features shape", img_input_feats.shape)
 
     # load gallery feature # image2template_feature_hash image2template_feature
-    gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature_hash_orig(
+    gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature_hash(
         img_input_feats, total_templates, total_medias, gallery_templates, gallery_subject_ids)
     stop = timeit.default_timer()
     print('Time: %.2f s. ' % (stop - start))
@@ -482,7 +482,7 @@ if __name__ == "__main__":
     probe_mixed_templates, probe_mixed_subject_ids = read_template_subject_id_list(
         os.path.join(meta_dir, probe_mixed_record))
     print(probe_mixed_templates.shape, probe_mixed_subject_ids.shape)
-    probe_mixed_templates_feature, probe_mixed_unique_templates, probe_mixed_unique_subject_ids = image2template_feature_hash_orig(
+    probe_mixed_templates_feature, probe_mixed_unique_templates, probe_mixed_unique_subject_ids = image2template_feature_hash(
         img_input_feats, total_templates, total_medias, probe_mixed_templates, probe_mixed_subject_ids)
     print("probe_mixed_templates_feature", probe_mixed_templates_feature.shape)
     print("probe_mixed_unique_subject_ids", probe_mixed_unique_subject_ids.shape)
