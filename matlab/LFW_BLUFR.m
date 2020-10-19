@@ -1,8 +1,8 @@
 function [reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(varargin)
-%LFW_BLUFR ´Ë´¦ÏÔÊ¾ÓÐ¹Ø´Ëº¯ÊýµÄÕªÒª
-%   ´Ë´¦ÏÔÊ¾ÏêÏ¸ËµÃ÷
+%LFW_BLUFR ï¿½Ë´ï¿½ï¿½ï¿½Ê¾ï¿½Ð¹Ø´Ëºï¿½ï¿½ï¿½ï¿½ï¿½ÕªÒª
+%   ï¿½Ë´ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Ï¸Ëµï¿½ï¿½
 ip = inputParser;
-%½ÓÏÂÀ´Éè¶¨Ä¬ÈÏÖµ£¬»¹¿ÉÒÔÖ¸¶¨ÊÇ±ØÐë²ÎÊý»¹ÊÇ¿ÉÑ¡²ÎÊýµÈ¡£
+%ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è¶¨Ä¬ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ç±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½
 ip.addRequired('Descriptors')
 ip.addParamValue('measure','Hamming');
 ip.parse(varargin{:});
@@ -77,7 +77,7 @@ for t = 1 : numTrials
     
     % Normlize each row to unit length. If you do not have this function,
     % do it manually.
-    %     X = normr(X);
+    X = normr(X);
     
     % Compute the cosine similarity score between the test samples.
     %     score = X * X';
