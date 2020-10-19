@@ -57,7 +57,7 @@ def main(_argv):
         arcmodel.load_weights(ckpt_path)
     else:
         print("[*] Cannot find ckpt from {}.".format(ckpt_path))
-        exit()
+
 
     def extractFeat(dataset, model, feature_dim):
         final_feature = np.zeros(feature_dim)
