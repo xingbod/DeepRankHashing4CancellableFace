@@ -85,6 +85,10 @@ def main(_argv):
         write = csv.writer(f)
         write.writerows(feats)
 
+    with open('embeddings/' + cfg['backbone_type'] + '_lfw_name.txt', 'w') as outfile:
+        for i in names:
+            outfile.write(i + "\n")
+
     '''
 
     For VGG2, we should select and pre-process the vgg dataset first, as the dataset is quite large, we would only select 50 imgs per person
