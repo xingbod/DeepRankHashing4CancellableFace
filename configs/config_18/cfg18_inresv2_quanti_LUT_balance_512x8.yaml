@@ -17,7 +17,7 @@ hidden_layer_remark: '1'
 code_balance_loss: True
 quanti: False
 # train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split /media/xingbo/Storage/facedata/ms1m_align_112/imgs
-train_dataset: '/home/datascience/xingbo/ms1m_align_112/imgs'
+train_dataset: '/home/xingbo/facedata/ms1m_align_112/imgs'
 #train_dataset: '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160'
 img_ext: 'jpg'
 dataset_ext: 'ms'
@@ -28,7 +28,7 @@ binary_img: False
 num_classes: 85742
 # I generate 1 milion triplets
 num_samples: 3000000
-epochs: 50
+epochs: 3
 base_lr: 0.01
 w_decay: !!float 5e-4
 save_steps: 10000
