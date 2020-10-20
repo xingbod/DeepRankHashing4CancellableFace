@@ -319,6 +319,7 @@ if __name__ == "__main__":
                         help='your config file')
     parser.add_argument('--job', default='insightface', type=str, help='job name')
     parser.add_argument('--target', default='IJBC', type=str, help='target, set to IJBC or IJBB')
+    parser.add_argument('--gallery_mark', default='0', type=str, help='Using which gallery?,default 0: combine and close-set, 1 G1, 2 G2')
     args = parser.parse_args()
     target = args.target
     model_path = args.model_prefix
@@ -343,9 +344,18 @@ if __name__ == "__main__":
         os.path.join(meta_dir, gallery_s2_record))
     print(gallery_s2_templates.shape, gallery_s2_templates.shape)
 
-    gallery_templates = np.concatenate([gallery_s1_templates, gallery_s2_templates])
-    gallery_subject_ids = np.concatenate([gallery_s1_subject_ids, gallery_s2_subject_ids])
+    if gallery_mark == 1:
+        gallery_templates = gallery_s1_templates
+        gallery_subject_ids = gallery_s1_subject_ids
+    elif gallery_mark == 2:
+        gallery_templates = gallery_s2_templates
+        gallery_subject_ids = gallery_s2_subject_ids
+    else:
+        gallery_templates = np.concatenate([gallery_s1_templates, gallery_s2_templates])
+        gallery_subject_ids = np.concatenate([gallery_s1_subject_ids, gallery_s2_subject_ids])
+
     print(gallery_templates.shape, gallery_subject_ids.shape)
+
 
     media_record = "%s_face_tid_mid.txt" % args.target.lower()
     total_templates, total_medias = read_template_media_list(os.path.join(meta_dir, media_record))
