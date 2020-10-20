@@ -1,0 +1,24 @@
+# general
+batch_size: 16
+eval_batch_size: 16
+input_size: 112
+embd_shape: 512
+sub_name: 'arc_insight_cont_resnet50'
+backbone_type: 'Insight_ResNet50' # 'ResNet50', 'MobileNetV2'
+head_type: ArcHead # 'ArcHead', 'NormHead'
+is_ccrop: False # central-cropping or not
+
+# train
+train_dataset: './data/ms1m_bin.tfrecord'
+binary_img: True
+num_classes: 85742
+num_samples: 5822653
+epochs: 10
+base_lr: 0.01
+w_decay: !!float 5e-4
+save_steps: 10000
+
+# test
+test_dataset: './data/test_dataset'
+test_dataset_ytf: './data/test_dataset/aligned_images_DB_YTF/'
+test_dataset_fs: './data/test_dataset/facescrub_images_112x112/'
