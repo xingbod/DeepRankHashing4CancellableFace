@@ -213,6 +213,7 @@ if __name__ == "__main__":
     parser.add_argument('--job', default='insightface', type=str, help='job name')
     parser.add_argument('--target', default='IJBC', type=str, help='target, set to IJBC or IJBB')
     parser.add_argument('--gallery_mark', default=1, type=int, help='Using which gallery?,default 0: combine and close-set, 1 G1, 2 G2')
+    parser.add_argument('--is_only_arc', default=1, type=int, help='is ArcFace only? Or IoM added')
     args = parser.parse_args()
     target = args.target
     model_path = args.model_prefix
@@ -221,7 +222,9 @@ if __name__ == "__main__":
     batch_size = args.batch_size
     epoch = args.model_epoch
     gallery_mark = args.gallery_mark
-    is_only_arc = False
+    is_only_arc = args.is_only_arc
+
+
 
     meta_dir = "%s/meta" % args.target  # meta root dir
     if target == 'IJBC':
@@ -264,10 +267,15 @@ if __name__ == "__main__":
     # img_feats, faceness_scores = get_image_feature(feature_path, face_path)
 
     cfg = load_yaml(cfg_path)  # cfg = load_yaml(FLAGS.cfg_path)
-    model = build_or_load_IoMmodel(cfg, is_only_arc=is_only_arc)
-    model.summary(line_length=80)
+    # model = build_or_load_IoMmodel(cfg, is_only_arc=is_only_arc)
+    # model.summary(line_length=80)
+    #
+    # # img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
 
-    # img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
+
+    if is_only_arc:
+        cfg['m'] = 0
+        cfg['q'] = 0
 
     img_feats = np.load("img_feats_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
         cfg['q']) + ".npy")
