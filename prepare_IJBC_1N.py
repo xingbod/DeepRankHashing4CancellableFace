@@ -276,6 +276,9 @@ if __name__ == "__main__":
     if is_only_arc:
         cfg['m'] = 0
         cfg['q'] = 0
+    else:
+        cfg['m'] = 512
+        cfg['q'] = 8
 
     img_feats = np.load("data_ijbc/img_feats_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
         cfg['q']) + ".npy")
