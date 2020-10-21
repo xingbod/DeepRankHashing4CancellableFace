@@ -44,7 +44,7 @@ import tqdm
 import os
 import numpy as np
 from modules.utils import load_yaml
-from modules.models import build_or_load_IoMmodel
+from modules.models import build_or_load_IoMmodel,build_or_load_Random_IoMmodel
 
 warnings.filterwarnings("ignore")
 
@@ -201,7 +201,10 @@ print('Time: %.2f s. ' % (stop - start))
 
 
 cfg = load_yaml(cfg_path)  # cfg = load_yaml(FLAGS.cfg_path)
-model = build_or_load_IoMmodel(cfg, is_only_arc=is_only_arc)
+if is_only_arc:
+    model = build_or_load_IoMmodel(cfg, is_only_arc=is_only_arc)
+else:
+    model = build_or_load_Random_IoMmodel(cfg)
 model.summary(line_length=80)
 
 # =============================================================
