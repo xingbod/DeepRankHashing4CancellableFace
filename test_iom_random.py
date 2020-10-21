@@ -12,7 +12,7 @@ import csv
 import math
 from modules.evaluations import get_val_data, perform_val, perform_val_yts
 from modules.utils import set_memory_growth, load_yaml, l2_norm
-from modules.models import ArcFaceModel, IoMFaceModelFromArFace, build_or_load_IoMmodel,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
+from modules.models import ArcFaceModel, IoMFaceModelFromArFace, build_or_load_Random_IoMmodel,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
 
 
 flags.DEFINE_string('cfg_path', './configs/iom_res50_random.yaml', 'config file path')
@@ -42,7 +42,7 @@ def callMe():
 
     m = cfg['m'] = mycfg['m']
     q = cfg['q'] = mycfg['q']
-    model = build_or_load_IoMmodel(cfg_iom)
+    model = build_or_load_Random_IoMmodel(cfg_iom)
     model.summary(line_length=80)
     model.layers[0].trainable = False
     # for layer in model.layers:

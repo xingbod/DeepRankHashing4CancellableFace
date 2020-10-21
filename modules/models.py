@@ -458,3 +458,46 @@ def build_or_load_IoMmodel(arc_cfg=None, ckpt_epoch = '', is_only_arc=False):
 
     return model
 
+
+def build_or_load_Random_IoMmodel(arc_cfg=None):
+    permKey = None
+    if arc_cfg['head_type'] == 'IoMHead':  #
+        # permKey = generatePermKey(cfg['embd_shape'])
+        permKey = tf.eye(arc_cfg['embd_shape'])  # for training, we don't permutate, won't influence the performance
+
+    arcmodel = ArcFaceModel(size=arc_cfg['input_size'],
+                            embd_shape=arc_cfg['embd_shape'],
+                            backbone_type=arc_cfg['backbone_type'],
+                            head_type='ArcHead',
+                            training=False,
+                            cfg=arc_cfg)
+
+    iom_cfg = arc_cfg
+    # here I add the extra IoM layer and head
+    if iom_cfg['hidden_layer_remark'] == '1':
+        model = IoMFaceModelFromArFace(size=iom_cfg['input_size'],
+                                       arcmodel=arcmodel, training=False,
+                                       permKey=permKey, cfg=iom_cfg)
+    elif iom_cfg['hidden_layer_remark'] == '2':
+        model = IoMFaceModelFromArFace2(size=iom_cfg['input_size'],
+                                        arcmodel=arcmodel, training=False,
+                                        permKey=permKey, cfg=iom_cfg)
+    elif iom_cfg['hidden_layer_remark'] == '3':
+        model = IoMFaceModelFromArFace3(size=iom_cfg['input_size'],
+                                        arcmodel=arcmodel, training=False,
+                                        permKey=permKey, cfg=iom_cfg)
+    elif iom_cfg['hidden_layer_remark'] == 'T':  # 2 layers
+        model = IoMFaceModelFromArFace_T(size=iom_cfg['input_size'],
+                                         arcmodel=arcmodel, training=False,
+                                         permKey=permKey, cfg=iom_cfg)
+    elif iom_cfg['hidden_layer_remark'] == 'T1':
+        model = IoMFaceModelFromArFace_T1(size=iom_cfg['input_size'],
+                                          arcmodel=arcmodel, training=False,
+                                          permKey=permKey, cfg=iom_cfg)
+    else:
+        model = IoMFaceModelFromArFace(size=iom_cfg['input_size'],
+                                       arcmodel=arcmodel, training=False,
+                                       permKey=permKey, cfg=iom_cfg)
+
+    return model
+
