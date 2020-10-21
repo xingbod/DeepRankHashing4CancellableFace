@@ -39,7 +39,7 @@ def callMe():
     cfg = cfg_iom = load_yaml('configs/config_random/iom_res100_random_insightface.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
     m = cfg['m'] = mycfg['m']
     q = cfg['q'] = mycfg['q']
-    model = build_or_load_IoMmodel(cfg_arc,cfg)
+    model = build_or_load_IoMmodel(cfg_arc)
     model.summary(line_length=80)
     model.layers[0].trainable = False
     # for layer in model.layers:
