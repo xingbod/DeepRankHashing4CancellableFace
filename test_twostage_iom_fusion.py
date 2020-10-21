@@ -18,7 +18,7 @@ from modules.utils import set_memory_growth, load_yaml, l2_norm
 # modules.utils.set_memory_growth()
 flags.DEFINE_string('cfg_path', './configs/iom_res50.yaml', 'config file path')
 flags.DEFINE_string('cfg_path2', './configs/iom_res50.yaml', 'config file path')
-flags.DEFINE_string('ckpt_epoch', '', 'config file path')
+flags.DEFINE_string('ckpt_epoch', '', 'ckpt epoch')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_string('img_path', '', 'path to input image')
 
@@ -36,7 +36,7 @@ def main(_argv):
         cfg = load_yaml(cfg_path)
         m = cfg['m']
         q = cfg['q']
-        model = build_or_load_IoMmodel(cfg, cfg)
+        model = build_or_load_IoMmodel(cfg)
         model.summary(line_length=80)
         return model,cfg
 
