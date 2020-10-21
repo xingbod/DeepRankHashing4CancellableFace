@@ -327,6 +327,7 @@ if __name__ == "__main__":
     cfg_path = args.cfg_path
     batch_size = args.batch_size
     epoch = args.model_epoch
+    gallery_mark = args.gallery_mark
     is_only_arc = False
 
     meta_dir = "%s/meta" % args.target  # meta root dir
