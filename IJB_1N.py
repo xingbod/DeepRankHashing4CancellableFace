@@ -458,11 +458,12 @@ if __name__ == "__main__":
     probe_ids = probe_mixed_unique_subject_ids
     probe_feats = probe_mixed_templates_feature
 
-    mask = gen_mask(probe_ids, gallery_ids)
     np.savetxt("data/gallery_ids.csv", gallery_ids, delimiter=",")
     np.savetxt("data/gallery_feats.csv", gallery_feats, delimiter=",")
     np.savetxt("data/probe_ids.csv", probe_ids, delimiter=",")
     np.savetxt("data/probe_feats.csv", probe_feats, delimiter=",")
+
+    mask = gen_mask(probe_ids, gallery_ids)
 
     print("{}: start evaluation".format(dt.now()))
     evaluation(probe_feats, gallery_feats, mask)
