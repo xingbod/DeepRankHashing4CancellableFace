@@ -35,11 +35,14 @@ def callMe():
     set_memory_growth()
     isInsightmodel = 100
     # cfg = load_yaml('./configs/iom_res50_random_xception.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
-    cfg_arc = load_yaml('configs/config_arc/arc_Insight_res100.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
-    cfg = cfg_iom = load_yaml('configs/config_random/iom_res100_random_insightface.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
+    # cfg_arc = load_yaml('configs/config_arc/arc_Insight_res100.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
+    # cfg = cfg_iom = load_yaml('configs/config_random/iom_res100_random_insightface.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
+
+    cfg_iom = load_yaml('./ configs / config_random / iom_res50_random_inceptionresnet.yaml')
+
     m = cfg['m'] = mycfg['m']
     q = cfg['q'] = mycfg['q']
-    model = build_or_load_IoMmodel(cfg_arc)
+    model = build_or_load_IoMmodel(cfg_iom)
     model.summary(line_length=80)
     model.layers[0].trainable = False
     # for layer in model.layers:
@@ -61,7 +64,7 @@ def callMe():
         # print("    Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(rr_ytf[0], rr_fs[0]))
         mAp_fs = mAp_ytf = 0
         rr_ytf = rr_fs = [0]
-        is_flip = True
+        is_flip = False
         print('[*] is_flip : {}'.format(is_flip))
         print("[*] Loading LFW, AgeDB30 and CFP-FP...")
         lfw, agedb_30, cfp_fp, lfw_issame, agedb_30_issame, cfp_fp_issame = \
