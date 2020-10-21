@@ -75,7 +75,7 @@ use_detector_score = True  # if Ture, TestMode(D1)
 use_flip_test = True  # if Ture, TestMode(F1)
 job = args.job
 # is_only_arc = True
-
+print("is_only_arc?",is_only_arc)
 def read_template_media_list(path):
     # ijb_meta = np.loadtxt(path, dtype=str)
     ijb_meta = pd.read_csv(path, sep=' ', header=None).values
