@@ -117,9 +117,9 @@ def main(_):
         optimizer = tf.keras.optimizers.SGD(
             learning_rate=learning_rate, momentum=0.9, nesterov=True)# can use adam sgd
 
-    for layer in model.layers:
-        if layer.name == 'arcface_model':
-            layer.trainable = False
+    # for layer in model.layers:
+    #     if layer.name == 'arcface_model':
+    #         layer.trainable = False
     # 可训练层
     # model.layers[0].trainable  = True
     for x in model.trainable_weights:
