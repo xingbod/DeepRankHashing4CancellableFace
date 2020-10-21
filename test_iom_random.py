@@ -38,7 +38,7 @@ def callMe():
     # cfg_arc = load_yaml('configs/config_arc/arc_Insight_res100.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
     # cfg = cfg_iom = load_yaml('configs/config_random/iom_res100_random_insightface.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
 
-    cfg_iom = load_yaml('./ configs / config_random / iom_res50_random_inceptionresnet.yaml')
+    cfg_iom = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
 
     m = cfg['m'] = mycfg['m']
     q = cfg['q'] = mycfg['q']
