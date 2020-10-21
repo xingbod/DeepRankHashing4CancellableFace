@@ -122,9 +122,9 @@ def main(_):
     #         layer.trainable = False
     # 可训练层
     # model.layers[0].trainable  = True
-    for x in model.trainable_weights:
-        print("trainable:",x.name)
-    print('\n')
+    # for x in model.trainable_weights:
+    #     print("trainable:",x.name)
+    # print('\n')
     model.summary(line_length=80)
 
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
