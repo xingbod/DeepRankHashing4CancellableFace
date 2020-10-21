@@ -245,6 +245,7 @@ def evaluation(query_feats, gallery_feats, mask,measure = 'euclidean'):
     print('similarity shape', similarity.shape)
     print("similarity",similarity[0])
 
+
     top_inds = np.argsort(-similarity)
     print(top_inds.shape)
     perf = []
@@ -457,6 +458,10 @@ if __name__ == "__main__":
     probe_feats = probe_mixed_templates_feature
 
     mask = gen_mask(probe_ids, gallery_ids)
+    np.savetxt("data/gallery_ids.csv", gallery_ids, delimiter=",")
+    np.savetxt("data/gallery_feats.csv", gallery_feats, delimiter=",")
+    np.savetxt("data/probe_ids.csv", probe_ids, delimiter=",")
+    np.savetxt("data/probe_feats.csv", probe_feats, delimiter=",")
 
     print("{}: start evaluation".format(dt.now()))
     evaluation(probe_feats, gallery_feats, mask)
