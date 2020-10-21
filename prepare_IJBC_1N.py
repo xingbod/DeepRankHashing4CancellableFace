@@ -357,14 +357,18 @@ if __name__ == "__main__":
     gallery_feats = gallery_templates_feature
     probe_ids = probe_mixed_unique_subject_ids
     probe_feats = probe_mixed_templates_feature
+    #
 
-    np.savetxt("data/"+"IJBC1N_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
-        cfg['q'])+"gallery_ids.csv", gallery_ids, delimiter=",")
-    np.savetxt("data/"+"IJBC1N_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
-        cfg['q'])+"gallery_feats.csv", gallery_feats, delimiter=",")
-    np.savetxt("data/"+"IJBC1N_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
-        cfg['q'])+"probe_ids.csv", probe_ids, delimiter=",")
-    np.savetxt("data/"+"IJBC1N_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
-        cfg['q'])+"probe_feats.csv", probe_feats, delimiter=",")
-
+    # np.savetxt("data/"+"IJBC1N_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
+    #     cfg['q'])+"gallery_ids.csv", gallery_ids, delimiter=",")
+    # np.savetxt("data/"+"IJBC1N_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
+    #     cfg['q'])+"gallery_feats.csv", gallery_feats, delimiter=",")
+    # np.savetxt("data/"+"IJBC1N_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
+    #     cfg['q'])+"probe_ids.csv", probe_ids, delimiter=",")
+    # np.savetxt("data/"+"IJBC1N_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
+    #     cfg['q'])+"probe_feats.csv", probe_feats, delimiter=",")
+    np.savetxt("data/gallery_ids.csv", gallery_ids, delimiter=",")
+    np.savetxt("data/gallery_feats.csv", gallery_feats, delimiter=",")
+    np.savetxt("data/probe_ids.csv", probe_ids, delimiter=",")
+    np.savetxt("data/probe_feats.csv", probe_feats, delimiter=",")
     print("[**]Completed!!!")
