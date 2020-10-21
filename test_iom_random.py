@@ -123,7 +123,7 @@ def callMe():
             acc_agedb30, acc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
 
         with open('./logs/' + cfg['sub_name'] + "_Output_line_" + measure + '_layer_' + cfg[
-            'hidden_layer_remark'] + "_0710_stat.md", "a") as text_file:
+            'hidden_layer_remark'] + "_20201021_stat.md", "a") as text_file:
             text_file.write(log_str2)
 
     # evl(0,measure='Euclidean')  # no LUT
