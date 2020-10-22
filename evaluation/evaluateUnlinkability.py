@@ -111,7 +111,7 @@ ax.axvline(bin_centers[index[0][0]], color='k', linestyle='--')
 ax.spines['top'].set_visible(False)
 ax.set_ylabel("Probability Density")
 ax.set_xlabel("Score")
-ax.set_title("%s, $\mathrm{D}_{\leftrightarrow}^{\mathit{sys}}$ = %.2f" % (figureTitle, Dsys),  y = 0.9)
+ax.set_title("%s, $\mathrm{D}_{\leftrightarrow}^{\mathit{sys}}$ = %.4f" % (figureTitle, Dsys),  y = 1.02)
 
 labs = [ax.get_lines()[0].get_label(), ax.get_lines()[1].get_label(), ax2.get_lines()[0].get_label()]
 lns = [ax.get_lines()[0], ax.get_lines()[1], lns3]
