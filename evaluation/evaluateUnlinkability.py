@@ -76,7 +76,7 @@ y2 = numpy.histogram(nonMatedScores, bins = bin_edges, density = True)[0]
 LR = numpy.divide(y1, y2, out=numpy.ones_like(y1), where=y2!=0)
 D = 2*(omega*LR/(1 + omega*LR)) - 1
 D[omega*LR <= 1] = 0
-D[y2 == 0] = 1 # this is the definition of D, and at the same time takes care of inf / nan # this is quite non-sense,as there may be some bins which is zeor,no data
+# D[y2 == 0] = 1 # this is the definition of D, and at the same time takes care of inf / nan # this is quite non-sense,as there may be some bins which is zeor,no data
 
 # Compute and print Dsys
 Dsys = numpy.trapz(x = bin_centers, y = D* y1)
