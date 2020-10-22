@@ -60,9 +60,9 @@ nonMatedScores = numpy.loadtxt(nonMatedScoresFile)
 print('matedScores: ',matedScores)
 if nBins == -1:
 	nBins = min(len(matedScores)/10,100)
-
-matedScores = savgol_filter(matedScores, 51, 3) # window size 51, polynomial order 3
-nonMatedScores = savgol_filter(nonMatedScores, 51, 3) # window size 51, polynomial order 3
+#
+# matedScores = savgol_filter(matedScores, 51, 3) # window size 51, polynomial order 3
+# nonMatedScores = savgol_filter(nonMatedScores, 51, 3) # window size 51, polynomial order 3
 
 # define range of scores to compute D
 bin_edges = numpy.linspace(min([min(matedScores), min(nonMatedScores)]), max([max(matedScores), max(nonMatedScores)]), num=nBins + 1, endpoint=True)
