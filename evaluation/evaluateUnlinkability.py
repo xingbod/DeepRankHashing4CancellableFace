@@ -22,7 +22,8 @@ import matplotlib.pyplot as plt
 import pylab
 import seaborn as sns
 import argparse
-
+import sklearn
+from scipy.signal import savgol_filter
 ######################################################################
 ### Parameter and arguments
 
@@ -60,6 +61,9 @@ print('matedScores: ',matedScores)
 if nBins == -1:
 	nBins = min(len(matedScores)/10,100)
 
+matedScores = savgol_filter(matedScores, 51, 3) # window size 51, polynomial order 3
+nonMatedScores = savgol_filter(nonMatedScores, 51, 3) # window size 51, polynomial order 3
+
 # define range of scores to compute D
 bin_edges = numpy.linspace(min([min(matedScores), min(nonMatedScores)]), max([max(matedScores), max(nonMatedScores)]), num=nBins + 1, endpoint=True)
 bin_centers = (bin_edges[1:] + bin_edges[:-1]) / 2 # find bin centers
@@ -72,7 +76,7 @@ y2 = numpy.histogram(nonMatedScores, bins = bin_edges, density = True)[0]
 LR = numpy.divide(y1, y2, out=numpy.ones_like(y1), where=y2!=0)
 D = 2*(omega*LR/(1 + omega*LR)) - 1
 D[omega*LR <= 1] = 0
-D[y2 == 0] = 1 # this is the definition of D, and at the same time takes care of inf / nan
+D[y2 == 0] = 1 # this is the definition of D, and at the same time takes care of inf / nan # this is quite non-sense,as there may be some bins which is zeor,no data
 
 # Compute and print Dsys
 Dsys = numpy.trapz(x = bin_centers, y = D* y1)
