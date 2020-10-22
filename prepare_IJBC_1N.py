@@ -242,11 +242,11 @@ if __name__ == "__main__":
     print(gallery_s2_templates.shape, gallery_s2_templates.shape)
 
     if gallery_mark == 1:
-        print('Using G!',gallery_s1_templates.shape)
+        print('Using G1!',gallery_s1_templates.shape)
         gallery_templates = gallery_s1_templates
         gallery_subject_ids = gallery_s1_subject_ids
     elif gallery_mark == 2:
-        print('Using G!',gallery_s1_templates.shape)
+        print('Using G2',gallery_s1_templates.shape)
         gallery_templates = gallery_s2_templates
         gallery_subject_ids = gallery_s2_subject_ids
     else:
