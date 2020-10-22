@@ -90,9 +90,9 @@ plt.clf()
 sns.set_context("paper",font_scale=1.7, rc={"lines.linewidth": 2.5})
 sns.set_style("white")
 
-ax = sns.kdeplot(matedScores, shade=False, label='Mated', fill=True, color=sns.xkcd_rgb["medium green"])
+ax = sns.kdeplot(matedScores, shade=False, label='Mated', color=sns.xkcd_rgb["medium green"])
 x1,y1 = ax.get_lines()[0].get_data()
-ax = sns.kdeplot(nonMatedScores, shade=False, label='Non-Mated', fill=True, color=sns.xkcd_rgb["pale red"],linewidth=5, linestyle='--')
+ax = sns.kdeplot(nonMatedScores, shade=False, label='Non-Mated', color=sns.xkcd_rgb["pale red"],linewidth=5, linestyle='--')
 x2,y2 = ax.get_lines()[1].get_data()
 
 ax2 = ax.twinx()
