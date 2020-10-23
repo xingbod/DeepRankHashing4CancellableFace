@@ -281,80 +281,87 @@ if __name__ == "__main__":
         cfg['m'] = 512
         cfg['q'] = 8
 
-    img_feats = np.load("data_ijbc/img_feats_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
+    img_feats_res50 = np.load("data_ijbc/img_feats_ResNet50_" + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
+        cfg['q']) + ".npy")
+    img_feats_incepv2 = np.load("data_ijbc/img_feats_InceptionResNetV2_" + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
+        cfg['q']) + ".npy")
+    img_feats_xception = np.load("data_ijbc/img_feats_Xception_"+ str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
         cfg['q']) + ".npy")
     faceness_scores = np.load("faceness_scores.npy")
 
-    # compute template features from image features.
-    start = timeit.default_timer()
-    # ==========================================================
-    # Norm feature before aggregation into template feature?
-    # Feature norm from embedding network and faceness score are able to decrease weights for noise samples (not face).
-    # ==========================================================
-    use_norm_score = True  # if True, TestMode(N1)
-    use_detector_score = False  # if True, TestMode(D1)
-    use_flip_test = True  # if True, TestMode(F1)
+    def produceTemplate(img_feats):
+        # compute template features from image features.
+        start = timeit.default_timer()
+        # ==========================================================
+        # Norm feature before aggregation into template feature?
+        # Feature norm from embedding network and faceness score are able to decrease weights for noise samples (not face).
+        # ==========================================================
+        use_norm_score = True  # if True, TestMode(N1)
+        use_detector_score = False  # if True, TestMode(D1)
+        use_flip_test = True  # if True, TestMode(F1)
 
-    if use_flip_test:
-        # concat --- F1
-        img_input_feats = img_feats
-        # add --- F2
-        # img_input_feats = img_feats[:, 0:int(img_feats.shape[1] / 2)] + img_feats[:, int(img_feats.shape[1] / 2):]
-    else:
-        img_input_feats = img_feats[:, 0:int(img_feats.shape[1] / 2)]
+        if use_flip_test:
+            # concat --- F1
+            img_input_feats = img_feats
+            # add --- F2
+            # img_input_feats = img_feats[:, 0:int(img_feats.shape[1] / 2)] + img_feats[:, int(img_feats.shape[1] / 2):]
+        else:
+            img_input_feats = img_feats[:, 0:int(img_feats.shape[1] / 2)]
 
-    if use_norm_score:
-        img_input_feats = img_input_feats
-    else:
-        # normalise features to remove norm information
-        img_input_feats = img_input_feats / np.sqrt(np.sum(img_input_feats ** 2, -1, keepdims=True))
+        if use_norm_score:
+            img_input_feats = img_input_feats
+        else:
+            # normalise features to remove norm information
+            img_input_feats = img_input_feats / np.sqrt(np.sum(img_input_feats ** 2, -1, keepdims=True))
 
-    if use_detector_score:
-        img_input_feats = img_input_feats * np.matlib.repmat(faceness_scores[:, np.newaxis], 1,
-                                                             img_input_feats.shape[1])
-    else:
-        img_input_feats = img_input_feats
-    print("input features shape", img_input_feats.shape)
+        if use_detector_score:
+            img_input_feats = img_input_feats * np.matlib.repmat(faceness_scores[:, np.newaxis], 1,
+                                                                 img_input_feats.shape[1])
+        else:
+            img_input_feats = img_input_feats
+        print("input features shape", img_input_feats.shape)
 
-    # load gallery feature # image2template_feature_hash image2template_feature
-    gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature_hash(
-        img_input_feats, total_templates, total_medias, gallery_templates, gallery_subject_ids)
-    stop = timeit.default_timer()
-    print('Time: %.2f s. ' % (stop - start))
-    print("gallery_templates_feature", gallery_templates_feature.shape)
-    print("gallery_unique_subject_ids", gallery_unique_subject_ids.shape)
-    # np.savetxt("gallery_templates_feature.txt", gallery_templates_feature)
-    # np.savetxt("gallery_unique_subject_ids.txt", gallery_unique_subject_ids)
+        # load gallery feature # image2template_feature_hash image2template_feature
+        gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature_hash(
+            img_input_feats, total_templates, total_medias, gallery_templates, gallery_subject_ids)
+        stop = timeit.default_timer()
+        print('Time: %.2f s. ' % (stop - start))
+        print("gallery_templates_feature", gallery_templates_feature.shape)
+        print("gallery_unique_subject_ids", gallery_unique_subject_ids.shape)
+        # np.savetxt("gallery_templates_feature.txt", gallery_templates_feature)
+        # np.savetxt("gallery_unique_subject_ids.txt", gallery_unique_subject_ids)
 
-    # load prope feature
-    probe_mixed_record = "%s_1N_probe_mixed.csv" % target.lower()
-    probe_mixed_templates, probe_mixed_subject_ids = read_template_subject_id_list(
-        os.path.join(meta_dir, probe_mixed_record))
-    print(probe_mixed_templates.shape, probe_mixed_subject_ids.shape)
-    probe_mixed_templates_feature, probe_mixed_unique_templates, probe_mixed_unique_subject_ids = image2template_feature_hash(
-        img_input_feats, total_templates, total_medias, probe_mixed_templates, probe_mixed_subject_ids)
-    print("probe_mixed_templates_feature", probe_mixed_templates_feature.shape)
-    print("probe_mixed_unique_subject_ids", probe_mixed_unique_subject_ids.shape)
-    # np.savetxt("probe_mixed_templates_feature.txt", probe_mixed_templates_feature)
-    # np.savetxt("probe_mixed_unique_subject_ids.txt", probe_mixed_unique_subject_ids)
+        # load prope feature
+        probe_mixed_record = "%s_1N_probe_mixed.csv" % target.lower()
+        probe_mixed_templates, probe_mixed_subject_ids = read_template_subject_id_list(
+            os.path.join(meta_dir, probe_mixed_record))
+        print(probe_mixed_templates.shape, probe_mixed_subject_ids.shape)
+        probe_mixed_templates_feature, probe_mixed_unique_templates, probe_mixed_unique_subject_ids = image2template_feature_hash(
+            img_input_feats, total_templates, total_medias, probe_mixed_templates, probe_mixed_subject_ids)
+        print("probe_mixed_templates_feature", probe_mixed_templates_feature.shape)
+        print("probe_mixed_unique_subject_ids", probe_mixed_unique_subject_ids.shape)
+        # np.savetxt("probe_mixed_templates_feature.txt", probe_mixed_templates_feature)
+        # np.savetxt("probe_mixed_unique_subject_ids.txt", probe_mixed_unique_subject_ids)
 
-    # root_dir = "" #feature root dir
-    # gallery_id_path = "" #id filepath
-    # gallery_feats_path = "" #feature filelpath
-    # print("{}: start loading gallery feat {}".format(dt.now(), gallery_id_path))
-    # gallery_ids, gallery_feats = load_feat_file(root_dir, gallery_id_path, gallery_feats_path)
-    # print("{}: end loading gallery feat".format(dt.now()))
-    #
-    # probe_id_path = "probe_mixed_unique_subject_ids.txt" #probe id filepath
-    # probe_feats_path = "probe_mixed_templates_feature.txt" #probe feats filepath
-    # print("{}: start loading probe feat {}".format(dt.now(), probe_id_path))
-    # probe_ids, probe_feats = load_feat_file(root_dir, probe_id_path, probe_feats_path)
-    # print("{}: end loading probe feat".format(dt.now()))
+        # root_dir = "" #feature root dir
+        # gallery_id_path = "" #id filepath
+        # gallery_feats_path = "" #feature filelpath
+        # print("{}: start loading gallery feat {}".format(dt.now(), gallery_id_path))
+        # gallery_ids, gallery_feats = load_feat_file(root_dir, gallery_id_path, gallery_feats_path)
+        # print("{}: end loading gallery feat".format(dt.now()))
+        #
+        # probe_id_path = "probe_mixed_unique_subject_ids.txt" #probe id filepath
+        # probe_feats_path = "probe_mixed_templates_feature.txt" #probe feats filepath
+        # print("{}: start loading probe feat {}".format(dt.now(), probe_id_path))
+        # probe_ids, probe_feats = load_feat_file(root_dir, probe_id_path, probe_feats_path)
+        # print("{}: end loading probe feat".format(dt.now()))
 
-    gallery_ids = gallery_unique_subject_ids
-    gallery_feats = gallery_templates_feature
-    probe_ids = probe_mixed_unique_subject_ids
-    probe_feats = probe_mixed_templates_feature
+        gallery_ids = gallery_unique_subject_ids
+        gallery_feats = gallery_templates_feature
+        probe_ids = probe_mixed_unique_subject_ids
+        probe_feats = probe_mixed_templates_feature
+
+        return gallery_ids,gallery_feats,probe_ids,probe_feats
     #
 
     # np.savetxt("data/"+"IJBC1N_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
@@ -365,8 +372,26 @@ if __name__ == "__main__":
     #     cfg['q'])+"probe_ids.csv", probe_ids, delimiter=",")
     # np.savetxt("data/"+"IJBC1N_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
     #     cfg['q'])+"probe_feats.csv", probe_feats, delimiter=",")
-    np.savetxt("data/gallery_ids.csv", gallery_ids, delimiter=",")
-    np.savetxt("data/gallery_feats.csv", gallery_feats, delimiter=",")
-    np.savetxt("data/probe_ids.csv", probe_ids, delimiter=",")
-    np.savetxt("data/probe_feats.csv", probe_feats, delimiter=",")
+    img_feats = np.concatenate((img_feats_res50, img_feats_incepv2), axis=1)
+    gallery_ids, gallery_feats, probe_ids, probe_feats = produceTemplate(img_feats)
+    np.savetxt("data/gallery_res50_incev2_ids.csv", gallery_ids, delimiter=",")
+    np.savetxt("data/gallery_res50_incev2_feats.csv", gallery_feats, delimiter=",")
+    np.savetxt("data/probe_res50_incev2_ids.csv", probe_ids, delimiter=",")
+    np.savetxt("data/probe_res50_incev2_feats.csv", probe_feats, delimiter=",")
+    print("[**]Completed!!!")
+
+    img_feats = np.concatenate((img_feats_res50, img_feats_xception), axis=1)
+    gallery_ids, gallery_feats, probe_ids, probe_feats = produceTemplate(img_feats)
+    np.savetxt("data/gallery_res50_xception_ids.csv", gallery_ids, delimiter=",")
+    np.savetxt("data/gallery_res50_xception_feats.csv", gallery_feats, delimiter=",")
+    np.savetxt("data/probe_res50_xception_ids.csv", probe_ids, delimiter=",")
+    np.savetxt("data/probe_res50_xception_feats.csv", probe_feats, delimiter=",")
+    print("[**]Completed!!!")
+
+    img_feats = np.concatenate((img_feats_incepv2, img_feats_xception), axis=1)
+    gallery_ids, gallery_feats, probe_ids, probe_feats = produceTemplate(img_feats)
+    np.savetxt("data/gallery_incepv2_xception_ids.csv", gallery_ids, delimiter=",")
+    np.savetxt("data/gallery_incepv2_xception_feats.csv", gallery_feats, delimiter=",")
+    np.savetxt("data/probe_incepv2_xception_ids.csv", probe_ids, delimiter=",")
+    np.savetxt("data/probe_incepv2_xception_feats.csv", probe_feats, delimiter=",")
     print("[**]Completed!!!")
