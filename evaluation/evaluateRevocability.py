@@ -99,7 +99,7 @@ ax = sns.kdeplot(matedScores, shade=False, label='Mated-imposter', color=sns.xkc
 x1,y1 = ax.get_lines()[0].get_data()
 ax = sns.kdeplot(nonMatedScores, shade=False, label='Imposter', color=sns.xkcd_rgb["pale red"],linewidth=5, linestyle='--')
 x2,y2 = ax.get_lines()[1].get_data()
-ax = sns.kdeplot(nonMatedScores, shade=False, label='Genuine', color=sns.xkcd_rgb["black"],linewidth=5, linestyle='-.')
+ax = sns.kdeplot(genMatedScores, shade=False, label='Genuine', color=sns.xkcd_rgb["black"],linewidth=5, linestyle='-.')
 x3,y3 = ax.get_lines()[1].get_data()
 
 ax2 = ax.twinx()
