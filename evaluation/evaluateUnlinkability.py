@@ -36,7 +36,7 @@ parser.add_argument('--nBins', help='number of bins for the computations, if non
 parser.add_argument('--figureTitle', help='title for the output figure', nargs='?', default='Unlinkability analysis', type=str)
 parser.add_argument('--legendLocation', help='legend location', nargs='?', default='upper right', type=str)
 
-
+# python evaluateUnlinkability.py.. / matlab / psedo_mated.txt.. / matlab / psedo_non_mated.txt test_nbins50.svg - -nBins 50
 args = parser.parse_args()
 matedScoresFile = args.matedScoresFile
 nonMatedScoresFile = args.nonMatedScoresFile

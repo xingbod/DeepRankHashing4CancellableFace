@@ -38,6 +38,8 @@ parser.add_argument('--figureTitle', help='title for the output figure', nargs='
 parser.add_argument('--legendLocation', help='legend location', nargs='?', default='upper right', type=str)
 
 
+# e.g.  python evaluateRevocability.py ../matlab/psedo_mated.txt ../matlab/psedo_non_mated.txt ../matlab/mated.txt  revocability_nbins50.svg --nBins 50
+
 args = parser.parse_args()
 matedScoresFile = args.matedScoresFile
 nonMatedScoresFile = args.nonMatedScoresFile
