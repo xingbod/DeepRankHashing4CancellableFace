@@ -62,6 +62,9 @@ matedScores = numpy.loadtxt(matedScoresFile)
 nonMatedScores = numpy.loadtxt(nonMatedScoresFile)
 genMatedScores = numpy.loadtxt(genMatedScoresFile)
 
+# remove value 1 coz they are from same samples
+genMatedScores = genMatedScores[genMatedScores!=1]
+
 if nBins == -1:
 	nBins = min(len(matedScores)/10,100)
 #
