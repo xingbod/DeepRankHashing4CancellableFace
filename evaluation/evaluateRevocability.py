@@ -129,7 +129,6 @@ ax.legend(lns, labs, loc = legendLocation)
 
 ax.set_ylim([0, max(max(y1), max(y2), max(y3)) * 1.05])
 ax.set_xlim([bin_edges[0]*0.98, bin_edges[-1]*1.02])
-ax2.set_ylim([0, 1.1])
 
 plt.gcf().subplots_adjust(bottom=0.15)
 plt.gcf().subplots_adjust(left=0.15)
