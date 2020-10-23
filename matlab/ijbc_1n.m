@@ -8,7 +8,7 @@ addpath_recurse('BLUFR')
 %        cfg['q'])+
 %ijbc_1n("gallery_res50_incev2_ids","gallery_res50_incev2_feats","probe_res50_incev2_ids","probe_res50_incev2_feats")
 %ijbc_1n("gallery_res50_xception_ids","gallery_res50_xception_feats","probe_res50_xception_ids","probe_res50_xception_feats")
-%ijbc_1n("gallery_incev2_xception_ids","gallery_incev2_xception_feats","probe_incev2_xception_ids","probe_incev2_xception_feats")
+%ijbc_1n("gallery_incepv2_xception_ids","gallery_incepv2_xception_feats","probe_incepv2_xception_ids","probe_incepv2_xception_feats")
 
 gallery_feats = importdata('../data/'+gallery_feats_path+'.csv');
 gallery_ids = importdata('../data/'+gallery_ids_path+'.csv');
