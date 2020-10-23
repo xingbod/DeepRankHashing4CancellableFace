@@ -8,8 +8,8 @@ input_size: 112
 embd_shape: 512
 #iom_res50_twostage_triplet -- only two stage with triplet loss
 #iom_res50_twostage_triplet and quantization loss -- triplet loss + quantization loss, this in another config file
-sub_name: 'cfg18_inresv2_512x8'
-backbone_type: 'InceptionResNetV2' # 'ResNet50', 'MobileNetV2'
+sub_name: 'cfg20_res50_512x8'
+backbone_type: 'ResNet50' # 'ResNet50', 'MobileNetV2'
 head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
 bin_lut_loss: 'none'

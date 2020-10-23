@@ -74,3 +74,12 @@ _revocablity.m_
 
 Using this script to generate genuine scores.
 
+
+
+
+```bash
+measure = "Hamming";
+remark = "learning_incepv2";
+enroll_query_search("embeddings_dl/InceptionResNetV2_VGG2_feat_randomIoM_0_LUT_0_512x8.csv", "embeddings_dl/InceptionResNetV2_VGG2_name_randomIoM_0_LUT_0_512x8.txt",measure,"VGG2",remark);
+
+```

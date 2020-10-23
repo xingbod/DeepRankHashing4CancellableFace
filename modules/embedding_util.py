@@ -103,4 +103,5 @@ def extractFeatAppend(dataset, model,feats,names,isLUT=0,LUT=None):
         feats = tf.cast(feats, tf.int32)
         LUV = tf.gather(LUT, feats)
         feats = tf.reshape(LUV, (feats.shape[0], isLUT * feats.shape[1]))
+        feats = feats.numpy()
     return feats, names, n

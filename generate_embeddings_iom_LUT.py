@@ -34,6 +34,7 @@ flags.DEFINE_integer('embedding_vgg2', 0, 'embedding_vgg2, 0 mean not use')
 flags.DEFINE_integer('embedding_ijbc', 0, 'embedding_ijbc, 0 mean not use')
 flags.DEFINE_integer('randomIoM', 0, 'randomIoM, 0 mean not use')
 
+# e.g. python generate_embeddings_iom_LUT.py --cfg_path ./configs/config_18/cfg18_inresv2_512x8.yaml --isLUT 0 --embedding_lfw 1 --embedding_vgg2 1 --randomIoM 0
 def main(_argv):
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     os.environ['CUDA_VISIBLE_DEVICES'] = FLAGS.gpu
