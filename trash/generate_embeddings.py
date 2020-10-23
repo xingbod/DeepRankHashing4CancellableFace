@@ -77,7 +77,7 @@ def main(_argv):
 
     arcmodel.summary(line_length=80)
 
-    dataset = load_data_from_dir('./data/lfw_mtcnnpy_160', BATCH_SIZE=cfg['batch_size'], ds='LFW')
+    dataset = load_data_from_dir('../data/lfw_mtcnnpy_160', BATCH_SIZE=cfg['batch_size'], ds='LFW')
     feats, names, n = extractFeat(dataset, arcmodel, 512)
     with open('embeddings/' + cfg['backbone_type'] + '_lfw_feat.csv',
               'w') as f:

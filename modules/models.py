@@ -396,7 +396,7 @@ def IoMFaceModel(size=None, channels=3, num_classes=None, name='IoMface_model',
     return Model(inputs, logist, name=name)
 '''
 
-def build_or_load_IoMmodel(arc_cfg=None, ckpt_epoch = '', is_only_arc=False):
+def build_or_load_IoMmodel(arc_cfg=None, ckpt_epoch = '', is_only_arc=False, randomInit=False):
     permKey = None
     if arc_cfg['head_type'] == 'IoMHead':  #
         # permKey = generatePermKey(cfg['embd_shape'])
@@ -449,13 +449,14 @@ def build_or_load_IoMmodel(arc_cfg=None, ckpt_epoch = '', is_only_arc=False):
     else:
         ckpt_path_iom = './checkpoints/' + iom_cfg['sub_name'] + '/' + ckpt_epoch
 
-    if ckpt_path_iom is not None:
-        print("[*] load ckpt from {}".format(ckpt_path_iom))
-        model.load_weights(ckpt_path_iom)
+    if not randomInit:
+        if ckpt_path_iom is not None:
+            print("[*] load ckpt from {}".format(ckpt_path_iom))
+            model.load_weights(ckpt_path_iom)
+        else:
+            print("[*] Warning!!!! Cannot find ckpt from {}.".format(ckpt_path_iom), 'Using random layer')
     else:
-        print("[*] Warning!!!! Cannot find ckpt from {}.".format(ckpt_path_iom),'Using random layer')
-
-
+        print('[*] A random IoM layer is added!')
     return model
 
 

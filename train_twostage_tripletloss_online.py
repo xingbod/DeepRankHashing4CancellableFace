@@ -71,7 +71,7 @@ def main(_):
         arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_Xception/')
     elif cfg['backbone_type'] == 'VGG19':
         arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_vgg19/')
-    elif cfg['backbone_type'] == 'Insight_ResNet100':
+    elif cfg['backbone_type'] == 'Insight_ResNet100' or cfg['backbone_type'] == 'Insight_ResNet50':
         arc_ckpt_path = None # here we don't have any check point file for this pre_build model, as it is loaded with weights
     else:
         arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50/')

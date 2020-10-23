@@ -60,7 +60,7 @@ def main(_argv):
 
 
 
-    dataset = load_data_from_dir('./data/lfw_mtcnnpy_160', BATCH_SIZE=cfg['eval_batch_size'], ds='LFW')
+    dataset = load_data_from_dir('../data/lfw_mtcnnpy_160', BATCH_SIZE=cfg['eval_batch_size'], ds='LFW')
     feats, names, n = extractFeat(dataset, arcmodel)
     with open('embeddings_0831/' + cfg['backbone_type'] + '_lfw_feat.csv',
               'w') as f:
@@ -129,7 +129,7 @@ def main(_argv):
             model.summary(line_length=80)
             cfg['embd_shape'] = m * q
             ##########################################
-            dataset = load_data_from_dir('./data/lfw_mtcnnpy_160', BATCH_SIZE=cfg['eval_batch_size'], ds='LFW')
+            dataset = load_data_from_dir('../data/lfw_mtcnnpy_160', BATCH_SIZE=cfg['eval_batch_size'], ds='LFW')
             feats, names, n = extractFeat(dataset, model)
             with open(
                     'embeddings_0831/' + cfg['backbone_type'] + '_lfw_feat_drIoM_' + str(cfg['m']) + 'x' + str(

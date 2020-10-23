@@ -231,7 +231,7 @@ def read_score(path):
 
 
 def evaluation(query_feats, gallery_feats, mask,measure = 'euclidean'):
-    Fars = [0.01, 0.1]
+    Fars = [0.001,0.01, 0.1]
     print(query_feats.shape)
     print(gallery_feats.shape)
 
