@@ -435,9 +435,9 @@ def eva(img_feats):
 
 
 # In[ ]:
-img_feats = np.concatenate((img_feats_res50, img_feats_incepv2), axis=1)
-eva(img_feats)
-img_feats = np.concatenate((img_feats_res50, img_feats_xception), axis=1)
-eva(img_feats)
+# img_feats = np.concatenate((img_feats_res50, img_feats_incepv2), axis=1)
+# eva(img_feats)
+# img_feats = np.concatenate((img_feats_res50, img_feats_xception), axis=1)
+# eva(img_feats)
 img_feats = np.concatenate((img_feats_incepv2, img_feats_xception), axis=1)
 eva(img_feats)
