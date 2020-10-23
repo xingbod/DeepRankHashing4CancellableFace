@@ -72,7 +72,7 @@ use_norm_score = True  # if Ture, TestMode(N1)
 use_detector_score = True  # if Ture, TestMode(D1)
 use_flip_test = True  # if Ture, TestMode(F1)
 job = args.job
-is_only_arc = False
+is_only_arc = 0
 
 def read_template_media_list(path):
     # ijb_meta = np.loadtxt(path, dtype=str)
