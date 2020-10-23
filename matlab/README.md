@@ -62,3 +62,15 @@ enroll_query_lfw_iom_id
 enroll_query_lfw_iom_id_fusion
 are for identification under mixing
 %%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+# Unlinkability and revocability
+
+_unlinkability.m_
+
+Using this script to generate mated non-mated scores.
+
+_revocablity.m_
+
+Using this script to generate genuine scores.
+

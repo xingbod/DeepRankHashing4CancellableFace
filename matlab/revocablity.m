@@ -41,13 +41,19 @@ for cnt_i=1:length(combs)
     dist_gen = 1-pdist2(Descriptors,Descriptors,'Hamming');
     
     mask = lfwlables==lfwlables';
-    
-    psedo_mated = dist_all(mask);
-    psedo_non_mated = dist_all(mask==0);
-    psedo_non_mated = psedo_non_mated(randperm(174614542,length(psedo_mated)));
-    mated = dist_gen(mask);
-    
-    dlmwrite('mated.txt',mated,'-append')
+%
+%    psedo_mated = dist_all(mask);
+%    psedo_non_mated = dist_all(mask==0);
+%    psedo_non_mated = psedo_non_mated(randperm(174614542,length(psedo_mated)));
+%
+    genuine = dist_gen(mask);
+    imposter_mated = dist_all(mask);
+    imposter = dist_gen(mask==0);
+    imposter = imposter(randperm(174614542,length(genuine)));
+
+    dlmwrite('genuine.txt',genuine,'-append')
+    dlmwrite('imposter_mated.txt',imposter_mated,'-append')
+    dlmwrite('imposter.txt',imposter,'-append')
 %     dlmwrite('psedo_mated.txt',psedo_mated,'-append')
 %     dlmwrite('psedo_non_mated.txt',psedo_non_mated,'-append')
     
