@@ -5,7 +5,7 @@ addpath('matlab_tools')
 addpath_recurse('BLUFR')
 
 combs = nchoosek(0:19,2);
-for cnt_i=1:length(combs)
+for cnt_i=1:50
        cnt_i
     fid_lfw_name = importdata('../embeddings_0831/Xception_lfw_name_512x8.txt');
     Descriptor_orig = importdata('../embeddings_0831/InceptionResNetV2_lfw_feat_LUT_PERM_512x8_'+string(combs(cnt_i,1))+'.csv');
@@ -51,9 +51,9 @@ for cnt_i=1:length(combs)
     imposter = dist_gen(mask==0);
     imposter = imposter(randperm(174614542,length(genuine)));
 
-    dlmwrite('genuine.txt',genuine,'-append')
-    dlmwrite('imposter_mated.txt',imposter_mated,'-append')
-    dlmwrite('imposter.txt',imposter,'-append')
+    dlmwrite('permlut_genuine.txt',genuine,'-append')
+    dlmwrite('permlut_imposter_mated.txt',imposter_mated,'-append')
+    dlmwrite('permlut_imposter.txt',imposter,'-append')
 %     dlmwrite('psedo_mated.txt',psedo_mated,'-append')
 %     dlmwrite('psedo_non_mated.txt',psedo_non_mated,'-append')
     

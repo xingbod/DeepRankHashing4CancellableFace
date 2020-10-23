@@ -5,11 +5,11 @@ addpath('matlab_tools')
 addpath_recurse('BLUFR')
 
 combs = nchoosek(0:19,2);
-for cnt_i=1:length(combs)
+for cnt_i=1:50
        cnt_i
     fid_lfw_name = importdata('../embeddings_0831/Xception_lfw_name_512x8.txt');
-    Descriptor_orig = importdata('../embeddings_0831/InceptionResNetV2_lfw_feat_LUT_512x8_'+string(combs(cnt_i,1))+'.csv');
-    Descriptor_orig2 = importdata('../embeddings_0831/InceptionResNetV2_lfw_feat_LUT_512x8_'+string(combs(cnt_i,2))+'.csv');
+    Descriptor_orig = importdata('../embeddings_0831/InceptionResNetV2_lfw_feat_LUT_PERM_512x8_'+string(combs(cnt_i,1))+'.csv');
+    Descriptor_orig2 = importdata('../embeddings_0831/InceptionResNetV2_lfw_feat_LUT_PERM_512x8_'+string(combs(cnt_i,2))+'.csv');
     
     lfw_name=[];
     for i=1:size(fid_lfw_name,1)
@@ -46,8 +46,8 @@ for cnt_i=1:length(combs)
     psedo_non_mated = psedo_non_mated(randperm(174614542,length(psedo_mated)));
     
     
-    dlmwrite('psedo_mated.txt',psedo_mated,'-append')
-    dlmwrite('psedo_non_mated.txt',psedo_non_mated,'-append')
+    dlmwrite('permlut_psedo_mated.txt',psedo_mated,'-append')
+    dlmwrite('permlut_psedo_non_mated.txt',psedo_non_mated,'-append')
     
 end
 %
