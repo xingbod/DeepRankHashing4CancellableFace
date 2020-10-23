@@ -310,6 +310,7 @@ print('Time: %.2f s. ' % (stop - start))
 # In[ ]:
 
 # load model
+cfg = {}
 cfg['m'] = 512
 cfg['q'] = 8
 img_feats_res50 = np.load("data_ijbc/img_feats_ResNet50_" + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
