@@ -34,7 +34,7 @@ parser.add_argument('genMatedScoresFile', help='filename for the Gen-mated score
 parser.add_argument('figureFile', help='filename for the output figure', type=str)
 parser.add_argument('--omega', help='omega value for the computations, if none provided, omega = 1', nargs='?', default=1., type=float)
 parser.add_argument('--nBins', help='number of bins for the computations, if none provided, nBins = min(length(matedScoresFile) / 10, 100)', nargs='?', default=-1, type=int)
-parser.add_argument('--figureTitle', help='title for the output figure', nargs='?', default='Unlinkability analysis', type=str)
+parser.add_argument('--figureTitle', help='title for the output figure', nargs='?', default='Revocability analysis', type=str)
 parser.add_argument('--legendLocation', help='legend location', nargs='?', default='upper right', type=str)
 
 
