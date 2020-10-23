@@ -22,7 +22,7 @@ import tqdm
 import csv
 from modules.embedding_util import load_data_from_dir,extractFeat
 from modules.LUT import genLUT
-
+from modules.utils import generatePermKey
 # modules.utils.set_memory_growth()
 flags.DEFINE_string('cfg_path', './configs/iom_res50.yaml', 'config file path')
 flags.DEFINE_string('ckpt_epoch', '', 'config file path')
