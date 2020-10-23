@@ -6,14 +6,14 @@ addpath_recurse('BLUFR')
 
 %+"IJBC1N_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
 %        cfg['q'])+
-%ijbc_1n('gallery_res50_incev2_ids','gallery_res50_incev2_feats','probe_res50_incev2_ids','probe_res50_incev2_feats')
-%ijbc_1n('gallery_res50_xception_ids','gallery_res50_xception_feats','probe_res50_xception_ids','probe_res50_xception_feats')
-%ijbc_1n('gallery_incev2_xception_ids','gallery_incev2_xception_feats','probe_incev2_xception_ids','probe_incev2_xception_feats')
+%ijbc_1n("gallery_res50_incev2_ids","gallery_res50_incev2_feats","probe_res50_incev2_ids","probe_res50_incev2_feats")
+%ijbc_1n("gallery_res50_xception_ids","gallery_res50_xception_feats","probe_res50_xception_ids","probe_res50_xception_feats")
+%ijbc_1n("gallery_incev2_xception_ids","gallery_incev2_xception_feats","probe_incev2_xception_ids","probe_incev2_xception_feats")
 
-load('../data/'+gallery_feats_path+'.csv')
-load('../data/'+gallery_ids_path+'.csv')
-load('../data/'+probe_feats_path+'.csv')
-load('../data/'+probe_ids_path+'.csv')
+gallery_feats = importdata('../data/'+gallery_feats_path+'.csv');
+gallery_ids = importdata('../data/'+gallery_ids_path+'.csv');
+probe_feats = importdata('../data/'+probe_feats_path+'.csv');
+probe_ids = importdata('../data/'+probe_ids_path+'.csv');
 
 
 
