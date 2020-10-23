@@ -110,8 +110,8 @@ x3,y3 = ax.get_lines()[1].get_data()
 # lns3, = ax2.plot(bin_centers, D, label='$\mathrm{D}_{\leftrightarrow}(s)$', color=sns.xkcd_rgb["denim blue"],linewidth=5)
 
 # print omega * LR = 1 lines
-index = numpy.where(D <= 0)
-ax.axvline(bin_centers[index[0][0]], color='k', linestyle='--')
+# index = numpy.where(D <= 0)
+# ax.axvline(bin_centers[index[0][0]], color='k', linestyle='--')
 
 #index = numpy.where(LR > 1)
 #ax.axvline(bin_centers[index[0][2]], color='k', linestyle='--')
