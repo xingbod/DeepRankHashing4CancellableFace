@@ -37,7 +37,7 @@ parser.add_argument('--figureTitle', help='title for the output figure', nargs='
 parser.add_argument('--legendLocation', help='legend location', nargs='?', default='upper right', type=str)
 
 # python evaluateUnlinkability.py.. / matlab / psedo_mated.txt.. / matlab / psedo_non_mated.txt test_nbins50.svg - -nBins 50
-# python evaluateUnlinkability.py ../matlab/permlut_psedo_mated.txt.. /matlab/permlut_psedo_non_mated.txt unlink_permlut_nbins50.svg - -nBins 50
+# python evaluateUnlinkability.py ../matlab/permlut_psedo_mated.txt ../matlab/permlut_psedo_non_mated.txt unlink_permlut_nbins50.svg --nBins 50
 args = parser.parse_args()
 matedScoresFile = args.matedScoresFile
 nonMatedScoresFile = args.nonMatedScoresFile

@@ -20,8 +20,7 @@ parser.add_argument('--figureTitle', help='title for the output figure', nargs='
 parser.add_argument('--legendLocation', help='legend location', nargs='?', default='upper right', type=str)
 
 
-# e.g.  python evaluateRevocability.py ../matlab/psedo_mated.txt ../matlab/psedo_non_mated.txt ../matlab/mated.txt  revocability_nbins50.svg --nBins 50
-# e.g.  python evaluateRevocability.py ../matlab/permlut_imposter_mated.txt ../matlab/permlut_imposter.txt ../matlab/permlut_genuine.txt  revocability_permlut_nbins50.svg --nBins 50
+# e.g.  python plot_genuine_imposter.py ../matlab/permlut_genuine.txt ../matlab/permlut_imposter.txt score_distribution_nbins50.svg --nBins 50
 
 args = parser.parse_args()
 matedScoresFile = args.matedScoresFile
