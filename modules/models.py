@@ -537,7 +537,7 @@ def build_iom_model(cfg):
         model.load_weights(ckpt_path)
     else:
         print("[*] training from scratch.")
-
+    return model
 
 def build_or_load_Random_IoMmodel(arc_cfg=None):
     permKey = None
