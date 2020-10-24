@@ -25,7 +25,7 @@ flags.DEFINE_integer('insightmodel', 0, 'using insightface pretrained model')
 mycfg = {'m': 0, 'q': 0}
 
 
-def callMe(cfg):
+def callMe():
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
