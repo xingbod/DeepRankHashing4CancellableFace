@@ -151,7 +151,8 @@ def main(_):
         while epochs <= cfg['epochs']:
             if steps % 5 == 0:
                 start = time.time()
-            if steps % 1000 == 0: #reshuffle and generate every epoch steps % steps_per_epoch == 0
+            if steps % 5000 == 0: #reshuffle and generate every epoch steps % steps_per_epoch == 0
+                print('[*] reload DS.')
                 train_dataset = dataset_triplet.load_online_pair_wise_dataset(cfg['train_dataset'], ext=cfg['img_ext'],
                                                                               dataset_ext=cfg['dataset_ext'],
                                                                               samples_per_class=cfg[
