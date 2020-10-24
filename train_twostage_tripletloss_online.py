@@ -250,16 +250,18 @@ def main(_):
                         tf.summary.scalar(
                             'learning rate', optimizer.lr, step=steps)
 
+            if steps % 100 == 0:
+                acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = val_LFW(model, cfg)
+                print(
+                    "    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
+                with summary_writer.as_default():
+                    tf.summary.scalar('metric/epoch_acc', acc_lfw, step=epochs)
+                    tf.summary.scalar('metric/epoch_eer', acc_lfw, step=epochs)
             if steps % cfg['save_steps'] == 0:
                 print('[*] save ckpt file!')
                 model.save_weights('checkpoints/{}/e_{}_b_{}.ckpt'.format(
                     cfg['sub_name'], epochs, steps % steps_per_epoch))
             if steps % steps_per_epoch == 0:
-                # acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = val_LFW(model,cfg)
-                # print("    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
-                # with summary_writer.as_default():
-                #     tf.summary.scalar( 'metric/epoch_acc', acc_lfw, step=epochs)
-                #     tf.summary.scalar('metric/epoch_eer', acc_lfw, step=epochs)
                 model.save_weights('checkpoints/{}/e_{}_b_{}.ckpt'.format(
                     cfg['sub_name'], epochs, steps % steps_per_epoch))
             steps += 1
