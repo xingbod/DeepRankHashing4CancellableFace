@@ -144,24 +144,46 @@ def callMe(cfg):
     # evl(16)
 
 
-def iCall(cfg):
-    for m in [32, 64, 128, 256, 512, 1024]:
-        for q in [8]:
-            print(m, q, '****')
-            mycfg['m'] = m
-            mycfg['q'] = q
-            callMe(cfg)
-    for m in [512]:
-        for q in [2, 4, 8, 16, 32]:  # 2,4,8,16,32,64
-            print(m, q, '****')
-            mycfg['m'] = m
-            mycfg['q'] = q
-            callMe(cfg)
-
 cfg = load_yaml('./configs/config_random/iom_res50_random.yaml')
-iCall(cfg)
-cfg = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
-iCall(cfg)
-cfg = load_yaml('./configs/config_random/iom_res50_random_xception.yaml')
-iCall(cfg)
 
+for m in [32, 64, 128, 256, 512, 1024]:
+    for q in [8]:
+        print(m, q, '****')
+        mycfg['m'] = m
+        mycfg['q'] = q
+        callMe(cfg)
+for m in [512]:
+    for q in [2, 4, 8, 16, 32]:  # 2,4,8,16,32,64
+        print(m, q, '****')
+        mycfg['m'] = m
+        mycfg['q'] = q
+        callMe(cfg)
+
+cfg = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
+for m in [32, 64, 128, 256, 512, 1024]:
+    for q in [8]:
+        print(m, q, '****')
+        mycfg['m'] = m
+        mycfg['q'] = q
+        callMe(cfg)
+for m in [512]:
+    for q in [2, 4, 8, 16, 32]:  # 2,4,8,16,32,64
+        print(m, q, '****')
+        mycfg['m'] = m
+        mycfg['q'] = q
+        callMe(cfg)
+
+
+cfg = load_yaml('./configs/config_random/iom_res50_random_xception.yaml')
+for m in [32, 64, 128, 256, 512, 1024]:
+    for q in [8]:
+        print(m, q, '****')
+        mycfg['m'] = m
+        mycfg['q'] = q
+        callMe(cfg)
+for m in [512]:
+    for q in [2, 4, 8, 16, 32]:  # 2,4,8,16,32,64
+        print(m, q, '****')
+        mycfg['m'] = m
+        mycfg['q'] = q
+        callMe(cfg)
