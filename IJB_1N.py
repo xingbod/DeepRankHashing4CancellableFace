@@ -372,8 +372,8 @@ if __name__ == "__main__":
     # img_feats, faceness_scores = get_image_feature(feature_path, face_path)
 
     cfg = load_yaml(cfg_path)  # cfg = load_yaml(FLAGS.cfg_path)
-    model = build_or_load_IoMmodel(cfg, is_only_arc=is_only_arc)
-    model.summary(line_length=80)
+    # model = build_or_load_IoMmodel(cfg, is_only_arc=is_only_arc)
+    # model.summary(line_length=80)
 
     # img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
 
@@ -458,10 +458,6 @@ if __name__ == "__main__":
     probe_ids = probe_mixed_unique_subject_ids
     probe_feats = probe_mixed_templates_feature
 
-    np.savetxt("data/gallery_ids.csv", gallery_ids, delimiter=",")
-    np.savetxt("data/gallery_feats.csv", gallery_feats, delimiter=",")
-    np.savetxt("data/probe_ids.csv", probe_ids, delimiter=",")
-    np.savetxt("data/probe_feats.csv", probe_feats, delimiter=",")
 
     mask = gen_mask(probe_ids, gallery_ids)
 
