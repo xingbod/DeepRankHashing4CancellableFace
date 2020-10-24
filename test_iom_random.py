@@ -44,8 +44,8 @@ def callMe():
     # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
 
     # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random.yaml')
-    cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
-    # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_xception.yaml')
+    # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
+    cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_xception.yaml')
 
     m = cfg['m'] = mycfg['m']
     q = cfg['q'] = mycfg['q']
