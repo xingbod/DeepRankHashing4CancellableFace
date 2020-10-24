@@ -298,7 +298,7 @@ def perform_val(embedding_size, batch_size, model,
         else:
             embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         # embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
-        print(embeddings)
+        # print(embeddings)
     if isLUT:  # length of bin
         # here do the binary convert
         # # here convert the embedding to binary
