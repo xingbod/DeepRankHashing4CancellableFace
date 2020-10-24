@@ -60,7 +60,7 @@ L = -sum(log(p)) - beta H(p)
 
 
 '''
-def binary_balance_loss_merge(embeddings,steps,summary_writer,q=2,scala=100):
+def binary_balance_loss_merge(embeddings,steps,summary_writer,q=2,scala=100,debug=False):
     embeddings = tf.math.round(embeddings)
     values = tf.cast(embeddings, tf.int32)
     final_loss_mean = tf.reduce_sum(tf.math.abs(tf.reduce_mean(embeddings- (q - 1) / 2.0, 1) ))
@@ -75,7 +75,8 @@ def binary_balance_loss_merge(embeddings,steps,summary_writer,q=2,scala=100):
 
 
     if steps % 5 == 0:
-        print('[***] ', prab)
+        if debug:
+            print('[***] ', prab)
         with summary_writer.as_default():
             if tf.__version__.startswith('1'):
                 tf.contrib.summary.scalar('loss/code balance loss_mean/', final_loss_mean, step=steps)
