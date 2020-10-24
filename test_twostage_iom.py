@@ -37,7 +37,7 @@ def main(_argv):
     m = cfg['m']
     q = cfg['q']
 
-    model = build_iom_model(cfg)
+    model = build_or_load_IoMmodel(cfg)# build_or_load_IoMmodel build_iom_model
     model.summary(line_length=80)
     cfg['embd_shape'] = m * q
 
