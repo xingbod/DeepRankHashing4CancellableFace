@@ -460,6 +460,85 @@ def build_or_load_IoMmodel(arc_cfg=None, ckpt_epoch = '', is_only_arc=False, ran
     return model
 
 
+def build_iom_model(cfg):
+    permKey = None
+    if cfg['head_type'] == 'IoMHead':  #
+        # permKey = generatePermKey(cfg['embd_shape'])
+        permKey = tf.eye(cfg['embd_shape'])  # for training, we don't permutate, won't influence the performance
+
+    arcmodel = ArcFaceModel(size=cfg['input_size'],
+                            embd_shape=cfg['embd_shape'],
+                            backbone_type=cfg['backbone_type'],
+                            head_type='ArcHead',
+                            training=False,
+                            # here equal false, just get the model without acrHead, to load the model trained by arcface
+                            cfg=cfg)
+
+
+    if cfg['backbone_type'] == 'ResNet50':
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50/')
+    elif cfg['backbone_type'] == 'InceptionResNetV2':
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_InceptionResNetV2/')
+    elif cfg['backbone_type'] == 'lresnet100e_ir':
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_lresnet100e_ir/')
+    elif cfg['backbone_type'] == 'Xception':
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_Xception/')
+    elif cfg['backbone_type'] == 'VGG19':
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_vgg19/')
+    elif cfg['backbone_type'] == 'Insight_ResNet100' or cfg['backbone_type'] == 'Insight_ResNet50':
+        arc_ckpt_path = None  # here we don't have any check point file for this pre_build model, as it is loaded with weights
+    else:
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50/')
+
+    ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
+    if (not ckpt_path) & (arc_ckpt_path is not None):
+        print("[*] load ckpt from {}".format(arc_ckpt_path))
+        arcmodel.load_weights(arc_ckpt_path)
+        # epochs, steps = get_ckpt_inf(ckpt_path, steps_per_epoch)
+
+    if cfg['hidden_layer_remark'] == '1':
+        model = IoMFaceModelFromArFace(size=cfg['input_size'],
+                                       arcmodel=arcmodel, training=True,
+                                       permKey=permKey, cfg=cfg)
+    elif cfg['hidden_layer_remark'] == '2':
+        model = IoMFaceModelFromArFace2(size=cfg['input_size'],
+                                        arcmodel=arcmodel, training=True,
+                                        permKey=permKey, cfg=cfg)
+    elif cfg['hidden_layer_remark'] == '3':
+        model = IoMFaceModelFromArFace3(size=cfg['input_size'],
+                                        arcmodel=arcmodel, training=True,
+                                        permKey=permKey, cfg=cfg)
+    elif cfg['hidden_layer_remark'] == 'T':
+        model = IoMFaceModelFromArFace_T(size=cfg['input_size'],
+                                         arcmodel=arcmodel, training=True,
+                                         permKey=permKey, cfg=cfg)
+    elif cfg['hidden_layer_remark'] == 'T1':  # one layer
+        model = IoMFaceModelFromArFace_T1(size=cfg['input_size'],
+                                          arcmodel=arcmodel, training=True,
+                                          permKey=permKey, cfg=cfg)
+    else:
+        model = IoMFaceModelFromArFace(size=cfg['input_size'],
+                                       arcmodel=arcmodel, training=True,
+                                       permKey=permKey, cfg=cfg)
+
+    # for layer in model.layers:
+    #     if layer.name == 'arcface_model':
+    #         layer.trainable = False
+    # 可训练层
+    # model.layers[0].trainable  = True
+    # for x in model.trainable_weights:
+    #     print("trainable:",x.name)
+    # print('\n')
+    model.summary(line_length=80)
+
+    ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
+    if ckpt_path is not None:
+        print("[*] load ckpt from {}".format(ckpt_path))
+        model.load_weights(ckpt_path)
+    else:
+        print("[*] training from scratch.")
+
+
 def build_or_load_Random_IoMmodel(arc_cfg=None):
     permKey = None
     if arc_cfg['head_type'] == 'IoMHead':  #

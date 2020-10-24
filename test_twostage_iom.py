@@ -12,7 +12,7 @@ import csv
 import math
 
 from modules.evaluations import get_val_data, perform_val, perform_val_yts
-from modules.models import build_or_load_IoMmodel
+from modules.models import build_or_load_IoMmodel,build_iom_model
 from modules.utils import set_memory_growth, load_yaml, l2_norm
 
 # modules.utils.set_memory_growth()
@@ -37,7 +37,7 @@ def main(_argv):
     m = cfg['m']
     q = cfg['q']
 
-    model = build_or_load_IoMmodel(cfg)
+    model = build_iom_model(cfg)
     model.summary(line_length=80)
     cfg['embd_shape'] = m * q
 
