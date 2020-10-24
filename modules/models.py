@@ -270,10 +270,10 @@ def IoMFaceModelFromArFace3(size=None, channels=3, arcmodel=None, name='IoMface_
     # here I add one extra hidden layer
     x = Dense(512, kernel_regularizer=_regularizer(w_decay))(x)  # , activation='relu'
     # x = BatchNormalization()(x)
-    x = Dropout(rate=0.5)(x)
+    # x = Dropout(rate=0.5)(x)
     x = Dense(512, kernel_regularizer=_regularizer(w_decay))(x)  # , activation='relu'
     # x = BatchNormalization()(x)
-    x = Dropout(rate=0.5)(x)
+    # x = Dropout(rate=0.5)(x)
     x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
               name="IoMProjection")(x)  # extra connection layer
     logist = IoMHead(m=cfg['m'], q=cfg['q'], isTraining=training)(x)  # loss need to change
