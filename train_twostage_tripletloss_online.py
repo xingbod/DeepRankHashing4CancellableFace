@@ -121,7 +121,7 @@ def main(_):
         if layer.name == 'arcface_model':
             layer.trainable = False
     # ########可训练层
-    model.layers[0].trainable  = True
+    # model.layers[0].trainable  = True
     for x in model.trainable_weights:
         print("trainable:",x.name)
     print('\n')
