@@ -329,7 +329,7 @@ if __name__ == "__main__":
     batch_size = args.batch_size
     epoch = args.model_epoch
     gallery_mark = args.gallery_mark
-    is_only_arc = False
+    is_only_arc = 0
 
     meta_dir = "%s/meta" % args.target  # meta root dir
     if target == 'IJBC':
