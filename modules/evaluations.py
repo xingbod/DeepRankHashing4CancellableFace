@@ -289,7 +289,7 @@ def perform_val(embedding_size, batch_size, model,
                 emb_batch = model(batch) + model(fliped)
             # embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         else:
-            batch = ccrop_batch(batch)
+            # batch = ccrop_batch(batch)
             emb_batch = model(batch)
         # print(emb_batch)
         if cfg['head_type'] == 'IoMHead':
@@ -298,7 +298,7 @@ def perform_val(embedding_size, batch_size, model,
         else:
             embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         # embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
-        # print(embeddings)
+        print(embeddings)
     if isLUT:  # length of bin
         # here do the binary convert
         # # here convert the embedding to binary
