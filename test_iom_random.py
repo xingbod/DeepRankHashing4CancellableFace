@@ -25,7 +25,7 @@ flags.DEFINE_integer('insightmodel', 0, 'using insightface pretrained model')
 mycfg = {'m': 0, 'q': 0}
 
 
-def callMe(cfg_iom):
+def callMe(cfg):
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
@@ -45,7 +45,7 @@ def callMe(cfg_iom):
 
     m = cfg['m'] = mycfg['m']
     q = cfg['q'] = mycfg['q']
-    model = build_or_load_Random_IoMmodel(cfg_iom)
+    model = build_or_load_Random_IoMmodel(cfg)
     model.summary(line_length=80)
     model.layers[0].trainable = False
     # for layer in model.layers:
