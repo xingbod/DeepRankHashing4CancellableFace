@@ -272,7 +272,7 @@ def IoMFaceModelFromArFace3(size=None, channels=3, arcmodel=None, name='IoMface_
     # x = BatchNormalization()(x)
     x = Dropout(rate=0.5)(x)
     x = Dense(512, kernel_regularizer=_regularizer(w_decay))(x)  # , activation='relu'
-    x = BatchNormalization()(x)
+    # x = BatchNormalization()(x)
     x = Dropout(rate=0.5)(x)
     x = Dense(cfg['m'] * cfg['q'], kernel_initializer=tf.keras.initializers.RandomNormal(mean=0.0, stddev=1, seed=None),
               name="IoMProjection")(x)  # extra connection layer
