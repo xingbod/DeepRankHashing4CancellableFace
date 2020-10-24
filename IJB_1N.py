@@ -320,7 +320,7 @@ if __name__ == "__main__":
                         help='your config file')
     parser.add_argument('--job', default='insightface', type=str, help='job name')
     parser.add_argument('--target', default='IJBC', type=str, help='target, set to IJBC or IJBB')
-    parser.add_argument('--gallery_mark', default=1, type=int, help='Using which gallery?,default 0: combine and close-set, 1 G1, 2 G2')
+    parser.add_argument('--gallery_mark', default=0, type=int, help='Using which gallery?,default 0: combine and close-set, 1 G1, 2 G2')
     args = parser.parse_args()
     target = args.target
     model_path = args.model_prefix
