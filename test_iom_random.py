@@ -25,7 +25,7 @@ flags.DEFINE_integer('insightmodel', 0, 'using insightface pretrained model')
 mycfg = {'m': 0, 'q': 0}
 
 
-def callMe():
+def callMe(cfg_iom):
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
@@ -35,10 +35,13 @@ def callMe():
     set_memory_growth()
     isInsightmodel = 100
     # cfg = load_yaml('./configs/iom_res50_random_xception.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
+
     # cfg_arc = load_yaml('configs/config_arc/arc_Insight_res100.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
+
     # cfg = cfg_iom = load_yaml('configs/config_random/iom_res100_random_insightface.yaml')  # cfg = load_yaml(FLAGS.cfg_path)
 
-    cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
+    # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
+    # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
 
     m = cfg['m'] = mycfg['m']
     q = cfg['q'] = mycfg['q']
@@ -118,12 +121,12 @@ def callMe():
         #     text_file.write(log_str)
         print(log_str)
 
-        log_str2 = '''| q = {:.2f}, m = {:.2f},LUT={},dist={}\t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f}\n\n '''.format(
+        log_str2 = '''| q = {:.2f}, m = {:.2f},LUT={},dist={}\t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f}\n'''.format(
             q, m, isLUT, measure, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, acc_lfw,
             acc_agedb30, acc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
 
         with open('./logs/' + cfg['sub_name'] + "_Output_line_" + measure + '_layer_' + cfg[
-            'hidden_layer_remark'] + "_20201021_stat.md", "a") as text_file:
+            'hidden_layer_remark'] + "_20201024_stat.md", "a") as text_file:
             text_file.write(log_str2)
 
     # evl(0,measure='Euclidean')  # no LUT
@@ -140,16 +143,25 @@ def callMe():
     # evl(8)
     # evl(16)
 
-# for m in [32, 64, 128, 256, 512,1024]:
-#     for q in [8]:
-#         print(m, q, '****')
-#         mycfg['m'] = m
-#         mycfg['q'] = q
-#         callMe()
-# #
-for m in [ 512]:
-    for q in [2,4,8,16,32,64]:#2,4,8,16,32,64
-        print(m, q, '****')
-        mycfg['m'] = m
-        mycfg['q'] = q
-        callMe()
+
+def iCall(cfg):
+    for m in [32, 64, 128, 256, 512, 1024]:
+        for q in [8]:
+            print(m, q, '****')
+            mycfg['m'] = m
+            mycfg['q'] = q
+            callMe(cfg)
+    for m in [512]:
+        for q in [2, 4, 8, 16, 32, 64]:  # 2,4,8,16,32,64
+            print(m, q, '****')
+            mycfg['m'] = m
+            mycfg['q'] = q
+            callMe(cfg)
+
+cfg = load_yaml('./configs/config_random/iom_res50_random.yaml')
+iCall(cfg)
+cfg = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
+iCall(cfg)
+cfg = load_yaml('./configs/config_random/iom_res50_random_xception.yaml')
+iCall(cfg)
+
