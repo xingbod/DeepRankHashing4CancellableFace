@@ -43,6 +43,10 @@ def callMe(cfg):
     # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
     # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
 
+    cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random.yaml')
+    # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
+    # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_xception.yaml')
+
     m = cfg['m'] = mycfg['m']
     q = cfg['q'] = mycfg['q']
     model = build_or_load_Random_IoMmodel(cfg)
@@ -144,46 +148,17 @@ def callMe(cfg):
     # evl(16)
 
 
-cfg = load_yaml('./configs/config_random/iom_res50_random.yaml')
 
 for m in [32, 64, 128, 256, 512, 1024]:
     for q in [8]:
         print(m, q, '****')
         mycfg['m'] = m
         mycfg['q'] = q
-        callMe(cfg)
+        callMe()
 for m in [512]:
     for q in [2, 4, 8, 16, 32]:  # 2,4,8,16,32,64
         print(m, q, '****')
         mycfg['m'] = m
         mycfg['q'] = q
-        callMe(cfg)
+        callMe()
 
-cfg = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
-for m in [32, 64, 128, 256, 512, 1024]:
-    for q in [8]:
-        print(m, q, '****')
-        mycfg['m'] = m
-        mycfg['q'] = q
-        callMe(cfg)
-for m in [512]:
-    for q in [2, 4, 8, 16, 32]:  # 2,4,8,16,32,64
-        print(m, q, '****')
-        mycfg['m'] = m
-        mycfg['q'] = q
-        callMe(cfg)
-
-
-cfg = load_yaml('./configs/config_random/iom_res50_random_xception.yaml')
-for m in [32, 64, 128, 256, 512, 1024]:
-    for q in [8]:
-        print(m, q, '****')
-        mycfg['m'] = m
-        mycfg['q'] = q
-        callMe(cfg)
-for m in [512]:
-    for q in [2, 4, 8, 16, 32]:  # 2,4,8,16,32,64
-        print(m, q, '****')
-        mycfg['m'] = m
-        mycfg['q'] = q
-        callMe(cfg)
