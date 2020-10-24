@@ -152,7 +152,7 @@ def iCall(cfg):
             mycfg['q'] = q
             callMe(cfg)
     for m in [512]:
-        for q in [2, 4, 8, 16, 32, 64]:  # 2,4,8,16,32,64
+        for q in [2, 4, 8, 16, 32]:  # 2,4,8,16,32,64
             print(m, q, '****')
             mycfg['m'] = m
             mycfg['q'] = q
