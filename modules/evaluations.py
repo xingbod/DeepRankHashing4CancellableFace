@@ -407,12 +407,14 @@ new add, in case val during train
 '''
 
 
-def val_LFW(model, cfg):
-    lfw, lfw_issame = get_val_pair(cfg['test_dataset'], 'lfw_align_112/lfw')
+def val_LFW(model, cfg, ds='AgeDB'):
+    if ds == 'LFW':
+        lfw, lfw_issame = get_val_pair(cfg['test_dataset'], 'lfw_align_112/lfw')
+    elif ds == 'AgeDB':
+        lfw, lfw_issame = get_val_pair(cfg['test_dataset'], 'agedb_align_112/AgeDB/agedb_30')
     return perform_val(
-        cfg['q'] * cfg['m'], 32, model, lfw, lfw_issame,
-        is_ccrop=cfg['is_ccrop'], cfg=cfg)
-
+            cfg['q'] * cfg['m'], 64, model, lfw, lfw_issame,
+            is_ccrop=cfg['is_ccrop'], cfg=cfg)
 
 '''
 2020/04/29 new add by Xingbo, evaluate y.t.f and f.s

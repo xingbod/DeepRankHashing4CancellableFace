@@ -136,7 +136,7 @@ def main(_):
         print("[*] training from scratch.")
         epochs, steps = 1, 1
 
-
+    tmp_best_acc = 0
     if FLAGS.mode == 'eager_tf':
         # Eager mode is great for debugging
         # Non eager graph mode is recommended for real training
@@ -251,13 +251,17 @@ def main(_):
                         tf.summary.scalar(
                             'learning rate', optimizer.lr, step=steps)
 
-            if steps % 100 == 0:
+            if steps % 1000 == 0:
                 acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = val_LFW(model, cfg)
                 print(
                     "    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
                 with summary_writer.as_default():
                     tf.summary.scalar('metric/epoch_acc', acc_lfw, step=steps)
                     tf.summary.scalar('metric/epoch_eer', eer_lfw, step=steps)
+                if tmp_best_acc < acc_lfw:
+                    print('[*] save ckpt file!')
+                    model.save_weights('checkpoints/{}/bestAcc.ckpt'.format(
+                        cfg['sub_name'], epochs, steps % steps_per_epoch))
             if steps % cfg['save_steps'] == 0:
                 print('[*] save ckpt file!')
                 model.save_weights('checkpoints/{}/e_{}_b_{}.ckpt'.format(
