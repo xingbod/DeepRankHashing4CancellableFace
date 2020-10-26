@@ -261,7 +261,7 @@ def main(_):
                 if tmp_best_acc < acc_lfw:
                     print('[*] save best ckpt file!')
                     with open('checkpoints/{}/bestAcc_e_{}_b_{}.log'.format(
-                        cfg['sub_name'], epochs, steps % steps_per_epoch), "a") as text_file:
+                        cfg['sub_name'], epochs, steps % steps_per_epoch), "w") as text_file:
                         text_file.write("hello!")
                     model.save_weights('checkpoints/{}/bestAcc.ckpt'.format(
                         cfg['sub_name']))
