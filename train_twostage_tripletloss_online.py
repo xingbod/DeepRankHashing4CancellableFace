@@ -270,6 +270,20 @@ def main(_):
                     file.close()
                     model.save_weights('checkpoints/{}/bestAcc.ckpt'.format(
                         cfg['sub_name']))
+                # here we would like to plot the code distribution
+                x = np.asarray(embeddings_lfw)
+                x = x.astype(int)
+                reshaped_array = x.reshape(x.size)
+                counter = collections.Counter(reshaped_array)
+                x = counter.keys()
+                frequency = counter.values()
+                y = [x / reshaped_array.size for x in frequency]
+                plt.bar(x, y)
+                plt.ylabel('Probability')
+                plt.xlabel('Code value')
+                # plt.show()
+                plt.savefig('checkpoints/{}/histogram_{}_m{}_q{}_e{}_b_{}.svg'.format(cfg['sub_name'],cfg['m'],cfg['q'],epochs, steps % steps_per_epoch), format='svg')
+                plt.close('all')
             if steps % cfg['save_steps'] == 0:
                 print('[*] save ckpt file!')
                 model.save_weights('checkpoints/{}/e_{}_b_{}.ckpt'.format(
