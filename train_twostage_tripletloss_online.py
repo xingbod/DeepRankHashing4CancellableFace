@@ -286,7 +286,7 @@ def main(_):
                 plt.ylabel('Probability')
                 plt.xlabel('Code value')
                 # plt.show()
-                plt.savefig('checkpoints/{}/histogram_{}_m{}_q{}_e{}_b_{}.svg'.format(cfg['sub_name'],cfg['m'],cfg['q'],epochs, steps % steps_per_epoch), format='svg')
+                plt.savefig('checkpoints/{}/histogram_{}_m{}_q{}_e{}_b_{}.svg'.format(cfg['sub_name'],cfg['sub_name'],cfg['m'],cfg['q'],epochs, steps % steps_per_epoch), format='svg')
                 plt.close('all')
             if steps % cfg['save_steps'] == 0:
                 print('[*] save ckpt file!')
