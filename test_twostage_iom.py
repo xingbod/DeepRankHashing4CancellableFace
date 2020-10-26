@@ -38,6 +38,11 @@ def main(_argv):
     q = cfg['q']
 
     model = build_iom_model(cfg)# build_or_load_IoMmodel build_iom_model
+    if not FLAGS.ckpt_epoch == '':
+        ckpt_path = './checkpoints/' + cfg['sub_name'] + '/' + FLAGS.ckpt_epoch
+        print("[*] load ckpt from {}".format(ckpt_path))
+        model.load_weights(ckpt_path)
+
     model.summary(line_length=80)
     cfg['embd_shape'] = m * q
 
