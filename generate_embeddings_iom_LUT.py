@@ -61,13 +61,13 @@ def main(_argv):
         dataset = load_data_from_dir('./data/lfw_mtcnnpy_160', BATCH_SIZE=cfg['eval_batch_size'])
         feats, names, n = extractFeat(dataset, model, isLUT, LUT)
         with open(
-                'embeddings_dl/' + cfg['backbone_type'] + '_lfw_feat_randomIoM_' +str(randomIoM) +'_LUT_'+str(isLUT)+'_'+ str(cfg['m']) + 'x' + str(
+                'embeddings_loss/' + cfg['backbone_type'] + '_lfw_feat_randomIoM_' +str(randomIoM) +'_LUT_'+str(isLUT)+'_'+ str(cfg['m']) + 'x' + str(
                     cfg['q']) + '.csv',
                 'w') as f:
             # using csv.writer method from CSV package
             write = csv.writer(f)
             write.writerows(feats)
-        with open('embeddings_dl/' + cfg['backbone_type'] + '_lfw_name_randomIoM_' +str(randomIoM) +'_LUT_'+str(isLUT)+'_' + str(cfg['m']) + 'x' + str(
+        with open('embeddings_loss/' + cfg['backbone_type'] + '_lfw_name_randomIoM_' +str(randomIoM) +'_LUT_'+str(isLUT)+'_' + str(cfg['m']) + 'x' + str(
                 cfg['q']) + '.txt', 'w') as outfile:
             for i in names:
                 outfile.write(i + "\n")
@@ -78,12 +78,12 @@ def main(_argv):
                                      BATCH_SIZE=cfg['eval_batch_size'],
                                      img_ext='png', ds='VGG2')
         feats, names, n = extractFeat(dataset, model, isLUT, LUT)
-        with open('embeddings_dl/' + cfg['backbone_type'] + '_VGG2_feat_randomIoM_' +str(randomIoM) +'_LUT_'+str(isLUT)+'_'+ str(cfg['m']) + 'x' + str(
+        with open('embeddings_loss/' + cfg['backbone_type'] + '_VGG2_feat_randomIoM_' +str(randomIoM) +'_LUT_'+str(isLUT)+'_'+ str(cfg['m']) + 'x' + str(
                 cfg['q']) + '.csv',
                   'w') as f:
             write = csv.writer(f)
             write.writerows(feats)
-        with open('embeddings_dl/' + cfg['backbone_type'] + '_VGG2_name_randomIoM_' +str(randomIoM) +'_LUT_'+str(isLUT)+'_'+str(cfg['m']) + 'x' + str(
+        with open('embeddings_loss/' + cfg['backbone_type'] + '_VGG2_name_randomIoM_' +str(randomIoM) +'_LUT_'+str(isLUT)+'_'+str(cfg['m']) + 'x' + str(
                 cfg['q']) + '.txt', 'w') as outfile:
             for i in names:
                 outfile.write(i + "\n")
@@ -101,12 +101,12 @@ def main(_argv):
                                       img_ext='png', ds='IJBC')
         feats, names, n = extractFeatAppend(dataset2, model, feats1, names1, isLUT, LUT)
 
-        with open('embeddings_dl/' + cfg['backbone_type'] + '_ijbc_feat_randomIoM_' +str(randomIoM) +'_LUT_'+str(isLUT)+str(cfg['m']) + 'x' + str(
+        with open('embeddings_loss/' + cfg['backbone_type'] + '_ijbc_feat_randomIoM_' +str(randomIoM) +'_LUT_'+str(isLUT)+str(cfg['m']) + 'x' + str(
                 cfg['q']) + '.csv',
                   'w') as f:
             write = csv.writer(f)
             write.writerows(feats)
-        with open('embeddings_dl/' + cfg['backbone_type'] + '_ijbc_name_randomIoM_' +str(randomIoM) +'_LUT_'+str(isLUT)+ str(cfg['m']) + 'x' + str(
+        with open('embeddings_loss/' + cfg['backbone_type'] + '_ijbc_name_randomIoM_' +str(randomIoM) +'_LUT_'+str(isLUT)+ str(cfg['m']) + 'x' + str(
                 cfg['q']) + '.txt', 'w') as outfile:
             for i in names:
                 outfile.write(i + "\n")
