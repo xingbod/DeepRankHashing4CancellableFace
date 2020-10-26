@@ -144,7 +144,7 @@ def main(_):
         # print("    Y.T.F CMC-1 {:.4f}, F.S CMC-1: {:.2f}".format(rr_ytf[0], rr_fs[0]))
         mAp_fs = mAp_ytf = 0
         rr_ytf = rr_fs = [0]
-        is_flip = FLAGS.is_flip
+        is_flip = 0
         print('[*] is_flip : {}'.format(is_flip))
         if isLUT == 0 and measure == 'Jaccard':
             isLUT = q
