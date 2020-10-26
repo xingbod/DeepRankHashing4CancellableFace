@@ -7,7 +7,6 @@ if tf.__version__.startswith('1'):# important if you want to run with tf1.x,
     tf.compat.v1.enable_eager_execution()
 import time
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
-import numpy as np
 from modules.models import ArcFaceModel,IoMFaceModelFromArFace,IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
 from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf
 from losses.euclidan_distance_loss import triplet_loss, triplet_loss_omoindrot
@@ -15,6 +14,11 @@ from losses.metric_learning_loss import arcface_pair_loss,ms_loss,bin_LUT_loss,c
 from losses.sampling_matters import margin_loss,triplet_loss_with_sampling
 import modules.dataset_triplet as dataset_triplet
 from modules.evaluations import val_LFW
+
+import matplotlib.pyplot as plt
+import numpy as np
+import collections
+
 flags.DEFINE_string('cfg_path', './configs/iom_res50_twostage_triplet_online.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_enum('mode', 'eager_tf', ['fit', 'eager_tf'],
