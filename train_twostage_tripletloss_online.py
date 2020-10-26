@@ -259,7 +259,7 @@ def main(_):
                     tf.summary.scalar('metric/epoch_acc', acc_lfw, step=steps)
                     tf.summary.scalar('metric/epoch_eer', eer_lfw, step=steps)
                 if tmp_best_acc < acc_lfw:
-                    print('[*] save ckpt file!')
+                    print('[*] save best ckpt file!')
                     with open('checkpoints/{}/bestAcc_e_{}_b_{}.log'.format(
                         cfg['sub_name'], epochs, steps % steps_per_epoch), "a") as text_file:
                         text_file.write("hello!")
