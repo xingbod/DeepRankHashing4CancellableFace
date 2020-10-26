@@ -260,6 +260,10 @@ def main(_):
                     tf.summary.scalar('metric/epoch_eer', eer_lfw, step=steps)
                 if tmp_best_acc < acc_lfw:
                     print('[*] save best ckpt file!')
+                    if not os.path.exists('checkpoints/{}'.format(
+                        cfg['sub_name'])):
+                        os.mkdir('checkpoints/{}'.format(
+                        cfg['sub_name']))
                     file = open('checkpoints/{}/bestAcc_e_{}_b_{}.log'.format(
                         cfg['sub_name'], epochs, steps % steps_per_epoch), 'w')
                     file.close()
