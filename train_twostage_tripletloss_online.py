@@ -7,7 +7,7 @@ if tf.__version__.startswith('1'):# important if you want to run with tf1.x,
     tf.compat.v1.enable_eager_execution()
 import time
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
-
+import numpy as np
 from modules.models import ArcFaceModel,IoMFaceModelFromArFace,IoMFaceModelFromArFaceMLossHead,IoMFaceModelFromArFace2,IoMFaceModelFromArFace3,IoMFaceModelFromArFace_T,IoMFaceModelFromArFace_T1
 from modules.utils import set_memory_growth, load_yaml, get_ckpt_inf
 from losses.euclidan_distance_loss import triplet_loss, triplet_loss_omoindrot
@@ -251,7 +251,7 @@ def main(_):
                         tf.summary.scalar(
                             'learning rate', optimizer.lr, step=steps)
 
-            if steps % 1000 == 0:
+            if steps % 10 == 0:
                 acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = val_LFW(model, cfg)
                 print(
                     "    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
