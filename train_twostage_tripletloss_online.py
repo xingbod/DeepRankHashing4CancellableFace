@@ -259,6 +259,7 @@ def main(_):
                     tf.summary.scalar('metric/epoch_acc', acc_lfw, step=steps)
                     tf.summary.scalar('metric/epoch_eer', eer_lfw, step=steps)
                 if tmp_best_acc < acc_lfw:
+                    tmp_best_acc = acc_lfw
                     print('[*] save best ckpt file!')
                     if not os.path.exists('checkpoints/{}'.format(
                         cfg['sub_name'])):
