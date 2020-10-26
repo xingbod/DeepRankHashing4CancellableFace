@@ -260,9 +260,9 @@ def main(_):
                     tf.summary.scalar('metric/epoch_eer', eer_lfw, step=steps)
                 if tmp_best_acc < acc_lfw:
                     print('[*] save best ckpt file!')
-                    with open('checkpoints/{}/bestAcc_e_{}_b_{}.log'.format(
-                        cfg['sub_name'], epochs, steps % steps_per_epoch), "w") as text_file:
-                        text_file.write("hello!")
+                    file = open('checkpoints/{}/bestAcc_e_{}_b_{}.log'.format(
+                        cfg['sub_name'], epochs, steps % steps_per_epoch), 'w')
+                    file.close()
                     model.save_weights('checkpoints/{}/bestAcc.ckpt'.format(
                         cfg['sub_name']))
             if steps % cfg['save_steps'] == 0:
