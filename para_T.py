@@ -85,7 +85,7 @@ def main(_):
         print("[*] load ckpt from {}".format(arc_ckpt_path))
         arcmodel.load_weights(arc_ckpt_path)
         # epochs, steps = get_ckpt_inf(ckpt_path, steps_per_epoch)
-    for T in [1,10,100,500,1000,2000]:
+    for T in [1,5,10,100,500,1000]:
         cfg['T'] = T
         model = IoMFaceModelFromArFace(size=cfg['input_size'],
                                        arcmodel=arcmodel, training=True,
