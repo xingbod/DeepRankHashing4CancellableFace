@@ -540,6 +540,7 @@ def build_iom_model(cfg):
     return model
 
 def build_or_load_Random_IoMmodel(arc_cfg=None):
+    print('[*] Loading a random model!')
     permKey = None
     if arc_cfg['head_type'] == 'IoMHead':  #
         # permKey = generatePermKey(cfg['embd_shape'])

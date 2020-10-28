@@ -43,19 +43,21 @@ def main(_argv):
     logger.disabled = True
     logger.setLevel(logging.FATAL)
     set_memory_growth()
+    randomIoM = FLAGS.randomIoM
     # cfg = load_yaml('./config_arc/arc_lres100ir.yaml')  #
     cfg = load_yaml(FLAGS.cfg_path)
-    if FLAGS.randomIoM:
+    if randomIoM:
         model = build_or_load_Random_IoMmodel(cfg)
     else:
         model = build_or_load_IoMmodel(cfg)  # randomIoM = 0 , load trained model, otherwise random initizaed
+
+    model.summary(line_length=80)
     m = cfg['m']
     q = cfg['q']
     cfg['embd_shape'] = m * q
     embedding_lfw = FLAGS.embedding_lfw
     embedding_vgg2 = FLAGS.embedding_vgg2
     embedding_ijbc = FLAGS.embedding_ijbc # No need, as we use specifical protocol.
-    randomIoM = FLAGS.randomIoM
     LUT = None
     if isLUT:
         LUT = genLUT(q=16, bin_dim=isLUT, isPerm=False)
