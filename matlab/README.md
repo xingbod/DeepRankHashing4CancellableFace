@@ -83,3 +83,27 @@ remark = "learning_incepv2";
 enroll_query_search("embeddings_dl/InceptionResNetV2_VGG2_feat_randomIoM_0_LUT_0_512x8.csv", "embeddings_dl/InceptionResNetV2_VGG2_name_randomIoM_0_LUT_0_512x8.txt",measure,"VGG2",remark);
 
 ```
+
+
+# 20201028
+```bash
+remark = "learning_xception_diomh";                      
+DS= "VGG2";                                            
+q=8;                                                                                                                      
+m=512;     
+remark = "learning_xceptio_diomh";  
+enroll_query_search( "embeddings_inresv2/Xception_VGG2_feat_randomIoM_0_LUT_0_512x8.csv", "embeddings_inresv2/Xception_VGG2_name_randomIoM_0_LUT_0_512x8.txt",measure,DS,remark);
+
+remark = "learning_xception_diomh";                      
+DS= "LFW";    
+measure = "Hamming";
+enroll_query_search( "embeddings_inresv2/Xception_lfw_feat_randomIoM_0_LUT_0_512x8.csv", "embeddings_inresv2/Xception_lfw_name_randomIoM_0_LUT_0_512x8.txt",measure,DS,remark);
+
+
+remark = "learning_ResNet50_diomh";                      
+DS= "VGG2";    
+measure = "Hamming";
+enroll_query_search( "embeddings_inresv2/ResNet50_VGG2_feat_randomIoM_0_LUT_0_512x8.csv", "embeddings_inresv2/ResNet50_VGG2_name_randomIoM_0_LUT_0_512x8.txt",measure,DS,remark);
+
+
+```
