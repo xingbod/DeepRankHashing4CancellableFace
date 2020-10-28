@@ -45,7 +45,7 @@ def main(_argv):
     set_memory_growth()
     # cfg = load_yaml('./config_arc/arc_lres100ir.yaml')  #
     cfg = load_yaml(FLAGS.cfg_path)
-    model = build_or_load_IoMmodel(cfg,randomInit=randomIoM)# randomIoM = 0 , load trained model, otherwise random initizaed
+    model = build_or_load_IoMmodel(cfg,randomInit=FLAGS.randomIoM)# randomIoM = 0 , load trained model, otherwise random initizaed
     m = cfg['m']
     q = cfg['q']
     cfg['embd_shape'] = m * q
