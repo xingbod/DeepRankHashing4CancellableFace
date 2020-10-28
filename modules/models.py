@@ -460,7 +460,7 @@ def build_or_load_IoMmodel(arc_cfg=None, ckpt_epoch = '', is_only_arc=False, ran
     return model
 
 
-def build_iom_model(cfg, randomInit=False):
+def build_iom_model(cfg):
     permKey = None
     if cfg['head_type'] == 'IoMHead':  #
         # permKey = generatePermKey(cfg['embd_shape'])
@@ -553,8 +553,23 @@ def build_or_load_Random_IoMmodel(arc_cfg=None):
                             head_type='ArcHead',
                             training=False,
                             cfg=arc_cfg)
-    ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + arc_cfg['sub_name'])
-    if ckpt_path is not None:
+
+    if cfg['backbone_type'] == 'ResNet50':
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50/')
+    elif cfg['backbone_type'] == 'InceptionResNetV2':
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_InceptionResNetV2/')
+    elif cfg['backbone_type'] == 'lresnet100e_ir':
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_lresnet100e_ir/')
+    elif cfg['backbone_type'] == 'Xception':
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_Xception/')
+    elif cfg['backbone_type'] == 'VGG19':
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_vgg19/')
+    elif cfg['backbone_type'] == 'Insight_ResNet100' or cfg['backbone_type'] == 'Insight_ResNet50':
+        arc_ckpt_path = None  # here we don't have any check point file for this pre_build model, as it is loaded with weights
+    else:
+        arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50/')
+
+    if arc_ckpt_path is not None:
         print("[*] load ckpt from {}".format(ckpt_path))
         arcmodel.load_weights(ckpt_path)
     else:

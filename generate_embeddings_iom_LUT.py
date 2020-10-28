@@ -47,7 +47,7 @@ def main(_argv):
     # cfg = load_yaml('./config_arc/arc_lres100ir.yaml')  #
     cfg = load_yaml(FLAGS.cfg_path)
     if randomIoM:
-        model = build_iom_model(cfg, randomInit=randomIoM)
+        model = build_or_load_Random_IoMmodel(cfg)
     else:
         model = build_or_load_IoMmodel(cfg)  # randomIoM = 0 , load trained model, otherwise random initizaed
 
