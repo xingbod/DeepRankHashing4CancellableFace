@@ -570,10 +570,10 @@ def build_or_load_Random_IoMmodel(arc_cfg=None):
         arc_ckpt_path = tf.train.latest_checkpoint('./checkpoints/arc_res50/')
 
     if arc_ckpt_path is not None:
-        print("[*] load ckpt from {}".format(ckpt_path))
-        arcmodel.load_weights(ckpt_path)
+        print("[*] load ckpt from {}".format(arc_ckpt_path))
+        arcmodel.load_weights(arc_ckpt_path)
     else:
-        print("[*] Cannot find ckpt from {}.".format(ckpt_path), ', this means you will give a IoM weight later.')
+        print("[*] Cannot find ckpt from {}.".format(arc_ckpt_path), ', this means you will give a IoM weight later.')
     iom_cfg = arc_cfg
     # here I add the extra IoM layer and head
     if iom_cfg['hidden_layer_remark'] == '1':
