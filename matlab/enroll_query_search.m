@@ -16,7 +16,7 @@ lambda = 0.3;
 % measure = 'Euclidean';
 % ds = "LFW";
 % remark = "deepfeat";
-log_path = "logs/log_"+ds+"_"+remark+".log";
+log_path = "logs/20201028_log_"+ds+"_"+remark+".log";
 %%
 disp('loading : ' + feat_path)
 disp('loading : ' + filename_path)
