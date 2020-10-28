@@ -22,7 +22,7 @@ import tqdm
 import csv
 from modules.embedding_util import load_data_from_dir,extractFeat,extractFeatAppend
 from modules.LUT import genLUT
-from modules.models import build_or_load_IoMmodel,build_or_load_Random_IoMmodel
+from modules.models import build_or_load_IoMmodel,build_or_load_Random_IoMmodel,build_iom_model
 
 # modules.utils.set_memory_growth()
 flags.DEFINE_string('cfg_path', './configs/iom_res50.yaml', 'config file path')
@@ -47,7 +47,7 @@ def main(_argv):
     # cfg = load_yaml('./config_arc/arc_lres100ir.yaml')  #
     cfg = load_yaml(FLAGS.cfg_path)
     if randomIoM:
-        model = build_or_load_Random_IoMmodel(cfg)
+        model = build_iom_model(cfg, randomInit=randomIoM)
     else:
         model = build_or_load_IoMmodel(cfg)  # randomIoM = 0 , load trained model, otherwise random initizaed
 

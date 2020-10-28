@@ -460,7 +460,7 @@ def build_or_load_IoMmodel(arc_cfg=None, ckpt_epoch = '', is_only_arc=False, ran
     return model
 
 
-def build_iom_model(cfg):
+def build_iom_model(cfg, randomInit=False):
     permKey = None
     if cfg['head_type'] == 'IoMHead':  #
         # permKey = generatePermKey(cfg['embd_shape'])
@@ -530,7 +530,8 @@ def build_iom_model(cfg):
     #     print("trainable:",x.name)
     # print('\n')
     model.summary(line_length=80)
-
+    if randomInit:
+        return model
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
     if ckpt_path is not None:
         print("[*] load ckpt from {}".format(ckpt_path))
