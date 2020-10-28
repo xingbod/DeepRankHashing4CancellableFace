@@ -26,7 +26,7 @@ measure = "Hamming";
 for m = [32 64 128 256 512]%64 128 256
     for q = [8]
         tic
-        enroll_query_search( +"/"+backbone+"_"+embed+"_feat_randomIoM_0_LUT_0_"+num2str(m)+"x"+num2str(q)+".csv", 'embeddings_0831/'+backbone+'_'+embed+'_name_randomIoM_0_LUT_0_'++num2str(m)+"x"+num2str(q)+'.txt',measure,DS,remark);
+        enroll_query_search( embpath+"/"+backbone+"_"+embed+"_feat_randomIoM_0_LUT_0_"+num2str(m)+"x"+num2str(q)+".csv", 'embeddings_0831/'+backbone+'_'+embed+'_name_randomIoM_0_LUT_0_'++num2str(m)+"x"+num2str(q)+'.txt',measure,DS,remark);
         toc
     end
 end
