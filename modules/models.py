@@ -530,8 +530,6 @@ def build_iom_model(cfg):
     #     print("trainable:",x.name)
     # print('\n')
     model.summary(line_length=80)
-    if randomInit:
-        return model
     ckpt_path = tf.train.latest_checkpoint('./checkpoints/' + cfg['sub_name'])
     if ckpt_path is not None:
         print("[*] load ckpt from {}".format(ckpt_path))
