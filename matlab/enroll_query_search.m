@@ -23,9 +23,11 @@ disp('loading : ' + filename_path)
 Descriptor_orig = importdata("../"+feat_path);
 fid_lfw_name=importdata("../" + filename_path);
 if ds == "LFW"
-    [Descriptors,lfw_label] = generate_lfw_align(Descriptor_orig,fid_lfw_name);
+%    [Descriptors,lfw_label] = generate_lfw_align(Descriptor_orig,fid_lfw_name);
     %% BLUFR
-    [reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure',measure);
+%    [reportVeriFar, reportVR,reportRank, reportOsiFar, reportDIR] = LFW_BLUFR(Descriptors,'measure',measure);
+    reportVR = 0;
+    reportDIR = 0;
 else
     reportVR = 0;
     reportDIR = 0;

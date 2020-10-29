@@ -100,10 +100,20 @@ measure = "Hamming";
 enroll_query_search( "embeddings_inresv2/Xception_lfw_feat_randomIoM_0_LUT_0_512x8.csv", "embeddings_inresv2/Xception_lfw_name_randomIoM_0_LUT_0_512x8.txt",measure,DS,remark);
 
 
-remark = "learning_ResNet50_diomh";                      
+remark = "random_ResNet50_diomh";                      
 DS= "VGG2";    
 measure = "Hamming";
-enroll_query_search( "embeddings_inresv2/ResNet50_VGG2_feat_randomIoM_0_LUT_0_512x8.csv", "embeddings_inresv2/ResNet50_VGG2_name_randomIoM_0_LUT_0_512x8.txt",measure,DS,remark);
+enroll_query_search( "embeddings_inresv2/ResNet50_VGG2_feat_randomIoM_1_LUT_0_512x8.csv", "embeddings_inresv2/ResNet50_VGG2_name_randomIoM_0_LUT_0_512x8.txt",measure,DS,remark);
 
+
+remark = "random_ResNet50_LUT_diomh";                      
+DS= "LFW";    
+measure = "Hamming";
+enroll_query_search( "embeddings_inresv2/ResNet50_lfw_feat_randomIoM_1_LUT_3_512x8.csv", "embeddings_inresv2/ResNet50_lfw_name_randomIoM_1_LUT_3_512x8.txt",measure,DS,remark);
+
+remark = "learning_ResNet50_LUT_diomh";                      
+DS= "LFW";    
+measure = "Hamming";
+enroll_query_search( "embeddings_inresv2/ResNet50_lfw_feat_randomIoM_0_LUT_3_512x8.csv", "embeddings_inresv2/ResNet50_lfw_name_randomIoM_0_LUT_3_512x8.txt",measure,DS,remark);
 
 ```
