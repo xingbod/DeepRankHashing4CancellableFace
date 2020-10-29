@@ -130,7 +130,7 @@ def callMe():
             q, m, isLUT, measure, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, acc_lfw,
             acc_agedb30, acc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
 
-        with open('./logs/' + cfg['sub_name'] + "_Output_line_" + measure + '_layer_' + cfg[
+        with open('./logs/1029_' + cfg['sub_name'] + "_Output_line_" + measure + '_layer_' + cfg[
             'hidden_layer_remark'] + "_20201024_stat.md", "a") as text_file:
             text_file.write(log_str2)
 
