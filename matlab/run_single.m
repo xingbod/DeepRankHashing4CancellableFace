@@ -1,4 +1,4 @@
-function run_single(embpath,backbone,DS)
+function run_single(embpath,backbone,DS,LUT)
 % backbone = "ResNet50";%InceptionResNetV2
 % DS = "IJBC";run_single("ResNet50","LFW")
 % run_single("embeddings_0831","InceptionResNetV2","LFW") run_single("embeddings_0831","Xception","LFW")
@@ -25,7 +25,7 @@ measure = "Hamming";
 for m = [32 64 128 256 512]%64 128 256
     for q = [8]
         tic
-        enroll_query_search( embpath+"/"+backbone+"_"+embed+"_feat_randomIoM_1_LUT_0_"+num2str(m)+"x"+num2str(q)+".csv", embpath+'/'+backbone+'_'+embed+'_name_randomIoM_1_LUT_0_'+num2str(m)+"x"+num2str(q)+'.txt',measure,DS,remark);
+        enroll_query_search( embpath+"/"+backbone+"_"+embed+"_feat_randomIoM_1_LUT_"+num2str(LUT)+"_"+num2str(m)+"x"+num2str(q)+".csv", embpath+'/'+backbone+'_'+embed+'_name_randomIoM_1_LUT_'+num2str(LUT)+'_'+num2str(m)+"x"+num2str(q)+'.txt',measure,DS,remark);
         toc
     end
 end
