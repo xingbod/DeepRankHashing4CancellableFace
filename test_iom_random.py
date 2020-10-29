@@ -47,6 +47,7 @@ def callMe():
     cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
     # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_xception.yaml')
 
+    cfg['T'] = 10# whateever
     m = cfg['m'] = mycfg['m']
     q = cfg['q'] = mycfg['q']
     model = build_or_load_Random_IoMmodel(cfg)
