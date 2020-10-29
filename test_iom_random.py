@@ -126,12 +126,11 @@ def callMe():
         #     text_file.write(log_str)
         print(log_str)
 
-        log_str2 = '''| q = {:.2f}, m = {:.2f},LUT={},dist={}\t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f}\n'''.format(
-            q, m, isLUT, measure, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, acc_lfw,
+        log_str2 = '''|{}, LUT={},dist={}\t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f} \t {:.4f}\n'''.format(
+            cfg['sub_name'], isLUT, measure, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, acc_lfw,
             acc_agedb30, acc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
 
-        with open('./logs/1029_' + cfg['sub_name'] + "_Output_line_" + measure + '_layer_' + cfg[
-            'hidden_layer_remark'] + ".md", "a") as text_file:
+        with open('./logs/1029_Output_line_.md', "a") as text_file:
             text_file.write(log_str2)
 
     # evl(0,measure='Euclidean')  # no LUT
