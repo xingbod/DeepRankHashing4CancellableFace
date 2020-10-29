@@ -12,7 +12,7 @@ enroll_query_iom_id_fusion("embeddings_dl/ResNet50_VGG2_feat_dlIoM_512x8.csv","e
 enroll_query_iom_id_fusion("embeddings_dl/Xception_VGG2_feat_dlIoM_512x8.csv","embeddings_dl/InceptionResNetV2_VGG2_feat_dlIoM_512x8.csv","embeddings_dl/ResNet50_VGG2_name_dl_256x8.txt",measure,ds,remark)
 
 
-run_single("embeddings_inresv2","InceptionResNetV2","LFW")
+run_single("embeddings_inresv2","InceptionResNetV2","LFW",3)
 run_single("embeddings_inresv2","InceptionResNetV2","VGG2")
 run_single("embeddings_0831","ResNet50","VGG2")
 run_single("embeddings_0831","InceptionResNetV2","VGG2")
