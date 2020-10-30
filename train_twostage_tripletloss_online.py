@@ -23,6 +23,7 @@ flags.DEFINE_string('cfg_path', './configs/iom_res50_twostage_triplet_online.yam
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_enum('mode', 'eager_tf', ['fit', 'eager_tf'],
                   'fit: model.fit, eager_tf: custom GradientTape')
+flags.DEFINE_bool('freezeBackbone', False, 'Freeze the backbone?')
 
 # modules.utils.set_memory_growth()
 
@@ -35,7 +36,7 @@ def main(_):
     logger.disabled = True
     logger.setLevel(logging.FATAL)
     set_memory_growth()
-
+    freezeBackbone = FLAGS.freezeBackbone
     cfg = load_yaml(FLAGS.cfg_path)
     permKey = None
     if cfg['head_type'] == 'IoMHead':#
@@ -120,10 +121,11 @@ def main(_):
                                            permKey=permKey, cfg=cfg)
         optimizer = tf.keras.optimizers.SGD(
             learning_rate=learning_rate, momentum=0.9, nesterov=True)# can use adam sgd
+    if freezeBackbone:
+        for layer in model.layers:
+            if layer.name == 'arcface_model':
+                layer.trainable = False
 
-    for layer in model.layers:
-        if layer.name == 'arcface_model':
-            layer.trainable = False
     # ########可训练层
     # model.layers[0].trainable  = True
     for x in model.trainable_weights:
