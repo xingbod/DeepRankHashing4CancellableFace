@@ -308,7 +308,7 @@ def perform_val(embedding_size, batch_size, model,
         embeddings = tf.cast(embeddings, tf.int32)
         LUV = tf.gather(LUT1, embeddings)
         if revert2Int:
-            embeddings = LUV.dot(1 << arange(LUV.shape[-1] - 1, -1, -1))  # if we want to convert it back to int
+            embeddings = LUV.numpy().dot(1 << arange(LUV.shape[-1] - 1, -1, -1))  # if we want to convert it back to int
         else:
             embeddings = tf.reshape(LUV, (embeddings.shape[0], isLUT * embeddings.shape[1]))
 
