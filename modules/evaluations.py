@@ -304,7 +304,7 @@ def perform_val(embedding_size, batch_size, model,
     if isLUT:  # length of bin
         # here do the binary convert
         # # here convert the embedding to binary
-        LUT1 = genLUT(q=cfg['q'], bin_dim=isLUT, isPerm=True)
+        LUT1 = genLUT(q=cfg['q'], bin_dim=isLUT, isPerm=False)
         embeddings = tf.cast(embeddings, tf.int32)
         LUV = tf.gather(LUT1, embeddings)
         if revert2Int:
