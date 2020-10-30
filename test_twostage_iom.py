@@ -123,7 +123,7 @@ def main(_argv):
     # evl(2, 'Hamming')
     # evl(1, 'Hamming')
     evl(int(math.log2(q)), 'Hamming')
-    # evl(0, 'Euclidean')
+    evl(0, 'Euclidean')
     # # evl(q, 'Jaccard')
     # # evl(8, 'Hamming')
     # evl(int(math.log2(q)), 'Euclidean')
