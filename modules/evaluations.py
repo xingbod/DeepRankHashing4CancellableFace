@@ -300,13 +300,17 @@ def perform_val(embedding_size, batch_size, model,
             embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         # embeddings[idx:idx + batch_size] = l2_norm(emb_batch)
         # print(embeddings)
+    revert2Int = True
     if isLUT:  # length of bin
         # here do the binary convert
         # # here convert the embedding to binary
         LUT1 = genLUT(q=cfg['q'], bin_dim=isLUT, isPerm=True)
         embeddings = tf.cast(embeddings, tf.int32)
         LUV = tf.gather(LUT1, embeddings)
-        embeddings = tf.reshape(LUV, (embeddings.shape[0], isLUT * embeddings.shape[1]))
+        if revert2Int:
+            embeddings = LUV.dot(1 << arange(LUV.shape[-1] - 1, -1, -1))  # if we want to convert it back to int
+        else:
+            embeddings = tf.reshape(LUV, (embeddings.shape[0], isLUT * embeddings.shape[1]))
 
         ##### end ########
     tpr, fpr, accuracy, best_thresholds, auc, eer = evaluate(
