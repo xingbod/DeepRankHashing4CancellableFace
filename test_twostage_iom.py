@@ -112,7 +112,7 @@ def main(_argv):
         # with open('./logs/' + cfg['sub_name'] + "_Output.md", "a") as text_file:
         #     text_file.write(log_str2)
 
-        with open('./logs/1029_inresv2_learning_Output.md', "a") as text_file:
+        with open('./logs/1030_inresv2_learning_Output.md', "a") as text_file:
             text_file.write(log_str2)
 
         print(log_str2)
