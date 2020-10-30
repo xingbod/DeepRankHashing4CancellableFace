@@ -118,7 +118,8 @@ def main(_argv):
         print(log_str2)
 
     evl(0, 'Hamming')
-    # evl(4, 'Hamming')
+    evl(4, 'Hamming')
+    evl(6, 'Hamming')
     # evl(3, 'Hamming')
     evl(int(math.log2(q)), 'Hamming')
     evl(2, 'Hamming')
