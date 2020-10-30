@@ -223,7 +223,8 @@ def calculate_roc(thresholds, embeddings1, embeddings2, actual_issame,
     elif measure == 'Hamming_scipy':
         dist = Hamming_scipy(embeddings1, embeddings2)
         dist = dist / (tf.math.reduce_max(dist).numpy() + 1)
-
+    # here we try to normalize scores
+    dist = dist / (tf.math.reduce_max(dist).numpy() + 10)  # should divide by the largest distance
     print("[*] dist {}".format(dist))
     for fold_idx, (train_set, test_set) in enumerate(k_fold.split(indices)):
         # Find the best threshold for the fold
