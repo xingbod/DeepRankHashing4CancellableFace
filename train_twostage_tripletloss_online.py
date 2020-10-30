@@ -122,6 +122,7 @@ def main(_):
         optimizer = tf.keras.optimizers.SGD(
             learning_rate=learning_rate, momentum=0.9, nesterov=True)# can use adam sgd
     if freezeBackbone:
+        print('[*] Freeze the backbone!!!!!!!!!!!')
         for layer in model.layers:
             if layer.name == 'arcface_model':
                 layer.trainable = False
