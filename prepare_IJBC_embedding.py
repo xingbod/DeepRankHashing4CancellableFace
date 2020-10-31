@@ -206,7 +206,7 @@ cfg = load_yaml(cfg_path)  # cfg = load_yaml(FLAGS.cfg_path)
 if is_only_arc:
     model = build_or_load_IoMmodel(cfg, is_only_arc=is_only_arc)
 else:
-    model = build_iom_model(cfg)
+    model = build_or_load_IoMmodel(cfg)
 model.summary(line_length=80)
 
 # =============================================================
