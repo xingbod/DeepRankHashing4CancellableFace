@@ -201,7 +201,7 @@ def verification(template_norm_feats=None, unique_templates=None, p1=None, p2=No
     score = np.zeros((len(p1),))  # save cosine distance between pairs
 
     total_pairs = np.array(range(len(p1)))
-    batchsize = 100000  # small batchsize instead of all pairs in one batch due to the memory limiation
+    batchsize = 10000  # small batchsize instead of all pairs in one batch due to the memory limiation
     sublists = [total_pairs[i:i + batchsize] for i in range(0, len(p1), batchsize)]
     total_sublists = len(sublists)
     for c, s in enumerate(sublists):
@@ -210,6 +210,7 @@ def verification(template_norm_feats=None, unique_templates=None, p1=None, p2=No
 
         # similarity_score = np.sum(feat1 * feat2, -1)
         # score[s] = similarity_score.flatten()
+
 
         # similarity_score = np.sum((feat1 - feat2)**2, -1)# Using euclidean distance to try
         # similarity_score = np.multiply(similarity_score, np.sum((feat1)**2, -1)+np.sum((feat2)**2, -1))
