@@ -25,6 +25,7 @@ import matplotlib.pyplot as plt
 import timeit
 import sklearn
 import sklearn.metrics
+import skimage.transform
 import argparse
 from sklearn.metrics import roc_curve, auc
 from sklearn import preprocessing
