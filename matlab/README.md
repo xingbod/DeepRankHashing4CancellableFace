@@ -117,3 +117,12 @@ measure = "Hamming";
 enroll_query_search( "embeddings_inresv2/ResNet50_lfw_feat_randomIoM_0_LUT_3_512x8.csv", "embeddings_inresv2/ResNet50_lfw_name_randomIoM_0_LUT_3_512x8.txt",measure,DS,remark);
 
 ```
+
+#20201031
+
+```bash
+
+run_single("embeddings_inresv2","InceptionResNetV2","VGG2",0)
+run_single_learning("embeddings_inresv2","InceptionResNetV2","VGG2",0)
+
+```

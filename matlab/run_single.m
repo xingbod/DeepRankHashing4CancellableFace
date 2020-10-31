@@ -20,12 +20,12 @@ end
 % remark = "deep_orig_feat";
 % enroll_query_search(embpath+"/"+backbone+"_"+embed+"_feat.csv", 'embeddings_0831/'+backbone+'_'+embed+'_name.txt',measure,DS,remark);
 
-remark = "random_diomh";
+remark = "random_vgg2_diomh";
 measure = "Hamming";
 for m = [32 64 128 256 512]%64 128 256
     for q = [8]
         tic
-        enroll_query_search( embpath+"/"+backbone+"_"+embed+"_feat_randomIoM_0_LUT_"+num2str(LUT)+"_"+num2str(m)+"x"+num2str(q)+".csv", embpath+'/'+backbone+'_'+embed+'_name_randomIoM_1_LUT_'+num2str(LUT)+'_'+num2str(m)+"x"+num2str(q)+'.txt',measure,DS,remark);
+        enroll_query_search( embpath+"/"+backbone+"_"+embed+"_feat_randomIoM_1_LUT_"+num2str(LUT)+"_"+num2str(m)+"x"+num2str(q)+".csv", embpath+'/'+backbone+'_'+embed+'_name_randomIoM_1_LUT_'+num2str(LUT)+'_'+num2str(m)+"x"+num2str(q)+'.txt',measure,DS,remark);
         toc
     end
 end
