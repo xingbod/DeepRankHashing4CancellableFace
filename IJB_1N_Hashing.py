@@ -394,7 +394,8 @@ if __name__ == "__main__":
     # model.summary(line_length=80)
 
     # img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
-
+    print('[*] loading',"img_feats_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
+        cfg['q']) + ".npy")
     img_feats = np.load("img_feats_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
         cfg['q']) + ".npy")
     faceness_scores = np.load("faceness_scores.npy")
