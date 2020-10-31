@@ -15,6 +15,7 @@ import argparse
 import cv2
 import numpy as np
 import sys
+import skimage
 import skimage.transform as trans
 # from skimage import transform as trans
 
