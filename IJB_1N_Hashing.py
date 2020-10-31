@@ -379,8 +379,8 @@ if __name__ == "__main__":
     # img_feats, faceness_scores = get_image_feature(feature_path, face_path)
 
     cfg = load_yaml(cfg_path)  # cfg = load_yaml(FLAGS.cfg_path)
-    model = build_or_load_IoMmodel(cfg, is_only_arc=is_only_arc)
-    model.summary(line_length=80)
+    # model = build_or_load_IoMmodel(cfg, is_only_arc=is_only_arc)
+    # model.summary(line_length=80)
 
     # img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
 
