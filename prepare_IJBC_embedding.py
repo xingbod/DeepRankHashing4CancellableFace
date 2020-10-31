@@ -60,7 +60,7 @@ parser.add_argument('--batch-size', default=32, type=int, help='')
 parser.add_argument('--cfg_path', default='configs/config_random/iom_res100_random_insightface.yaml', type=str, help='your config file')
 parser.add_argument('--job', default='insightface', type=str, help='job name')
 parser.add_argument('--target', default='IJBC', type=str, help='target, set to IJBC or IJBB')
-parser.add_argument('--is_only_arc', default=1, type=int, help='is ArcFace only? Or IoM added')
+parser.add_argument('--is_only_arc', default=0, type=int, help='is ArcFace only? Or IoM added')
 args = parser.parse_args()
 
 target = args.target
