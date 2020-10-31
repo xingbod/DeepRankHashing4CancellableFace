@@ -177,7 +177,8 @@ def image2template_feature_hash_orig(img_feats=None, templates=None, medias=None
     # template_feats = np.round(template_feats)
     print('***template_feats***',template_feats[0])
     # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
-    template_norm_feats = sklearn.preprocessing.normalize(template_feats)
+    # template_norm_feats = sklearn.preprocessing.normalize(template_feats)
+    template_norm_feats = template_feats
     print('***finaltemplate***',template_norm_feats[0])
     return template_norm_feats, unique_templates, unique_subjectids
 
@@ -261,7 +262,7 @@ def read_score(path):
     return img_feats
 
 
-def evaluation(query_feats, gallery_feats, mask,measure = 'euclidean'):
+def evaluation(query_feats, gallery_feats, mask,measure = 'hamming'):
     Fars = [0.01, 0.1]
     print(query_feats.shape)
     print(gallery_feats.shape)
@@ -270,9 +271,9 @@ def evaluation(query_feats, gallery_feats, mask,measure = 'euclidean'):
     gallery_num = gallery_feats.shape[0]
 
     #
-    # similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
-    # similarity = 1- (similarity / ( max(similarity.flatten())+ 1))
-    similarity = np.dot(query_feats, gallery_feats.T)
+    similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
+    similarity = 1- (similarity / ( max(similarity.flatten())+ 1))
+    # similarity = np.dot(query_feats, gallery_feats.T)
     print('similarity shape', similarity.shape)
     print("similarity",similarity[0])
 
@@ -438,7 +439,7 @@ if __name__ == "__main__":
     print("input features shape", img_input_feats.shape)
 
     # load gallery feature # image2template_feature_hash image2template_feature
-    gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature_hash_orig_bak(
+    gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature_hash_orig(
         img_input_feats, total_templates, total_medias, gallery_templates, gallery_subject_ids)
     stop = timeit.default_timer()
     print('Time: %.2f s. ' % (stop - start))
@@ -452,7 +453,7 @@ if __name__ == "__main__":
     probe_mixed_templates, probe_mixed_subject_ids = read_template_subject_id_list(
         os.path.join(meta_dir, probe_mixed_record))
     print(probe_mixed_templates.shape, probe_mixed_subject_ids.shape)
-    probe_mixed_templates_feature, probe_mixed_unique_templates, probe_mixed_unique_subject_ids = image2template_feature_hash_orig_bak(
+    probe_mixed_templates_feature, probe_mixed_unique_templates, probe_mixed_unique_subject_ids = image2template_feature_hash_orig(
         img_input_feats, total_templates, total_medias, probe_mixed_templates, probe_mixed_subject_ids)
     print("probe_mixed_templates_feature", probe_mixed_templates_feature.shape)
     print("probe_mixed_unique_subject_ids", probe_mixed_unique_subject_ids.shape)
