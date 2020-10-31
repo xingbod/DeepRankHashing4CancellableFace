@@ -33,8 +33,7 @@ import cv2
 import sys
 import glob
 
-sys.path.append('recognition')
-from embedding import Embedding
+from recognition.embedding import Embedding
 from menpo.visualize import print_progress
 from menpo.visualize.viewmatplotlib import sample_colours_from_colourmap
 from prettytable import PrettyTable
