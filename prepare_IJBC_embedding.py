@@ -44,7 +44,7 @@ import tqdm
 import os
 import numpy as np
 from modules.utils import load_yaml
-from modules.models import build_or_load_IoMmodel,build_or_load_Random_IoMmodel
+from modules.models import build_or_load_IoMmodel,build_or_load_Random_IoMmodel,build_iom_model
 
 warnings.filterwarnings("ignore")
 
@@ -204,7 +204,7 @@ cfg = load_yaml(cfg_path)  # cfg = load_yaml(FLAGS.cfg_path)
 if is_only_arc:
     model = build_or_load_IoMmodel(cfg, is_only_arc=is_only_arc)
 else:
-    model = build_or_load_Random_IoMmodel(cfg)
+    model = build_iom_model(cfg)
 model.summary(line_length=80)
 
 # =============================================================
@@ -227,6 +227,6 @@ if is_only_arc:
     cfg['m'] = 0
     cfg['q'] = 0
 
-np.save("img_feats_"+cfg['backbone_type']+'_'+str(is_only_arc)+'_'+ str(cfg['m']) + 'x' + str(cfg['q'])+".npy", img_feats)
-np.save("faceness_scores.npy", faceness_scores)
+np.save("data/ijbc_img_feats_learning_"+cfg['backbone_type']+'_'+ str(cfg['m']) + 'x' + str(cfg['q'])+".npy", img_feats)
+np.save("data/ijbc_faceness_scores.npy", faceness_scores)
 # # Step3: Get Template Features
