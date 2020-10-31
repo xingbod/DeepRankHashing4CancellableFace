@@ -45,6 +45,7 @@ import os
 import numpy as np
 from modules.utils import load_yaml
 from modules.models import build_or_load_IoMmodel
+from modules.IJB_utils import modeOrMedian
 
 warnings.filterwarnings("ignore")
 
@@ -153,19 +154,17 @@ def get_image_feature(img_path, img_list_path, model):
 # In[ ]:
 
 
+
 def image2template_feature(img_feats=None, templates=None, medias=None):
     # ==========================================================
     # 1. face image feature l2 normalization. img_feats:[number_image x feats_dim]
     # 2. compute media feature.
     # 3. compute template feature.
     # ==========================================================
-    img_feats = img_feats.astype(int)
     unique_templates = np.unique(templates)
-    template_feats = np.zeros((len(unique_templates), img_feats.shape[1] * 8))
-    x2 = np.arange(1024)
+    template_feats = np.zeros((len(unique_templates), img_feats.shape[1]))
 
     for count_template, uqt in enumerate(unique_templates):
-        this_template_feats = np.zeros(1024 * 8)
         (ind_t,) = np.where(templates == uqt)
         face_norm_feats = img_feats[ind_t]
         face_medias = medias[ind_t]
@@ -174,17 +173,15 @@ def image2template_feature(img_feats=None, templates=None, medias=None):
         for u, ct in zip(unique_medias, unique_media_counts):
             (ind_m,) = np.where(face_medias == u)
             if ct == 1:
-                index_t = np.multiply(face_norm_feats[ind_m], x2)
-                this_template_feats[index_t] = 1
+                media_norm_feats += [face_norm_feats[ind_m]]
             else:  # image features from the same video will be aggregated into one feature
-                all_feat = face_norm_feats[ind_m]
-                for iii in range(ct):
-                    index_t = np.multiply(all_feat[iii], x2)
-                    this_template_feats[index_t] += 1
-        template_feats[count_template] = this_template_feats  # median can achieve good perf sum-mean can not.median-sum cannot
-
+                media_norm_feats += [modeOrMedian(face_norm_feats[ind_m])]
+        media_norm_feats = np.array(media_norm_feats)
+        # media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
+        template_feats[count_template] = modeOrMedian(media_norm_feats)
         if count_template % 2000 == 0:
             print('Finish Calculating {} template features.'.format(count_template))
+    # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
     template_norm_feats = template_feats
     # print(template_norm_feats.shape)
     return template_norm_feats, unique_templates
@@ -211,12 +208,12 @@ def verification(template_norm_feats=None, unique_templates=None, p1=None, p2=No
         feat1 = template_norm_feats[template2id[p1[s]]]
         feat2 = template_norm_feats[template2id[p2[s]]]
 
-        similarity_score = np.sum(feat1 * feat2, -1)
-        score[s] = similarity_score.flatten()
-
-        # similarity_score = np.sum((feat1 - feat2)**2, -1)# Using euclidean distance to try
-        # similarity_score = np.multiply(similarity_score, np.sum((feat1)**2, -1)+np.sum((feat2)**2, -1))
+        # similarity_score = np.sum(feat1 * feat2, -1)
         # score[s] = similarity_score.flatten()
+
+        similarity_score = np.sum((feat1 - feat2)**2, -1)# Using euclidean distance to try
+        similarity_score = np.multiply(similarity_score, np.sum((feat1)**2, -1)+np.sum((feat2)**2, -1))
+        score[s] = similarity_score.flatten()
 
 
         # similarity_score = sklearn.metrics.pairwise_distances(feat1, feat2, metric='euclidean')
