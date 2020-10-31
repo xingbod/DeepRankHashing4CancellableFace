@@ -142,7 +142,10 @@ def main(_):
     else:
         print("[*] training from scratch.")
         epochs, steps = 1, 1
-
+    # test first
+    acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = val_LFW(model, cfg)
+    print(
+        "    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
     tmp_best_acc = 0
     if FLAGS.mode == 'eager_tf':
         # Eager mode is great for debugging
@@ -258,7 +261,7 @@ def main(_):
                         tf.summary.scalar(
                             'learning rate', optimizer.lr, step=steps)
 
-            if steps % 1000 == 0 or steps==1:
+            if steps % 1000 == 0:
                 acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = val_LFW(model, cfg)
                 print(
                     "    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
