@@ -15,7 +15,8 @@ import argparse
 import cv2
 import numpy as np
 import sys
-from skimage import transform as trans
+import skimage.transform as trans
+# from skimage import transform as trans
 
 class Embedding:
   def __init__(self, model):
