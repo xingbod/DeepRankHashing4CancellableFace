@@ -151,6 +151,7 @@ def image2template_feature_hash_orig(img_feats=None, templates=None, medias=None
         media_norm_feats = []
         for u, ct in zip(unique_medias, unique_media_counts):
             (ind_m,) = np.where(face_medias == u)
+            print("[***********]face_norm_feats[ind_m],", face_norm_feats[ind_m].shape)
             if ct == 1:
                 print("[***********]face_norm_feats[ind_m],",face_norm_feats[ind_m].shape)
                 media_norm_feats += [face_norm_feats[ind_m]]
