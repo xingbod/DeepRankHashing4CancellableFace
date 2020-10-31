@@ -201,15 +201,15 @@ def verification(template_norm_feats=None, unique_templates=None, p1=None, p2=No
     score = np.zeros((len(p1),))  # save cosine distance between pairs
 
     total_pairs = np.array(range(len(p1)))
-    batchsize = 10000  # small batchsize instead of all pairs in one batch due to the memory limiation
+    batchsize = 100000  # small batchsize instead of all pairs in one batch due to the memory limiation
     sublists = [total_pairs[i:i + batchsize] for i in range(0, len(p1), batchsize)]
     total_sublists = len(sublists)
     for c, s in enumerate(sublists):
         feat1 = template_norm_feats[template2id[p1[s]]]
         feat2 = template_norm_feats[template2id[p2[s]]]
 
-        # similarity_score = np.sum(feat1 * feat2, -1)
-        # score[s] = similarity_score.flatten()
+        similarity_score = np.sum(feat1 * feat2, -1)
+        score[s] = similarity_score.flatten()
 
 
         # similarity_score = np.sum((feat1 - feat2)**2, -1)# Using euclidean distance to try
@@ -217,9 +217,9 @@ def verification(template_norm_feats=None, unique_templates=None, p1=None, p2=No
         # score[s] = similarity_score.flatten()
 
 
-        similarity_score = sklearn.metrics.pairwise_distances(np.squeeze(feat1), np.squeeze(feat2), metric='hamming')
-        similarity_score = similarity_score.flatten()
-        score[s]  = 1- (similarity_score / ( max(similarity_score)+ 1))
+        # similarity_score = sklearn.metrics.pairwise_distances(np.squeeze(feat1), np.squeeze(feat2), metric='hamming')
+        # similarity_score = similarity_score.flatten()
+        # score[s]  = 1- (similarity_score / ( max(similarity_score)+ 1))
         if c % 10 == 0:
             print('Finish {}/{} pairs.'.format(c, total_sublists))
     return score
