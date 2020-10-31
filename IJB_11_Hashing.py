@@ -216,7 +216,7 @@ def verification(template_norm_feats=None, unique_templates=None, p1=None, p2=No
         # score[s] = similarity_score.flatten()
 
 
-        similarity_score = sklearn.metrics.pairwise_distances(feat1, feat2, metric='hamming')
+        similarity_score = sklearn.metrics.pairwise_distances(np.squeeze(feat1), np.squeeze(feat2), metric='hamming')
         similarity_score = similarity_score.flatten()
         score[s]  = 1- (similarity_score / ( max(similarity_score)+ 1))
         if c % 10 == 0:
