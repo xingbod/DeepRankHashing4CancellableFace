@@ -10,7 +10,7 @@ head_type: IoMHead # 'ArcHead', 'NormHead'
 is_ccrop: False # central-cropping or not
 isLUT: False
 hidden_layer_remark: '1'
-
+T: 10
 
 # train
 train_dataset: './data/triplets_ds.tfrecord'

@@ -61,6 +61,7 @@ parser.add_argument('--cfg_path', default='configs/config_random/iom_res100_rand
 parser.add_argument('--job', default='insightface', type=str, help='job name')
 parser.add_argument('--target', default='IJBC', type=str, help='target, set to IJBC or IJBB')
 parser.add_argument('--is_only_arc', default=0, type=int, help='is ArcFace only? Or IoM added')
+parser.add_argument('--remark', default='random_model', type=str, help='remarkd')
 args = parser.parse_args()
 
 target = args.target
@@ -74,6 +75,7 @@ use_norm_score = True  # if Ture, TestMode(N1)
 use_detector_score = True  # if Ture, TestMode(D1)
 use_flip_test = True  # if Ture, TestMode(F1)
 job = args.job
+remark = args.remark
 # is_only_arc = True
 print("is_only_arc?",is_only_arc)
 def read_template_media_list(path):
@@ -227,6 +229,6 @@ if is_only_arc:
     cfg['m'] = 0
     cfg['q'] = 0
 
-np.save("data/ijbc_img_feats_learning_"+cfg['backbone_type']+'_'+ str(cfg['m']) + 'x' + str(cfg['q'])+".npy", img_feats)
+np.save("data/ijbc_img_feats_"+remark+"_"+cfg['backbone_type']+'_'+ str(cfg['m']) + 'x' + str(cfg['q'])+".npy", img_feats)
 np.save("data/ijbc_faceness_scores.npy", faceness_scores)
 # # Step3: Get Template Features
