@@ -152,8 +152,9 @@ def image2template_feature_hash_orig(img_feats=None, templates=None, medias=None
         for u, ct in zip(unique_medias, unique_media_counts):
             (ind_m,) = np.where(face_medias == u)
             if ct == 1:
-                print("[***********]face_norm_feats[ind_m],",face_norm_feats[ind_m])
+                print("[***********]face_norm_feats[ind_m],",face_norm_feats[ind_m].shape)
                 media_norm_feats += [face_norm_feats[ind_m]]
+                break
             else:  # image features from the same video will be aggregated into one feature
                 media_norm_feats += [np.median(face_norm_feats[ind_m], 0, keepdims=True)]# using sum to try median can achieve good perf 40%  sum can not 3% mean can also 30%
         media_norm_feats = np.array(media_norm_feats)
