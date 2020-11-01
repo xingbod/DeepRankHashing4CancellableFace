@@ -214,6 +214,75 @@ def read_score(path):
     return img_feats
 
 
+def evaluation(query_feats, gallery_feats, mask,measure = 'euclidean'):
+    Fars = [0.001,0.01, 0.1]
+    print(query_feats.shape)
+    print(gallery_feats.shape)
+
+    query_num = query_feats.shape[0]
+    gallery_num = gallery_feats.shape[0]
+
+    #
+    # similarity = sklearn.metrics.pairwise_distances(query_feats, gallery_feats, metric=measure)
+    # similarity = 1- (similarity / ( max(similarity.flatten())+ 1))
+    similarity = np.dot(query_feats, gallery_feats.T)
+    print('similarity shape', similarity.shape)
+    print("similarity",similarity[0])
+
+
+    top_inds = np.argsort(-similarity)
+    print(top_inds.shape)
+    perf = []
+    # calculate top1
+    correct_num = 0
+    for i in range(query_num):
+        j = top_inds[i, 0]
+        if j == mask[i]:
+            correct_num += 1
+    print("top1 = {}".format(correct_num / query_num))
+    perf.append(correct_num / query_num)
+    # calculate top5
+    correct_num = 0
+    for i in range(query_num):
+        j = top_inds[i, 0:5]
+        if mask[i] in j:
+            correct_num += 1
+    print("top5 = {}".format(correct_num / query_num))
+    perf.append(correct_num / query_num)
+    # calculate 10
+    correct_num = 0
+    for i in range(query_num):
+        j = top_inds[i, 0:10]
+        if mask[i] in j:
+            correct_num += 1
+    print("top10 = {}".format(correct_num / query_num))
+    perf.append(correct_num / query_num)
+
+    neg_pair_num = query_num * gallery_num - query_num
+    print(neg_pair_num)
+    required_topk = [math.ceil(query_num * x) for x in Fars]
+    top_sims = similarity
+    # calculate fars and tprs
+    pos_sims = []
+    for i in range(query_num):
+        gt = mask[i]
+        pos_sims.append(top_sims[i, gt])
+        top_sims[i, gt] = -2.0
+
+    pos_sims = np.array(pos_sims)
+    print(pos_sims.shape)
+    neg_sims = top_sims[np.where(top_sims > -2.0)]
+    print("neg_sims num = {}".format(len(neg_sims)))
+    neg_sims = heapq.nlargest(max(required_topk), neg_sims)  # heap sort
+    print("after sorting , neg_sims num = {}".format(len(neg_sims)))
+    for far, pos in zip(Fars, required_topk):
+        th = neg_sims[pos - 1]
+        recall = np.sum(pos_sims > th) / query_num
+        print("far = {:.10f} pr = {:.10f} th = {:.10f}".format(far, recall, th))
+        perf.append(recall)
+
+    print("performance: ", perf)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='do ijb 1n test')
     # general
