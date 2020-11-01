@@ -185,7 +185,7 @@ def read_score(path):
 
 
 def evaluation(query_feats, gallery_feats, mask,measure = 'hamming'):
-    Fars = [0.01, 0.1]
+    Fars = [0.0001,0.001,0.01, 0.1]
     print(query_feats.shape)
     print(gallery_feats.shape)
 
@@ -316,12 +316,14 @@ if __name__ == "__main__":
     # model = build_or_load_IoMmodel(cfg, is_only_arc=is_only_arc)
     # model.summary(line_length=80)
 
+    # # Step3: Get Template Features
+    remark = "random_model"
     # img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
     print('[*] loading',"img_feats_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
         cfg['q']) + ".npy")
-    img_feats = np.load("img_feats_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
+    img_feats = np.load("data/ijbc_img_feats_" + remark + "_" + cfg['backbone_type'] + '_' + str(cfg['m']) + 'x' + str(
         cfg['q']) + ".npy")
-    faceness_scores = np.load("faceness_scores.npy")
+    np.save("data/ijbc_faceness_scores.npy", faceness_scores)
     print('img_feats', img_feats.shape)
     print('faceness_scores', faceness_scores.shape)
 
