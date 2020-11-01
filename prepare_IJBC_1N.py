@@ -268,7 +268,7 @@ if __name__ == "__main__":
     img_feats = np.load(
         "data_ijbc/ijbc_img_feats_random_model_" + cfg['backbone_type'] + '_'  + str(cfg['m']) + 'x' + str(
             cfg['q']) + ".npy")
-    faceness_scores = np.load("data/faceness_scores.npy")
+    faceness_scores = np.load("data_ijbc/ijbc_faceness_scores.npy")
     print('img_feats', img_feats.shape)
     print('faceness_scores', faceness_scores.shape)
 
