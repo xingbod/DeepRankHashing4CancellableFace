@@ -258,12 +258,12 @@ if __name__ == "__main__":
     #
     # # img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
 
-    if is_only_arc:
-        cfg['m'] = 0
-        cfg['q'] = 0
-    else:
-        cfg['m'] = 512
-        cfg['q'] = 8
+    # if is_only_arc:
+    #     cfg['m'] = 0
+    #     cfg['q'] = 0
+    # else:
+    #     cfg['m'] = 512
+    #     cfg['q'] = 8
 
     img_feats = np.load(
         "data_ijbc/ijbc_img_feats_random_model_" + cfg['backbone_type'] + '_'  + str(cfg['m']) + 'x' + str(
