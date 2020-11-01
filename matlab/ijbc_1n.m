@@ -10,7 +10,10 @@ addpath_recurse('BLUFR')
 %ijbc_1n("gallery_res50_xception_ids","gallery_res50_xception_feats","probe_res50_xception_ids","probe_res50_xception_feats")
 %ijbc_1n("gallery_incepv2_xception_ids","gallery_incepv2_xception_feats","probe_incepv2_xception_ids","probe_incepv2_xception_feats")
 %ijbc_1n("1101gallery_ids","1101gallery_feats","1101probe_ids","1101probe_feats")
-
+disp(gallery_feats_path)
+disp(gallery_ids_path)
+disp(probe_feats_path)
+disp(probe_ids_path)
 gallery_feats = importdata('../data/'+gallery_feats_path+'_G1.csv');
 gallery_ids = importdata('../data/'+gallery_ids_path+'_G1.csv');
 probe_feats = importdata('../data/'+probe_feats_path+'_G1.csv');
