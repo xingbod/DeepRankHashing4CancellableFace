@@ -112,9 +112,12 @@ iom_DIR_re = zeros(numRanks, numOsiFarPoints, numTrials); % detection and identi
 iom_osiFAR = zeros(numTrials, numOsiFarPoints); % open-set identification false accept rates of the 10 trials
 
 final_dist =pdist2( gallery_feats,probe_feats,measure);
-[iom_max_rank,iom_rec_rates] = CMC(1-final_dist',probe_ids,gallery_ids);
 %[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist , gallery_ids, probe_ids, osiFarPoints );
-[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-final_dist, gallery_ids, gallery_ids, veriFarPoints);
+[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-final_dist, gallery_ids, probe_ids, veriFarPoints);
+iom_VR(1,[29 38 56])* 100;
+
+[CMC_eu, map_eu, ~, ~] = evaluation(final_dist', gallery_ids, probe_ids, [], []);
+[iom_max_rank,iom_rec_rates] = CMC(1-final_dist',probe_ids,gallery_ids);
 
 
 %DIR3 =iom_DIR(1,[11 20],2) * 100;
