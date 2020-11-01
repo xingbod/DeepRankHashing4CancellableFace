@@ -395,5 +395,12 @@ if __name__ == "__main__":
     np.savetxt("data/1101gallery_feats_G1G2.csv", gallery_feats, delimiter=",")
     np.savetxt("data/1101probe_ids_G1G2.csv", probe_ids, delimiter=",")
     np.savetxt("data/1101probe_feats_G1G2.csv", probe_feats, delimiter=",")
+
+
+    mask = gen_mask(probe_ids, gallery_ids)
+    print("{}: start evaluation".format(dt.now()))
+    evaluation(probe_feats, gallery_feats, mask)
+    print("{}: end evaluation".format(dt.now()))
+
     print("[**]Completed _G1G2!!")
 
