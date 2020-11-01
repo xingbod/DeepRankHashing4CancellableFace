@@ -1,6 +1,6 @@
 function ijbc_1n(gallery_ids_path,gallery_feats_path,probe_ids_path,probe_feats_path,measure)
 
-tic
+
 addpath('../');
 addpath('matlab_tools')
 addpath_recurse('BLUFR')
@@ -113,11 +113,14 @@ iom_osiFAR = zeros(numTrials, numOsiFarPoints); % open-set identification false 
 
 final_dist =pdist2( gallery_feats,probe_feats,measure);
 %[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist , gallery_ids, probe_ids, osiFarPoints );
+tic
 [iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-final_dist, gallery_ids, probe_ids, veriFarPoints);
 iom_VR(1,[29 38 56])* 100;
-
+toc
+tic
 [CMC_eu, map_eu, ~, ~] = evaluation(final_dist', gallery_ids, probe_ids, [], []);
 CMC_eu
+toc
 %[iom_max_rank,iom_rec_rates] = CMC(1-final_dist',probe_ids,gallery_ids);
 
 
@@ -127,7 +130,6 @@ IR_1 = iom_rec_rates(1)* 100;
 VR = iom_VR(1,[29 38 56])* 100;
 %% DIR3 should equal IR_1
 %[DIR1 DIR2 IR_1 VR]
-toc
 end
 
 
