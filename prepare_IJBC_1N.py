@@ -241,74 +241,75 @@ if __name__ == "__main__":
         os.path.join(meta_dir, gallery_s2_record))
     print(gallery_s2_templates.shape, gallery_s2_templates.shape)
 
+    media_record = "%s_face_tid_mid.txt" % args.target.lower()
+    total_templates, total_medias = read_template_media_list(os.path.join(meta_dir, media_record))
+    print("total_templates", total_templates.shape, total_medias.shape)
+    # load image features
+    start = timeit.default_timer()
+    feature_path = ''  # feature path
+    face_path = ''  # face path
+    img_path = './%s/loose_crop' % target
+    img_list_path = './%s/meta/%s_name_5pts_score.txt' % (target, target.lower())
+    # img_feats, faceness_scores = get_image_feature(feature_path, face_path)
+
+    cfg = load_yaml(cfg_path)  # cfg = load_yaml(FLAGS.cfg_path)
+    # model = build_or_load_IoMmodel(cfg, is_only_arc=is_only_arc)
+    # model.summary(line_length=80)
+    #
+    # # img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
+
+    if is_only_arc:
+        cfg['m'] = 0
+        cfg['q'] = 0
+    else:
+        cfg['m'] = 512
+        cfg['q'] = 8
+
+    img_feats = np.load(
+        "data_ijbc/ijbc_img_feats_random_model_" + cfg['backbone_type'] + '_'  + str(cfg['m']) + 'x' + str(
+            cfg['q']) + ".npy")
+    faceness_scores = np.load("data/faceness_scores.npy")
+    print('img_feats', img_feats.shape)
+    print('faceness_scores', faceness_scores.shape)
+
+    stop = timeit.default_timer()
+    print('Time: %.2f s. ' % (stop - start))
+    print('Feature Shape: ({} , {}) .'.format(img_feats.shape[0], img_feats.shape[1]))
+
+    # compute template features from image features.
+    start = timeit.default_timer()
+    # ==========================================================
+    # Norm feature before aggregation into template feature?
+    # Feature norm from embedding network and faceness score are able to decrease weights for noise samples (not face).
+    # ==========================================================
+    use_norm_score = True  # if True, TestMode(N1)
+    use_detector_score = False  # if True, TestMode(D1)
+    use_flip_test = True  # if True, TestMode(F1)
+
+    if use_flip_test:
+        # concat --- F1
+        img_input_feats = img_feats
+        # add --- F2
+        # img_input_feats = img_feats[:, 0:int(img_feats.shape[1] / 2)] + img_feats[:, int(img_feats.shape[1] / 2):]
+    else:
+        img_input_feats = img_feats[:, 0:int(img_feats.shape[1] / 2)]
+
+    if use_norm_score:
+        img_input_feats = img_input_feats
+    else:
+        # normalise features to remove norm information
+        img_input_feats = img_input_feats / np.sqrt(np.sum(img_input_feats ** 2, -1, keepdims=True))
+
+    if use_detector_score:
+        img_input_feats = img_input_feats * np.matlib.repmat(faceness_scores[:, np.newaxis], 1,
+                                                             img_input_feats.shape[1])
+    else:
+        img_input_feats = img_input_feats
+    print("input features shape", img_input_feats.shape)
 
 
     def generateTemplate(gallery_templates,gallery_subject_ids):
-       media_record = "%s_face_tid_mid.txt" % args.target.lower()
-       total_templates, total_medias = read_template_media_list(os.path.join(meta_dir, media_record))
-       print("total_templates", total_templates.shape, total_medias.shape)
-       # load image features
-       start = timeit.default_timer()
-       feature_path = ''  # feature path
-       face_path = ''  # face path
-       img_path = './%s/loose_crop' % target
-       img_list_path = './%s/meta/%s_name_5pts_score.txt' % (target, target.lower())
-       # img_feats, faceness_scores = get_image_feature(feature_path, face_path)
 
-       cfg = load_yaml(cfg_path)  # cfg = load_yaml(FLAGS.cfg_path)
-       # model = build_or_load_IoMmodel(cfg, is_only_arc=is_only_arc)
-       # model.summary(line_length=80)
-       #
-       # # img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
-
-       if is_only_arc:
-           cfg['m'] = 0
-           cfg['q'] = 0
-       else:
-           cfg['m'] = 512
-           cfg['q'] = 8
-
-       img_feats = np.load(
-           "data_ijbc/img_feats_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
-               cfg['q']) + ".npy")
-       faceness_scores = np.load("faceness_scores.npy")
-       print('img_feats', img_feats.shape)
-       print('faceness_scores', faceness_scores.shape)
-
-       stop = timeit.default_timer()
-       print('Time: %.2f s. ' % (stop - start))
-       print('Feature Shape: ({} , {}) .'.format(img_feats.shape[0], img_feats.shape[1]))
-
-       # compute template features from image features.
-       start = timeit.default_timer()
-       # ==========================================================
-       # Norm feature before aggregation into template feature?
-       # Feature norm from embedding network and faceness score are able to decrease weights for noise samples (not face).
-       # ==========================================================
-       use_norm_score = True  # if True, TestMode(N1)
-       use_detector_score = False  # if True, TestMode(D1)
-       use_flip_test = True  # if True, TestMode(F1)
-
-       if use_flip_test:
-           # concat --- F1
-           img_input_feats = img_feats
-           # add --- F2
-           # img_input_feats = img_feats[:, 0:int(img_feats.shape[1] / 2)] + img_feats[:, int(img_feats.shape[1] / 2):]
-       else:
-           img_input_feats = img_feats[:, 0:int(img_feats.shape[1] / 2)]
-
-       if use_norm_score:
-           img_input_feats = img_input_feats
-       else:
-           # normalise features to remove norm information
-           img_input_feats = img_input_feats / np.sqrt(np.sum(img_input_feats ** 2, -1, keepdims=True))
-
-       if use_detector_score:
-           img_input_feats = img_input_feats * np.matlib.repmat(faceness_scores[:, np.newaxis], 1,
-                                                                img_input_feats.shape[1])
-       else:
-           img_input_feats = img_input_feats
-       print("input features shape", img_input_feats.shape)
 
        # load gallery feature # image2template_feature_hash image2template_feature
        gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature_hash(
@@ -365,29 +366,29 @@ if __name__ == "__main__":
     gallery_templates = gallery_s1_templates
     gallery_subject_ids = gallery_s1_subject_ids
     gallery_ids,gallery_feats,probe_ids,probe_feats = generateTemplate(gallery_templates, gallery_subject_ids)
-    np.savetxt("data/gallery_ids_G1.csv", gallery_ids, delimiter=",")
-    np.savetxt("data/gallery_feats_G1.csv", gallery_feats, delimiter=",")
-    np.savetxt("data/probe_ids_G1.csv", probe_ids, delimiter=",")
-    np.savetxt("data/probe_feats_G1.csv", probe_feats, delimiter=",")
+    np.savetxt("data/1101gallery_ids_G1.csv", gallery_ids, delimiter=",")
+    np.savetxt("data/1101gallery_feats_G1.csv", gallery_feats, delimiter=",")
+    np.savetxt("data/1101probe_ids_G1.csv", probe_ids, delimiter=",")
+    np.savetxt("data/1101probe_feats_G1.csv", probe_feats, delimiter=",")
     print("[**]Completed _G1!!!")
 
     print('Using G2', gallery_s1_templates.shape)
     gallery_templates = gallery_s2_templates
     gallery_subject_ids = gallery_s2_subject_ids
     gallery_ids, gallery_feats, probe_ids, probe_feats = generateTemplate(gallery_templates, gallery_subject_ids)
-    np.savetxt("data/gallery_ids_G2.csv", gallery_ids, delimiter=",")
-    np.savetxt("data/gallery_feats_G2.csv", gallery_feats, delimiter=",")
-    np.savetxt("data/probe_ids_G2.csv", probe_ids, delimiter=",")
-    np.savetxt("data/probe_feats_G2.csv", probe_feats, delimiter=",")
+    np.savetxt("data/1101gallery_ids_G2.csv", gallery_ids, delimiter=",")
+    np.savetxt("data/1101gallery_feats_G2.csv", gallery_feats, delimiter=",")
+    np.savetxt("data/1101probe_ids_G2.csv", probe_ids, delimiter=",")
+    np.savetxt("data/1101probe_feats_G2.csv", probe_feats, delimiter=",")
     print("[**]Completed _G2!!!")
 
     print('Using G1 mix with G2')
     gallery_templates = np.concatenate([gallery_s1_templates, gallery_s2_templates])
     gallery_subject_ids = np.concatenate([gallery_s1_subject_ids, gallery_s2_subject_ids])
     gallery_ids, gallery_feats, probe_ids, probe_feats = generateTemplate(gallery_templates, gallery_subject_ids)
-    np.savetxt("data/gallery_ids_G1G2.csv", gallery_ids, delimiter=",")
-    np.savetxt("data/gallery_feats_G1G2.csv", gallery_feats, delimiter=",")
-    np.savetxt("data/probe_ids_G1G2.csv", probe_ids, delimiter=",")
-    np.savetxt("data/probe_feats_G1G2.csv", probe_feats, delimiter=",")
+    np.savetxt("data/1101gallery_ids_G1G2.csv", gallery_ids, delimiter=",")
+    np.savetxt("data/1101gallery_feats_G1G2.csv", gallery_feats, delimiter=",")
+    np.savetxt("data/1101probe_ids_G1G2.csv", probe_ids, delimiter=",")
+    np.savetxt("data/1101probe_feats_G1G2.csv", probe_feats, delimiter=",")
     print("[**]Completed _G1G2!!")
 
