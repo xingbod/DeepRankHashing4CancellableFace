@@ -37,6 +37,7 @@ from menpo.visualize.viewmatplotlib import sample_colours_from_colourmap
 
 from modules.utils import load_yaml
 from modules.models import build_or_load_IoMmodel
+from modules.IJB_utils import modeOrMedian
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
