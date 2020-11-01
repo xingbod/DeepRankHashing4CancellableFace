@@ -199,6 +199,14 @@ def verification(template_norm_feats=None, unique_templates=None, p1=None, p2=No
             print('Finish {}/{} pairs.'.format(c, total_sublists))
     return score
 
+def gen_mask(query_ids, reg_ids):
+    mask = []
+    for query_id in query_ids:
+        pos = [i for i, x in enumerate(reg_ids) if query_id == x]
+        if len(pos) != 1:
+            raise RuntimeError("RegIdsError with id = {}， duplicate = {} ".format(query_id, len(pos)))
+        mask.append(pos[0])
+    return mask
 
 def read_score(path):
     with open(path, 'rb') as fid:
