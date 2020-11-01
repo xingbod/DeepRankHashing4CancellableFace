@@ -1,5 +1,6 @@
 function ijbc_1n(gallery_ids_path,gallery_feats_path,probe_ids_path,probe_feats_path)
 
+tic
 addpath('../');
 addpath('matlab_tools')
 addpath_recurse('BLUFR')
@@ -45,7 +46,7 @@ final_dist =pdist2( gallery_feats,probe_feats);
 
 [iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist , gallery_ids, probe_ids, osiFarPoints );
 
-DIR1 =iom_DIR(1,[11 20],2) * 100;
+DIR1 =iom_DIR(1,[11 20],2) * 100
 
 %%
 gallery_feats = importdata('../data/'+gallery_feats_path+'_G2.csv');
@@ -80,7 +81,7 @@ final_dist =pdist2( gallery_feats,probe_feats);
 [iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist , gallery_ids, probe_ids, osiFarPoints );
 
 
-DIR2 =iom_DIR(1,[11 20],2) * 100;
+DIR2 =iom_DIR(1,[11 20],2) * 100
 
 
 %%
@@ -122,6 +123,7 @@ IR_1 = iom_rec_rates(1)* 100;
 VR = iom_VR(1,[29 38 56])* 100;
 %% DIR3 should equal IR_1
 [DIR1 DIR2 IR_1 VR]
+toc
 end
 
 
