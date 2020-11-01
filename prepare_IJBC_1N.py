@@ -132,7 +132,6 @@ def image2template_feature(img_feats=None, templates=None, medias=None, choose_t
     template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
     return template_norm_feats, unique_templates, unique_subjectids
 
-
 def image2template_feature_hash(img_feats=None, templates=None, medias=None, choose_templates=None, choose_ids=None):
     # ==========================================================
     # 1. face image feature l2 normalization. img_feats:[number_image x feats_dim]
@@ -154,19 +153,24 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
             (ind_m,) = np.where(face_medias == u)
             if ct == 1:
                 media_norm_feats += [face_norm_feats[ind_m]]
+                break
             else:  # image features from the same video will be aggregated into one feature
-                media_norm_feats += [np.median(face_norm_feats[ind_m], 0, keepdims=True)]# using sum to try median can achieve good perf 40%  sum can not 3% mean can also 30%
+                # print('[ct>1]',ct)
+                media_norm_feats += [modeOrMedian(face_norm_feats[ind_m])]# using sum to try median can achieve good perf 40%  sum can not 3% mean can also 30%
+
+        # print("[***********]media_norm_feats,", media_norm_feats)
         media_norm_feats = np.array(media_norm_feats)
         # media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
-        template_feats[count_template] = np.median(media_norm_feats, 0)# median can achieve good perf sum-mean can not.median-sum cannot
+        template_feats[count_template] = modeOrMedian(media_norm_feats)# median can achieve good perf sum-mean can not.median-sum cannot
         if count_template % 2000 == 0:
             print('Finish Calculating {} template features.'.format(count_template))
     # print('***template_feats',template_feats[0])
     # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
     # template_feats = np.round(template_feats)
     print('***template_feats***',template_feats[0])
-    # template_norm_feats = template_feats
-    template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
+    # template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
+    # template_norm_feats = sklearn.preprocessing.normalize(template_feats)
+    template_norm_feats = template_feats
     print('***finaltemplate***',template_norm_feats[0])
     return template_norm_feats, unique_templates, unique_subjectids
 
