@@ -4,7 +4,7 @@ tic
 addpath('../');
 addpath('matlab_tools')
 addpath_recurse('BLUFR')
-
+measure = "Hamming";
 %+"IJBC1N_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
 %        cfg['q'])+
 %ijbc_1n("gallery_res50_incev2_ids","gallery_res50_incev2_feats","probe_res50_incev2_ids","probe_res50_incev2_feats")
@@ -42,7 +42,7 @@ iom_DIR_re = zeros(numRanks, numOsiFarPoints, numTrials); % detection and identi
 iom_osiFAR = zeros(numTrials, numOsiFarPoints); % open-set identification false accept rates of the 10 trials
 
 
-final_dist =pdist2( gallery_feats,probe_feats);
+final_dist =pdist2( gallery_feats,probe_feats,measure);
 
 [iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist , gallery_ids, probe_ids, osiFarPoints );
 
@@ -76,7 +76,7 @@ iom_DIR_re = zeros(numRanks, numOsiFarPoints, numTrials); % detection and identi
 iom_osiFAR = zeros(numTrials, numOsiFarPoints); % open-set identification false accept rates of the 10 trials
 
 
-final_dist =pdist2( gallery_feats,probe_feats);
+final_dist =pdist2( gallery_feats,probe_feats,measure);
 
 [iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist , gallery_ids, probe_ids, osiFarPoints );
 
@@ -111,7 +111,7 @@ iom_DIR = zeros(numRanks, numOsiFarPoints, numTrials); % detection and identific
 iom_DIR_re = zeros(numRanks, numOsiFarPoints, numTrials); % detection and identification rates of the 10 trials
 iom_osiFAR = zeros(numTrials, numOsiFarPoints); % open-set identification false accept rates of the 10 trials
 
-final_dist =pdist2( gallery_feats,probe_feats);
+final_dist =pdist2( gallery_feats,probe_feats,measure);
 [iom_max_rank,iom_rec_rates] = CMC(1-final_dist',probe_ids,gallery_ids);
 %[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist , gallery_ids, probe_ids, osiFarPoints );
 [iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-final_dist, facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
