@@ -117,10 +117,10 @@ tic
 [iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-final_dist, gallery_ids, probe_ids, veriFarPoints);
 iom_VR(1,[29 38 56])* 100;
 toc
-tic
-[CMC_eu, map_eu, ~, ~] = evaluation(final_dist', gallery_ids, probe_ids, [], []);
-CMC_eu
-toc
+%tic
+%[CMC_eu, map_eu, ~, ~] = evaluation(final_dist', gallery_ids, probe_ids, [], []);
+%CMC_eu
+%toc
 %[iom_max_rank,iom_rec_rates] = CMC(1-final_dist',probe_ids,gallery_ids);
 
 
