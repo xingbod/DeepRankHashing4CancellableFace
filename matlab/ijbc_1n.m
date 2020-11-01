@@ -114,7 +114,7 @@ iom_osiFAR = zeros(numTrials, numOsiFarPoints); % open-set identification false 
 final_dist =pdist2( gallery_feats,probe_feats,measure);
 %[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist , gallery_ids, probe_ids, osiFarPoints );
 tic
-[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(final_dist, gallery_ids, probe_ids, veriFarPoints);
+[iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-final_dist, gallery_ids, probe_ids, veriFarPoints);
 iom_VR(1,[29 38 56])* 100
 toc
 %tic
