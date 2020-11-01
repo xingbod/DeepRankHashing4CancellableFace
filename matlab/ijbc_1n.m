@@ -112,16 +112,16 @@ iom_osiFAR = zeros(numTrials, numOsiFarPoints); % open-set identification false 
 
 final_dist =pdist2( gallery_feats,probe_feats);
 [iom_max_rank,iom_rec_rates] = CMC(1-final_dist',probe_ids,gallery_ids);
-[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist , gallery_ids, probe_ids, osiFarPoints );
+%[iom_DIR(:,:,2), iom_osiFAR(2,:)] = OpenSetROC(1-final_dist , gallery_ids, probe_ids, osiFarPoints );
 [iom_VR(1,:), iom_veriFAR(1,:)] = EvalROC(1-final_dist, facenet_gallery_label, facenet_probe_label_c, veriFarPoints);
 
 
-DIR3 =iom_DIR(1,[11 20],2) * 100;
+%DIR3 =iom_DIR(1,[11 20],2) * 100;
 
 IR_1 = iom_rec_rates(1)* 100;
 VR = iom_VR(1,[29 38 56])* 100;
 %% DIR3 should equal IR_1
-[DIR1 DIR2 DIR3 IR_1 VR]
+[DIR1 DIR2 IR_1 VR]
 end
 
 
