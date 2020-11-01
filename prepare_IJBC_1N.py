@@ -367,25 +367,25 @@ if __name__ == "__main__":
     #     cfg['q'])+"probe_ids.csv", probe_ids, delimiter=",")
     # np.savetxt("data/"+"IJBC1N_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
     #     cfg['q'])+"probe_feats.csv", probe_feats, delimiter=",")
-    print('Using G1!', gallery_s1_templates.shape)
-    gallery_templates = gallery_s1_templates
-    gallery_subject_ids = gallery_s1_subject_ids
-    gallery_ids,gallery_feats,probe_ids,probe_feats = generateTemplate(gallery_templates, gallery_subject_ids)
-    np.savetxt("data/1101gallery_ids_G1.csv", gallery_ids, delimiter=",")
-    np.savetxt("data/1101gallery_feats_G1.csv", gallery_feats, delimiter=",")
-    np.savetxt("data/1101probe_ids_G1.csv", probe_ids, delimiter=",")
-    np.savetxt("data/1101probe_feats_G1.csv", probe_feats, delimiter=",")
-    print("[**]Completed _G1!!!")
-
-    print('Using G2', gallery_s1_templates.shape)
-    gallery_templates = gallery_s2_templates
-    gallery_subject_ids = gallery_s2_subject_ids
-    gallery_ids, gallery_feats, probe_ids, probe_feats = generateTemplate(gallery_templates, gallery_subject_ids)
-    np.savetxt("data/1101gallery_ids_G2.csv", gallery_ids, delimiter=",")
-    np.savetxt("data/1101gallery_feats_G2.csv", gallery_feats, delimiter=",")
-    np.savetxt("data/1101probe_ids_G2.csv", probe_ids, delimiter=",")
-    np.savetxt("data/1101probe_feats_G2.csv", probe_feats, delimiter=",")
-    print("[**]Completed _G2!!!")
+    # print('Using G1!', gallery_s1_templates.shape)
+    # gallery_templates = gallery_s1_templates
+    # gallery_subject_ids = gallery_s1_subject_ids
+    # gallery_ids,gallery_feats,probe_ids,probe_feats = generateTemplate(gallery_templates, gallery_subject_ids)
+    # np.savetxt("data/1101gallery_ids_G1.csv", gallery_ids, delimiter=",")
+    # np.savetxt("data/1101gallery_feats_G1.csv", gallery_feats, delimiter=",")
+    # np.savetxt("data/1101probe_ids_G1.csv", probe_ids, delimiter=",")
+    # np.savetxt("data/1101probe_feats_G1.csv", probe_feats, delimiter=",")
+    # print("[**]Completed _G1!!!")
+    #
+    # print('Using G2', gallery_s1_templates.shape)
+    # gallery_templates = gallery_s2_templates
+    # gallery_subject_ids = gallery_s2_subject_ids
+    # gallery_ids, gallery_feats, probe_ids, probe_feats = generateTemplate(gallery_templates, gallery_subject_ids)
+    # np.savetxt("data/1101gallery_ids_G2.csv", gallery_ids, delimiter=",")
+    # np.savetxt("data/1101gallery_feats_G2.csv", gallery_feats, delimiter=",")
+    # np.savetxt("data/1101probe_ids_G2.csv", probe_ids, delimiter=",")
+    # np.savetxt("data/1101probe_feats_G2.csv", probe_feats, delimiter=",")
+    # print("[**]Completed _G2!!!")
 
     print('Using G1 mix with G2')
     gallery_templates = np.concatenate([gallery_s1_templates, gallery_s2_templates])
