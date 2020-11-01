@@ -1,10 +1,10 @@
-function ijbc_1n(gallery_ids_path,gallery_feats_path,probe_ids_path,probe_feats_path)
+function ijbc_1n(gallery_ids_path,gallery_feats_path,probe_ids_path,probe_feats_path,measure)
 
 tic
 addpath('../');
 addpath('matlab_tools')
 addpath_recurse('BLUFR')
-measure = "Hamming";
+%measure = "Hamming";
 %+"IJBC1N_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
 %        cfg['q'])+
 %ijbc_1n("gallery_res50_incev2_ids","gallery_res50_incev2_feats","probe_res50_incev2_ids","probe_res50_incev2_feats")
