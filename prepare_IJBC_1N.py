@@ -269,10 +269,11 @@ if __name__ == "__main__":
     # else:
     #     cfg['m'] = 512
     #     cfg['q'] = 8
+    feat_path ="data_ijbc/ijbc_img_feats_random_model_" + cfg['backbone_type'] + '_'  + str(cfg['m']) + 'x' + str(
+            cfg['q']) + ".npy"
 
-    img_feats = np.load(
-        "data_ijbc/ijbc_img_feats_random_model_" + cfg['backbone_type'] + '_'  + str(cfg['m']) + 'x' + str(
-            cfg['q']) + ".npy")
+    print('[*] loading',feat_path)
+    img_feats = np.load(feat_path)
     faceness_scores = np.load("data_ijbc/ijbc_faceness_scores.npy")
     print('img_feats', img_feats.shape)
     print('faceness_scores', faceness_scores.shape)
