@@ -321,7 +321,7 @@ if __name__ == "__main__":
     # img_feats, faceness_scores = get_image_feature(img_path, img_list_path, model)
     # print('[*] loading',"img_feats_" + cfg['backbone_type'] + '_' + str(is_only_arc) + '_' + str(cfg['m']) + 'x' + str(
     #     cfg['q']) + ".npy")
-    img_feats = np.load("data/img_feats_ResNet50_0_512x8.npy")
+    img_feats = np.load("data_ijbc/img_feats_ResNet50_0_512x8.npy")
     np.save("data_ijbc/ijbc_faceness_scores.npy", faceness_scores)
     print('img_feats', img_feats.shape)
     print('faceness_scores', faceness_scores.shape)
