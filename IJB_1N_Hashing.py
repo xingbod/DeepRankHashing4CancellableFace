@@ -178,6 +178,69 @@ def image2template_feature_hash(img_feats=None, templates=None, medias=None, cho
     return template_norm_feats, unique_templates, unique_subjectids
 
 
+
+def image2template_feature(img_feats=None, templates=None, medias=None, choose_templates=None, choose_ids=None):
+    # ==========================================================
+    # 1. face image feature l2 normalization. img_feats:[number_image x feats_dim]
+    # 2. compute media feature.
+    # 3. compute template feature.
+    # ==========================================================
+    unique_templates, indices = np.unique(choose_templates, return_index=True)
+    unique_subjectids = choose_ids[indices]
+    template_feats = np.zeros((len(unique_templates), img_feats.shape[1]))
+
+    for count_template, uqt in enumerate(unique_templates):
+        (ind_t,) = np.where(templates == uqt)
+        face_norm_feats = img_feats[ind_t]
+        face_medias = medias[ind_t]
+        unique_medias, unique_media_counts = np.unique(face_medias, return_counts=True)
+        media_norm_feats = []
+        for u, ct in zip(unique_medias, unique_media_counts):
+            (ind_m,) = np.where(face_medias == u)
+            if ct == 1:
+                media_norm_feats += [face_norm_feats[ind_m]]
+            else:  # image features from the same video will be aggregated into one feature
+                media_norm_feats += [np.mean(face_norm_feats[ind_m], 0, keepdims=True)]
+        media_norm_feats = np.array(media_norm_feats)
+        # media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
+        template_feats[count_template] = np.sum(media_norm_feats, 0)
+        if count_template % 2000 == 0:
+            print('Finish Calculating {} template features.'.format(count_template))
+    template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
+    return template_norm_feats, unique_templates, unique_subjectids
+
+
+def image2template_feature_hash_median(img_feats=None, templates=None, medias=None, choose_templates=None, choose_ids=None):
+    # ==========================================================
+    # 1. face image feature l2 normalization. img_feats:[number_image x feats_dim]
+    # 2. compute media feature.
+    # 3. compute template feature.
+    # ==========================================================
+    unique_templates, indices = np.unique(choose_templates, return_index=True)
+    unique_subjectids = choose_ids[indices]
+    template_feats = np.zeros((len(unique_templates), img_feats.shape[1]))
+
+    for count_template, uqt in enumerate(unique_templates):
+        (ind_t,) = np.where(templates == uqt)
+        face_norm_feats = img_feats[ind_t]
+        face_medias = medias[ind_t]
+        unique_medias, unique_media_counts = np.unique(face_medias, return_counts=True)
+        media_norm_feats = []
+        for u, ct in zip(unique_medias, unique_media_counts):
+            (ind_m,) = np.where(face_medias == u)
+            if ct == 1:
+                media_norm_feats += [face_norm_feats[ind_m]]
+            else:  # image features from the same video will be aggregated into one feature
+                media_norm_feats += [np.median(face_norm_feats[ind_m], 0, keepdims=True)]
+        media_norm_feats = np.array(media_norm_feats)
+        # media_norm_feats = media_norm_feats / np.sqrt(np.sum(media_norm_feats ** 2, -1, keepdims=True))
+        template_feats[count_template] = np.median(media_norm_feats, 0)
+        if count_template % 2000 == 0:
+            print('Finish Calculating {} template features.'.format(count_template))
+    template_norm_feats = template_feats / np.sqrt(np.sum(template_feats ** 2, -1, keepdims=True))
+    return template_norm_feats, unique_templates, unique_subjectids
+
+
 def read_score(path):
     with open(path, 'rb') as fid:
         img_feats = pickle.load(fid)
@@ -363,7 +426,7 @@ if __name__ == "__main__":
     print("input features shape", img_input_feats.shape)
 
     # load gallery feature # image2template_feature_hash image2template_feature
-    gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature_hash(
+    gallery_templates_feature, gallery_unique_templates, gallery_unique_subject_ids = image2template_feature_hash_median(
         img_input_feats, total_templates, total_medias, gallery_templates, gallery_subject_ids)
     stop = timeit.default_timer()
     print('Time: %.2f s. ' % (stop - start))
@@ -377,7 +440,7 @@ if __name__ == "__main__":
     probe_mixed_templates, probe_mixed_subject_ids = read_template_subject_id_list(
         os.path.join(meta_dir, probe_mixed_record))
     print(probe_mixed_templates.shape, probe_mixed_subject_ids.shape)
-    probe_mixed_templates_feature, probe_mixed_unique_templates, probe_mixed_unique_subject_ids = image2template_feature_hash(
+    probe_mixed_templates_feature, probe_mixed_unique_templates, probe_mixed_unique_subject_ids = image2template_feature_hash_median(
         img_input_feats, total_templates, total_medias, probe_mixed_templates, probe_mixed_subject_ids)
     print("probe_mixed_templates_feature", probe_mixed_templates_feature.shape)
     print("probe_mixed_unique_subject_ids", probe_mixed_unique_subject_ids.shape)
