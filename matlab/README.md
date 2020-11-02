@@ -134,7 +134,6 @@ run_single_learning("embeddings_inresv2","InceptionResNetV2","VGG2",0)
 remark = "learning_VGG2_fusion_diomh";                      
 DS= "VGG2";    
 measure = "Hamming";
-(feat_path,feat_path2,filename_path,measure,ds,remark)
-enroll_query_search_fusion("embeddings_inresv2/Xception_lfw_feat_randomIoM_0_LUT_0_512x8.csv","embeddings_inresv2/InceptionResNetV2_lfw_feat_randomIoM_0_LUT_0_512x8.csv")
+enroll_query_search_fusion("embeddings_inresv2/Xception_VGG2_feat_randomIoM_0_LUT_0_512x8.csv","embeddings_inresv2/InceptionResNetV2_VGG2_feat_randomIoM_0_LUT_0_512x8.csv", "embeddings_inresv2/Xception_VGG2_name_randomIoM_0_LUT_0_512x8.txt",measure,DS,remark)
 
 ```
