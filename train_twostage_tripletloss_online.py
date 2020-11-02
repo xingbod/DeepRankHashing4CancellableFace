@@ -58,7 +58,7 @@ def main(_):
     else:
         logging.info("load fake dataset.")
         steps_per_epoch = 1
-
+    print('[*] batch size',cfg['batch_size'])
     learning_rate = tf.constant(cfg['base_lr'])
     # optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 

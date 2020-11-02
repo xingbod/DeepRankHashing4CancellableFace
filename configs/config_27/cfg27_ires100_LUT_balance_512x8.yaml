@@ -1,7 +1,7 @@
 # general x.x.134.222
 samples_per_class: 4
-classes_per_batch: 20
-batch_size: 80
+classes_per_batch: 15
+batch_size: 60
 eval_batch_size: 200
 input_size: 112
 # embd_shape is for the Resnet, backbone
@@ -16,7 +16,7 @@ bin_lut_loss: 'tanh'
 hidden_layer_remark: '1'
 code_balance_loss: True
 quanti: False
-T: 1
+T: 10
 # train /media/xingbo/Storage/facedata/vgg_mtcnnpy_160 ./data/split /media/xingbo/Storage/facedata/ms1m_align_112/imgs
 train_dataset: '/home/datascience/xingbo/ms1m_align_112/imgs'
 #train_dataset: '/media/xingbo/Storage/facedata/vgg_mtcnnpy_160'
