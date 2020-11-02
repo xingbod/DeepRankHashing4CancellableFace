@@ -118,11 +118,23 @@ enroll_query_search( "embeddings_inresv2/ResNet50_lfw_feat_randomIoM_0_LUT_3_512
 
 ```
 
-#20201031
+# 20201031
 
 ```bash
 
 run_single("embeddings_inresv2","InceptionResNetV2","VGG2",0)
 run_single_learning("embeddings_inresv2","InceptionResNetV2","VGG2",0)
+
+```
+
+
+# 20201102
+
+```bash
+remark = "learning_VGG2_fusion_diomh";                      
+DS= "VGG2";    
+measure = "Hamming";
+(feat_path,feat_path2,filename_path,measure,ds,remark)
+enroll_query_search_fusion("embeddings_inresv2/Xception_lfw_feat_randomIoM_0_LUT_0_512x8.csv","embeddings_inresv2/InceptionResNetV2_lfw_feat_randomIoM_0_LUT_0_512x8.csv")
 
 ```
