@@ -338,7 +338,7 @@ if __name__ == "__main__":
     # Feature norm from embedding network and faceness score are able to decrease weights for noise samples (not face).
     # ==========================================================
     use_norm_score = True  # if True, TestMode(N1)
-    use_detector_score = False  # if True, TestMode(D1)
+    use_detector_score = True  # if True, TestMode(D1)
     use_flip_test = True  # if True, TestMode(F1)
 
     if use_flip_test:
