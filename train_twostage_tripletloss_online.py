@@ -39,6 +39,7 @@ def main(_):
     freezeBackbone = FLAGS.freezeBackbone
     cfg = load_yaml(FLAGS.cfg_path)
     permKey = None
+    debuging = False
     if cfg['head_type'] == 'IoMHead':#
         #permKey = generatePermKey(cfg['embd_shape'])
         permKey = tf.eye(cfg['embd_shape']) # for training, we don't permutate, won't influence the performance
@@ -143,9 +144,11 @@ def main(_):
         print("[*] training from scratch.")
         epochs, steps = 1, 1
     # test first
-    acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = val_LFW(model, cfg)
-    print(
-        "    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
+    if debuging:
+        acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = val_LFW(model, cfg)
+        print(
+            "    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
+
     tmp_best_acc = 0
     if FLAGS.mode == 'eager_tf':
         # Eager mode is great for debugging
@@ -261,39 +264,45 @@ def main(_):
                         tf.summary.scalar(
                             'learning rate', optimizer.lr, step=steps)
 
-            if steps % 1000 == 0:
-                acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = val_LFW(model, cfg)
-                print(
-                    "    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw, eer_lfw))
-                with summary_writer.as_default():
-                    tf.summary.scalar('metric/epoch_acc', acc_lfw, step=steps)
-                    tf.summary.scalar('metric/epoch_eer', eer_lfw, step=steps)
-                if tmp_best_acc < acc_lfw:
-                    tmp_best_acc = acc_lfw
-                    print('[*] save best ckpt file!')
-                    if not os.path.exists('checkpoints/{}'.format(
-                        cfg['sub_name'])):
-                        os.mkdir('checkpoints/{}'.format(
-                        cfg['sub_name']))
-                    file = open('checkpoints/{}/bestAcc_e_{}_b_{}.log'.format(
-                        cfg['sub_name'], epochs, steps % steps_per_epoch), 'w')
-                    file.close()
-                    model.save_weights('checkpoints/{}/bestAcc.ckpt'.format(
-                        cfg['sub_name']))
-                # here we would like to plot the code distribution
-                x = np.asarray(embeddings_lfw)
-                x = x.astype(int)
-                reshaped_array = x.reshape(x.size)
-                counter = collections.Counter(reshaped_array)
-                x = counter.keys()
-                frequency = counter.values()
-                y = [x / reshaped_array.size for x in frequency]
-                plt.bar(x, y)
-                plt.ylabel('Probability')
-                plt.xlabel('Code value')
-                # plt.show()
-                plt.savefig('checkpoints/{}/histogram_{}_m{}_q{}_e{}_b_{}.svg'.format(cfg['sub_name'],cfg['sub_name'],cfg['m'],cfg['q'],epochs, steps % steps_per_epoch), format='svg')
-                plt.close('all')
+            if debuging:
+                if steps % 1000 == 0:
+                    acc_lfw, best_th_lfw, auc_lfw, eer_lfw, embeddings_lfw = val_LFW(model, cfg)
+                    print(
+                        "    acc {:.4f}, th: {:.2f}, auc {:.4f}, EER {:.4f}".format(acc_lfw, best_th_lfw, auc_lfw,
+                                                                                    eer_lfw))
+                    with summary_writer.as_default():
+                        tf.summary.scalar('metric/epoch_acc', acc_lfw, step=steps)
+                        tf.summary.scalar('metric/epoch_eer', eer_lfw, step=steps)
+                    if tmp_best_acc < acc_lfw:
+                        tmp_best_acc = acc_lfw
+                        print('[*] save best ckpt file!')
+                        if not os.path.exists('checkpoints/{}'.format(
+                                cfg['sub_name'])):
+                            os.mkdir('checkpoints/{}'.format(
+                                cfg['sub_name']))
+                        file = open('checkpoints/{}/bestAcc_e_{}_b_{}.log'.format(
+                            cfg['sub_name'], epochs, steps % steps_per_epoch), 'w')
+                        file.close()
+                        model.save_weights('checkpoints/{}/bestAcc.ckpt'.format(
+                            cfg['sub_name']))
+                    # here we would like to plot the code distribution
+                    x = np.asarray(embeddings_lfw)
+                    x = x.astype(int)
+                    reshaped_array = x.reshape(x.size)
+                    counter = collections.Counter(reshaped_array)
+                    x = counter.keys()
+                    frequency = counter.values()
+                    y = [x / reshaped_array.size for x in frequency]
+                    plt.bar(x, y)
+                    plt.ylabel('Probability')
+                    plt.xlabel('Code value')
+                    # plt.show()
+                    plt.savefig(
+                        'checkpoints/{}/histogram_{}_m{}_q{}_e{}_b_{}.svg'.format(cfg['sub_name'], cfg['sub_name'],
+                                                                                  cfg['m'], cfg['q'], epochs,
+                                                                                  steps % steps_per_epoch),
+                        format='svg')
+                    plt.close('all')
             if steps % cfg['save_steps'] == 0:
                 print('[*] save ckpt file!')
                 model.save_weights('checkpoints/{}/e_{}_b_{}.ckpt'.format(
