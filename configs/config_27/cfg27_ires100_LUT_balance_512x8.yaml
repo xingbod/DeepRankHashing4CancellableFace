@@ -1,7 +1,7 @@
 # general x.x.134.222
 samples_per_class: 4
-classes_per_batch: 50
-batch_size: 240
+classes_per_batch: 40
+batch_size: 160
 eval_batch_size: 200
 input_size: 112
 # embd_shape is for the Resnet, backbone
