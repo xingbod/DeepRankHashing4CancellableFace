@@ -44,8 +44,9 @@ def callMe():
     # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
 
     # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random.yaml')
-    cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
+    # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
     # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_xception.yaml')
+    # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res100_random_insightface.yaml')
 
     cfg['T'] = 10# whateever
     m = cfg['m'] = mycfg['m']
@@ -148,7 +149,7 @@ def callMe():
     # evl(16)
 
 for aaaa in [1,2,3]:
-    for m in [32, 64, 128, 256, 512, 1024]:
+    for m in [512]:
         for q in [8]:
             print(m, q, '****')
             mycfg['m'] = m

@@ -166,4 +166,17 @@ enroll_query_search_fusion("embeddings_inresv2/Xception_VGG2_feat_randomIoM_0_LU
 
 
 
+remark = "insightres100_lfw_fusion_diomh";                      
+DS= "LFW";    
+measure = "Hamming";
+enroll_query_search_fusion("embeddings_inresv2/Insight_ResNet100_lfw_feat_randomIoM_1_LUT_0_512x8.csv","embeddings_inresv2/InceptionResNetV2_lfw_feat_randomIoM_0_LUT_0_512x8.csv", "embeddings_inresv2/Xception_lfw_name_randomIoM_0_LUT_0_512x8.txt",measure,DS,remark)
+
+
+remark = "insightres100_lfw_fusion_diomh";                      
+DS= "LFW";    
+measure = "Hamming";
+enroll_query_search_fusion("embeddings_inresv2/Xception_lfw_feat_randomIoM_0_LUT_0_512x8.csv","embeddings_inresv2/Insight_ResNet100_lfw_feat_randomIoM_1_LUT_0_512x8.csv", "embeddings_inresv2/Xception_lfw_name_randomIoM_0_LUT_0_512x8.txt",measure,DS,remark)
+
+
+
 ```
