@@ -25,7 +25,7 @@ mycfg = {'m': 0, 'q': 0}
 
 def callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_random/iom_res50_random_inceptionresnet.yaml'):
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+    os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
     logger = tf.get_logger()
     logger.disabled = True
@@ -41,7 +41,7 @@ def callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_
     model, cfg = getModel(cfg_path)
     model2, cfg2 = getModel(cfg_path2)
     cfg['embd_shape'] = cfg['m'] * cfg['q']
-    cfg['eval_batch_size'] = 2
+    cfg['eval_batch_size'] = 32
     def evl(isLUT, measure):
 
         # if measure == 'Jaccard':
