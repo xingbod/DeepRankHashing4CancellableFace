@@ -48,9 +48,9 @@ def callMe():
     # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_xception.yaml')
     # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res100_random_insightface.yaml')
 
-    cfg['T'] = 10# whateever
     m = cfg['m'] = mycfg['m']
     q = cfg['q'] = mycfg['q']
+    cfg['T'] = 10# whateever
     model = build_or_load_Random_IoMmodel(cfg)
     model.summary(line_length=80)
     model.layers[0].trainable = False
