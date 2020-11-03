@@ -119,6 +119,6 @@ for m in [512]:
         print(m, q, '****')
         mycfg['m'] = m
         mycfg['q'] = q
-        # callMe(cfg_path ='./configs/config_27/cfg27_ires100_LUT_balance_512x8.yaml', cfg_path2 ='./configs/config_18/cfg18_inresv2_512x8.yaml')
-        callMe(cfg_path ='./configs/config_27/cfg27_ires100_LUT_balance_512x8.yaml ', cfg_path2 ='./configs/config_13/cfg13_allloss_Xception_512x8.yaml')
+        callMe(cfg_path ='./configs/config_27/cfg27_ires100_LUT_balance_512x8.yaml', cfg_path2 ='./configs/config_13/cfg13_allloss_Xception_512x8.yaml')
+        # callMe(cfg_path ='./configs/config_27/cfg27_ires100_LUT_balance_512x8.yaml ', cfg_path2 ='./configs/config_13/cfg13_allloss_Xception_512x8.yaml')
         # callMe(cfg_path ='configs/config_11/cfg11_allloss_inresv2_512x8.yaml', cfg_path2 ='./config_13/cfg13_allloss_Xception_512x8.yaml')
