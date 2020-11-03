@@ -34,7 +34,7 @@ def callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_
 
     def getModel(cfg_path):
         cfg = load_yaml(cfg_path)  # cfg = load_yaml(FLAGS.cfg_path)
-        model = build_or_load_IoMmodel(cfg, cfg)
+        model = build_or_load_IoMmodel(cfg)
         model.summary(line_length=80)
         return model,cfg
 
