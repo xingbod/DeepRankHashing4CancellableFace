@@ -41,7 +41,7 @@ def callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_
     model, cfg = getModel(cfg_path)
     model2, cfg2 = getModel(cfg_path2)
     cfg['embd_shape'] = cfg['m'] * cfg['q']
-    cfg['eval_batch_size'] = 32
+    cfg['eval_batch_size'] = 8
     def evl(isLUT, measure):
 
         # if measure == 'Jaccard':
@@ -108,8 +108,7 @@ def callMe(cfg_path = 'config_random/iom_res50_random.yaml',cfg_path2 = 'config_
             q, m, isLUT, measure, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, acc_lfw,
             acc_agedb30, acc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
 
-        with open('./logs/' + cfg['sub_name']+'_fuse_'+ cfg2['sub_name'] + "_learning_Output_line_" + measure + '_layer_' + cfg[
-            'hidden_layer_remark'] + "_0710_stat.md", "a") as text_file:
+        with open("./logs/1103fusion.md", "a") as text_file:
             text_file.write(log_str2)
 
     evl(0, measure='Hamming')  # no LUT
