@@ -39,11 +39,7 @@ def main(_argv):
     # set_memory_growth()
 
     cfg = load_yaml(FLAGS.cfg_path)  # cfg = load_yaml(FLAGS.cfg_path)
-    permKey = None
-    if cfg['head_type'] == 'IoMHead':  #
-        # permKey = generatePermKey(cfg['embd_shape'])
-        permKey = tf.eye(cfg['embd_shape'])  # for training, we don't permutate, won't influence the performance
-
+    cfg['batch_size'] = 32
     arcmodel = ArcFaceModel(size=cfg['input_size'],
                             embd_shape=cfg['embd_shape'],
                             backbone_type=cfg['backbone_type'],
@@ -77,15 +73,15 @@ def main(_argv):
 
     arcmodel.summary(line_length=80)
 
-    dataset = load_data_from_dir('../data/lfw_mtcnnpy_160', BATCH_SIZE=cfg['batch_size'], ds='LFW')
+    dataset = load_data_from_dir('data/lfw_mtcnnpy_160', BATCH_SIZE=cfg['batch_size'], ds='LFW')
     feats, names, n = extractFeat(dataset, arcmodel, 512)
-    with open('embeddings/' + cfg['backbone_type'] + '_lfw_feat.csv',
+    with open('embeddings_inresv2/' + cfg['backbone_type'] + '_lfw_feat.csv',
               'w') as f:
-        print('embeddings/' + cfg['backbone_type'] + '_lfw_feat.csv')
+        print('embeddings_inresv2/' + cfg['backbone_type'] + '_lfw_feat.csv')
         write = csv.writer(f)
         write.writerows(feats)
 
-    with open('embeddings/' + cfg['backbone_type'] + '_lfw_name.txt', 'w') as outfile:
+    with open('embeddings_inresv2/' + cfg['backbone_type'] + '_lfw_name.txt', 'w') as outfile:
         for i in names:
             outfile.write(i + "\n")
 
@@ -94,18 +90,18 @@ def main(_argv):
     For VGG2, we should select and pre-process the vgg dataset first, as the dataset is quite large, we would only select 50 imgs per person
 
     '''
-    #
-    # dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=cfg['batch_size'], img_ext='png',ds='VGG2')
-    # feats, names, n = extractFeat(dataset, arcmodel, 512)
-    # with open('embeddings/' + cfg['backbone_type'] + '_VGG2_feat.csv',
-    #           'w') as f:
-    #     # using csv.writer method from CSV package
-    #     print('embeddings/' + cfg['backbone_type'] + '_VGG2_feat.csv')
-    #     write = csv.writer(f)
-    #     write.writerows(feats)
-    # with open('embeddings/' + cfg['backbone_type'] + '_VGG2_name.txt', 'w') as outfile:
-    #     for i in names:
-    #         outfile.write(i + "\n")
+
+    dataset = load_data_from_dir('/media/Storage/facedata/vgg_mtcnnpy_160_shuffled', BATCH_SIZE=cfg['batch_size'], img_ext='png',ds='VGG2')
+    feats, names, n = extractFeat(dataset, arcmodel, 512)
+    with open('embeddings_inresv2/' + cfg['backbone_type'] + '_VGG2_feat.csv',
+              'w') as f:
+        # using csv.writer method from CSV package
+        print('embeddings_inresv2/' + cfg['backbone_type'] + '_VGG2_feat.csv')
+        write = csv.writer(f)
+        write.writerows(feats)
+    with open('embeddings_inresv2/' + cfg['backbone_type'] + '_VGG2_name.txt', 'w') as outfile:
+        for i in names:
+            outfile.write(i + "\n")
     #
     # '''
     #
