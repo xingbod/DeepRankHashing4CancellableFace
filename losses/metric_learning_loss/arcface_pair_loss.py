@@ -206,7 +206,7 @@ def _get_anchor_negative_triplet_mask(labels):
     mask = tf.logical_not(labels_equal)
 
     return mask
-def batch_hard_triplet_arcloss(labels, embeddings,steps,summary_writer,arc_margin=0,scala=20):
+def batch_hard_triplet_arcloss(labels, embeddings,steps,summary_writer,arc_margin=0,scala=20,minimize_dist=False):
     """Build the triplet loss over a batch of embeddings.
 
     For each anchor, we get the hardest positive and hardest negative to form a triplet.
@@ -259,7 +259,8 @@ def batch_hard_triplet_arcloss(labels, embeddings,steps,summary_writer,arc_margi
     triplet_arcloss = triplet_arcloss_positive + triplet_arcloss_negetive
 
     triplet_arcloss = tf.reduce_sum(triplet_arcloss) * scala
-
+    if minimize_dist:
+        triplet_arcloss =  triplet_arcloss + tf.reduce_mean(hardest_positive_dist)
     # Get final mean triplet loss
     with summary_writer.as_default():
         if tf.__version__.startswith('1'):

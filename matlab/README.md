@@ -178,5 +178,16 @@ measure = "Hamming";
 enroll_query_search_fusion("embeddings_inresv2/Xception_lfw_feat_randomIoM_0_LUT_0_512x8.csv","embeddings_inresv2/Insight_ResNet100_lfw_feat_randomIoM_0_LUT_0_512x8.csv", "embeddings_inresv2/Xception_lfw_name_randomIoM_0_LUT_0_512x8.txt",measure,DS,remark)
 
 
+remark = "orig_res100_1103";                      
+DS= "LFW";    
+measure = "Euclidean";
+enroll_query_search( "embeddings_inresv2/Insight_ResNet100_lfw_feat.csv", "embeddings_inresv2/Insight_ResNet100_lfw_name.txt",measure,DS,remark);
+
+
+remark = "orig_res100_1103";                      
+DS= "VGG2";    
+measure = "Cosine";
+enroll_query_search( "embeddings_inresv2/Insight_ResNet100_VGG2_feat.csv", "embeddings_inresv2/Insight_ResNet100_VGG2_name.txt",measure,DS,remark);
+
 
 ```
