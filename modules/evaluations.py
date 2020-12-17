@@ -20,6 +20,7 @@ from modules.LUT import genLUT
 import scipy.spatial.distance as dist
 import sklearn.metrics
 from scipy.spatial import distance
+from modules.utils import tic,toc
 
 
 def pdist(a, b=None):
@@ -275,7 +276,7 @@ def perform_val(embedding_size, batch_size, model,
         if is_flip:
             embedding_size = embedding_size * 2
     embeddings = np.zeros([len(carray), embedding_size])
-
+    tic()
     for idx in tqdm.tqdm(range(0, len(carray), batch_size), ascii=True):
         batch = carray[idx:idx + batch_size]
         batch = np.transpose(batch, [0, 2, 3, 1]) * 0.5 + 0.5
@@ -311,7 +312,7 @@ def perform_val(embedding_size, batch_size, model,
             embeddings = LUV.numpy().dot(1 << np.arange(LUV.shape[-1] - 1, -1, -1))  # if we want to convert it back to int
         else:
             embeddings = tf.reshape(LUV, (embeddings.shape[0], isLUT * embeddings.shape[1]))
-
+    toc()# here complete, print the time used
         ##### end ########
     tpr, fpr, accuracy, best_thresholds, auc, eer = evaluate(
         embeddings, issame, nrof_folds,measure, cfg)
