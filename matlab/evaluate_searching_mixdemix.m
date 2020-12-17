@@ -48,8 +48,8 @@ for i = progress(1:size(facenet_probe_label_c,2))
     for j=1: size(mixing_facenet_gallery,1)
         gallery_bin =  mixing_facenet_gallery(j,:);
         retrieved_id = bitxor(gallery_bin,hash_facenet_probe_c(i,:));
-%         dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
-        dist(j) = pdist2( retrieved_id,identifiers(facenet_gallery_label(j),:),  measure);
+        dist(j) = sum(bitxor(retrieved_id,identifiers(facenet_gallery_label(j),:)))/m;
+        %dist(j) = pdist2( retrieved_id,identifiers(facenet_gallery_label(j),:),  measure);% it may be slow?
     end
     final_dist(i,:) = dist;
 
