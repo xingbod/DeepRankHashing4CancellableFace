@@ -112,18 +112,20 @@ def main(_argv):
         # with open('./logs/' + cfg['sub_name'] + "_Output.md", "a") as text_file:
         #     text_file.write(log_str2)
 
-        with open('./logs/1030_inresv2_learning_Output.md', "a") as text_file:
+        with open('./logs/1217_inresv2_learning_Output.md', "a") as text_file:
             text_file.write(log_str2)
 
         print(log_str2)
 
     evl(0, 'Hamming')
-    evl(4, 'Hamming')
-    evl(6, 'Hamming')
-    # evl(3, 'Hamming')
     evl(int(math.log2(q)), 'Hamming')
-    evl(2, 'Hamming')
     evl(1, 'Hamming')
+    evl(2, 'Hamming')
+    evl(3, 'Hamming')
+    evl(4, 'Hamming')
+    evl(5, 'Hamming')
+    # evl(6, 'Hamming')
+    # evl(3, 'Hamming')
     # evl(0, 'Euclidean')
     # # evl(q, 'Jaccard')
     # # evl(8, 'Hamming')
