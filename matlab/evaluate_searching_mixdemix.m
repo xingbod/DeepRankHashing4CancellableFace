@@ -38,6 +38,10 @@ iom_DIR = zeros(numRanks, numOsiFarPoints, numTrials); % detection and identific
 iom_DIR_re = zeros(numRanks, numOsiFarPoints, numTrials); % detection and identification rates of the 10 trials
 iom_osiFAR = zeros(numTrials, numOsiFarPoints); % open-set identification false accept rates of the 10 trials
 
+
+tic
+size(facenet_probe_label_c,2)
+size(mixing_facenet_gallery,1)
 final_dist = zeros(size(facenet_probe_label_c,2),size(mixing_facenet_gallery,1));
 for i = progress(1:size(facenet_probe_label_c,2))
     dist = zeros(1,size(mixing_facenet_gallery,1));
@@ -50,6 +54,7 @@ for i = progress(1:size(facenet_probe_label_c,2))
     final_dist(i,:) = dist;
 
 end
+toc
 
 
 % final_dist_o1 = zeros(size(facenet_probe_label_o1,2),size(mixing_facenet_gallery,1));
