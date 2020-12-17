@@ -78,6 +78,6 @@ def tic():
 def toc():
     import time
     if 'startTime_for_tictoc' in globals():
-        print("Elapsed time is " + str(time.time() - startTime_for_tictoc) + " seconds.")
+        print("Elapsed time is " + str((time.time() - startTime_for_tictoc)*1000) + " ms.")
     else:
         print("Toc: start time not set")
