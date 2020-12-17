@@ -196,5 +196,9 @@ DS= "LFW";
 measure = "Hamming";
 enroll_query_iom_id( "embeddings_dl/Xception_lfw_feat_dlIoM_512x8.csv", "embeddings_dl/Xception_lfw_name_512x8.txt",measure,DS,remark);
 
+remark = "hashing_efficiency";                      
+DS= "VGG2";    
+measure = "Hamming";
+enroll_query_iom_id( "embeddings_inresv2/Insight_ResNet100_VGG2_feat_randomIoM_0_LUT_0_512x8.csv", "embeddings_inresv2/Insight_ResNet100_VGG2_name_randomIoM_0_LUT_0_512x8.txt",measure,DS,remark);
 
 ```
