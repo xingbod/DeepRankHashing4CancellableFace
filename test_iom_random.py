@@ -44,9 +44,9 @@ def callMe():
     # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
 
     # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random.yaml')
-    # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
+    cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_inceptionresnet.yaml')
     # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res50_random_xception.yaml')
-    cfg = cfg_iom = load_yaml('./configs/config_random/iom_res100_random_insightface.yaml')
+    # cfg = cfg_iom = load_yaml('./configs/config_random/iom_res100_random_insightface.yaml')
 
     m = cfg['m'] = mycfg['m']
     q = cfg['q'] = mycfg['q']
@@ -131,17 +131,17 @@ def callMe():
             cfg['sub_name'], m,q,isLUT, measure, mAp_ytf, mAp_fs, rr_ytf[0], rr_fs[0], eer_lfw, eer_agedb30, eer_cfp_fp, acc_lfw,
             acc_agedb30, acc_cfp_fp, auc_lfw, auc_agedb30, auc_cfp_fp)
 
-        with open('./logs/1029_Output_line_.md', "a") as text_file:
+        with open('./logs/1217_Output_line_.md', "a") as text_file:
             text_file.write(log_str2)
 
     # evl(0,measure='Euclidean')  # no LUT
     # evl(0,measure='Jaccard')  # no LUT
     # evl(0,measure='Cosine')  # no LUT
-    evl(0, measure='Hamming')  # no LUT
 
     # evl(int(math.log2(q)), measure='Euclidean')  # no LUT
     # evl(q, measure='Jaccard')  # no LUT
     # evl(q, measure='Cosine')  # no LUT
+    evl(0, measure='Hamming')  # no LUT
     evl(int(math.log2(q)), measure='Hamming')  # no LUT
 
     # evl(4)
@@ -149,18 +149,19 @@ def callMe():
     # evl(16)
 
 for aaaa in [1,2,3]:
-    for m in [512]:
+    for m in [32, 64, 128, 256, 512]:
         for q in [8]:
             print(m, q, '****')
             mycfg['m'] = m
             mycfg['q'] = q
             callMe()
 
+for aaaa in [1,2,3]:
+    for m in [512]:
+        for q in [2, 4, 8, 16, 32]:  # 2,4,8,16,32,64
+            print(m, q, '****')
+            mycfg['m'] = m
+            mycfg['q'] = q
+            callMe()
 
-# for m in [512]:
-#     for q in [2, 4, 8, 16, 32]:  # 2,4,8,16,32,64
-#         print(m, q, '****')
-#         mycfg['m'] = m
-#         mycfg['q'] = q
-#         callMe()
 
