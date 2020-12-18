@@ -39,7 +39,7 @@ for i = progress(1:size(facenet_probe_label_c,2))
     dist = zeros(1,size(hash_facenet_gallery,1));
     for j=1: size(hash_facenet_gallery,1)
         gallery_this =  hash_facenet_gallery(j,:);
-        dist(j) = gallery_this*hash_facenet_probe_c(i,:)'
+        dist(j) = gallery_this*hash_facenet_probe_c(i,:)';
     end
     final_dist(i,:) = dist;
 
