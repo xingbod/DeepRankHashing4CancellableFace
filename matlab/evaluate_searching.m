@@ -28,7 +28,10 @@ iom_DIR_re = zeros(numRanks, numOsiFarPoints, numTrials); % detection and identi
 iom_osiFAR = zeros(numTrials, numOsiFarPoints); % open-set identification false accept rates of the 10 trials
 
 %% Compute the cosine similarity score between the test samples.
+disp('*********************8')
+tic
 final_dist =(pdist2( hash_facenet_gallery,hash_facenet_probe_c,  measure));
+toc
 % final_dist_o1 =(pdist2( hash_facenet_gallery,hash_facenet_probe_o1,  measure));
 final_dist_o2 =(pdist2( hash_facenet_gallery,hash_facenet_probe_o2,  measure));
 % final_dist_o3 =(pdist2( hash_facenet_gallery,hash_facenet_probe_o3,  measure));
