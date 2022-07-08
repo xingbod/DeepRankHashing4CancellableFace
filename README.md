@@ -1,13 +1,10 @@
-# [IoMFace-tf2/1](https://github.com/xingbod/DeepRankHashing4CancellableFace)
-
-
 # Abstract
 Cancellable biometrics (CB) is one of the major approaches for biometric template protection. However, almost all the prior arts are designed to work under verification (one-to-one matching). This paper proposes a deep learning-based cancellable biometric scheme for face identification (one-to-many matching). Our scheme comprises two key ingredients: a deep rank hashing (DRH) network and a cancellable identification scheme. The DRH network transforms a raw face image into discriminative yet compact face hash codes based upon the nonlinear subspace ranking notion. The network is designed to be trained for both identification and hashing goals with their respective rich identity-related and rank hashing relevant loss functions. A modified softmax function is utilized to alleviate the hashing quantization error, and a regularization term is designed to encourage hash code balance. The hash code is binarized, compressed, and secured with the randomized lookup table function. Unlike prior CB schemes that require two input factors for verification, the proposed scheme demands no additional input except face images during identification, yet the face template is replaceable whenever needed based upon a one-time XOR cipher notion. The proposed scheme is evaluated on five public unconstrained face datasets in terms of verification, closed-set and open-set identification performance accuracy, computation cost, template protection criteria, and security.
 
 Cite
 
 ```
-@article{XINGBO2022108886,
+@article{XINGBODeepRankHashing4CancellableFace,
 title = {Deep Rank Hashing Network for Cancellable Face Identification},
 journal = {Pattern Recognition},
 pages = {108886},
